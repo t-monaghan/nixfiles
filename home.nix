@@ -3,9 +3,16 @@
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  home.username = "tom.monaghan";
-  home.homeDirectory = "/Users/tom.monaghan";
-
+  home = with pkgs; {
+    username = "tom.monaghan";
+    homeDirectory = "/Users/tom.monaghan";
+    stateVersion = "23.11";
+    packages = [
+      # Can i have node_pkg as a string var? is it worth it?
+      nodePackages_latest.bash-language-server
+      nodePackages_latest.typescript-language-server
+    ];
+  };
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
@@ -14,7 +21,6 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "23.11";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
