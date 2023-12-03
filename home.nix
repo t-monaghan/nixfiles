@@ -16,6 +16,10 @@
       nerdfonts
       udev-gothic-nf
       neofetch
+      python3
+      python311Packages.python-lsp-server
+      yarn
+      # TODO: add rectangle once dots file is findable
     ];
   };
   # This value determines the Home Manager release that your
@@ -31,6 +35,10 @@
   programs.home-manager.enable = true;
 
   programs.bat.enable = true;
+  programs.gh = {
+    enable = true;
+  };
+  programs.thefuck.enable = true;
   programs.helix = {
     enable = true;
     defaultEditor = true;
@@ -66,6 +74,10 @@
     enableCompletion = true;
     syntaxHighlighting.enable = true;
     initExtra = "neofetch";
+    oh-my-zsh = {
+      enable = true;
+      plugins = ["git" "thefuck"];
+    };
   };
   programs.fzf = {
     enable = true;
