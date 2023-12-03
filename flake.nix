@@ -9,10 +9,9 @@
   outputs = { self, nixpkgs, home-manager, flake-utils, ... }:
     let
       inherit nixpkgs;
-      username = "tom.monaghan";
     in
     {
-      homeConfigurations."${username}@tmonaghan-9WLJ0K" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."tom.monaghan@tmonaghan-9WLJ0K" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
           config.allowUnfree = true;
@@ -21,6 +20,16 @@
           ./home.nix
         ];
       };
+      homeConfigurations."tmonaghan@thomass-mbp.lan" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-darwin";
+          config.allowUnfree = true;
+        };
+        modules = [
+          ./home.nix
+        ];
+      };
+
 
     };
 }

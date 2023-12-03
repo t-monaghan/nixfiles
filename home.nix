@@ -4,13 +4,18 @@
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
-    username = "tom.monaghan";
-    homeDirectory = "/Users/tom.monaghan";
+    username = "tmonaghan";
+    homeDirectory = "/Users/tmonaghan";
     stateVersion = "23.11";
     packages = [
       # Can i have node_pkg as a string var? is it worth it?
       nodePackages_latest.bash-language-server
       nodePackages_latest.typescript-language-server
+      nil
+      act
+      asciinema
+      nerdfonts
+      udev-gothic-nf
     ];
   };
   # This value determines the Home Manager release that your
@@ -26,7 +31,6 @@
   programs.home-manager.enable = true;
 
   programs.bat.enable = true;
-  programs.zsh.enableCompletion = true;
   programs.helix = {
     enable = true;
     defaultEditor = true;
@@ -34,7 +38,7 @@
       tmonaghan = let
         transparent = "none"; 
       in {
-        inherits = "acme";
+        inherits = "everforest_dark";
         "ui.background" = transparent;
         "ui.bufferline.active" = { fg = "#e69875";};
       };
@@ -55,5 +59,70 @@
         C-l = ["goto_line_end" ":append-output echo -n ';'" "normal_mode"];
       };
     };
+  };
+  programs.zsh = {
+    enable = true;
+    enableAutosuggestions = true;
+    enableCompletion = true;
+    # oh-my-zsh = {
+    #   enable = true;
+    #   theme = 
+    # };
+    syntaxHighlighting.enable = true;
+  };
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+  programs.tmux = {
+    enable = true;
+  };
+  programs.oh-my-posh = {
+    enable = true;
+    enableZshIntegration = true;
+    useTheme = "atomic";
+  };
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      window = {
+      option_as_alt = "Both";
+      decorations = "buttonless";
+      opacity = 0.95;
+      };
+      font.normal = {
+        family = "UDEV Gothic NF";
+        style = "Regular";
+      };
+      font.size = 15.0;
+      schemes = {
+        everforest_dark_medium = "&everforest_dark_medium";
+        primary = {
+          background = "'#2d353b'";
+          foreground = "'#d3c6aa'";
+        };
+        normal = {
+          black   = "'#475258'";
+          red     = "'#e67e80'";
+          green   = "'#a7c080'";
+          yellow  = "'#dbbc7f'";
+          blue    = "'#7fbbb3'";
+          magenta = "'#d699b6'";
+          cyan    = "'#83c092'";
+          white   = "'#d3c6aa'";
+        };
+        bright = {
+          black  = "'#475258'";
+          red    = "'#e67e80'";
+          green  = "'#a7c080'";
+          yellow = "'#dbbc7f'";
+          blue   = "'#7fbbb3'";
+          magenta= "'#d699b6'";
+          cyan   = "'#83c092'";
+          white  = "'#d3c6aa'";
+        };
+        colors = "*everforest_dark_medium";
+    };
+  };
   };
 }
