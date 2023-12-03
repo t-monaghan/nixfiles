@@ -8,7 +8,6 @@
     homeDirectory = "/Users/tmonaghan";
     stateVersion = "23.11";
     packages = [
-      # Can i have node_pkg as a string var? is it worth it?
       nodePackages_latest.bash-language-server
       nodePackages_latest.typescript-language-server
       nil
@@ -16,6 +15,7 @@
       asciinema
       nerdfonts
       udev-gothic-nf
+      neofetch
     ];
   };
   # This value determines the Home Manager release that your
@@ -64,11 +64,8 @@
     enable = true;
     enableAutosuggestions = true;
     enableCompletion = true;
-    # oh-my-zsh = {
-    #   enable = true;
-    #   theme = 
-    # };
     syntaxHighlighting.enable = true;
+    initExtra = "neofetch";
   };
   programs.fzf = {
     enable = true;
@@ -80,7 +77,7 @@
   programs.oh-my-posh = {
     enable = true;
     enableZshIntegration = true;
-    useTheme = "atomic";
+    useTheme = "uew";
   };
   programs.alacritty = {
     enable = true;
