@@ -18,6 +18,7 @@
         };
         modules = [
           ./home.nix
+          ./hosts/culture-amp.nix
         ];
       };
       homeConfigurations."tmonaghan@thomass-mbp.lan" = home-manager.lib.homeManagerConfiguration {
