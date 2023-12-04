@@ -44,7 +44,10 @@
   programs.gh = {
     enable = true;
   };
-  programs.thefuck.enable = true;
+  programs.thefuck = {
+    enable = true;
+    enableZshIntegration = true;
+  };
   programs.helix = {
     enable = true;
     defaultEditor = true;
@@ -87,6 +90,14 @@
     oh-my-zsh = {
       enable = true;
       plugins = ["git" "thefuck"];
+    };
+    shellAliases = {
+      f = "fuck";
+      # Sometimes colourful language is best kept to ourselves
+      woops = "fuck";
+      gs = "git status";
+      ga = "git add";
+      gc = "git commit -m";
     };
   };
   programs.fzf = {
