@@ -20,6 +20,7 @@
       python3
       python311Packages.python-lsp-server
       yarn
+      tree
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -35,7 +36,12 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  programs.bat.enable = true;
+  programs.bat = {
+  enable = true;
+  config = {
+    theme = "Monokai Extended";
+  };
+  };
   programs.gh = {
     enable = true;
   };
