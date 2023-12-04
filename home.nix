@@ -98,6 +98,7 @@
       gs = "git status";
       ga = "git add";
       gc = "git commit -m";
+      ll = "ls -ltra";
     };
   };
   programs.fzf = {
