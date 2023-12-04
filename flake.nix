@@ -28,6 +28,7 @@
         };
         modules = [
           ./home.nix
+          ./hosts/personal.nix
         ];
       };
 
