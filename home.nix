@@ -4,10 +4,11 @@
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
-    username = "tmonaghan";
-    homeDirectory = "/Users/tmonaghan";
+    username = "tom.monaghan";
+    homeDirectory = "/Users/tom.monaghan";
     stateVersion = "23.11";
     packages = [
+      alacritty
       nodePackages_latest.bash-language-server
       nodePackages_latest.typescript-language-server
       nil
@@ -46,7 +47,7 @@
       tmonaghan = let
         transparent = "none"; 
       in {
-        inherits = "everforest_dark";
+        inherits = "autumn";
         "ui.background" = transparent;
         "ui.bufferline.active" = { fg = "#e69875";};
       };
@@ -73,7 +74,11 @@
     enableAutosuggestions = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
-    initExtra = "neofetch";
+    initExtra = "neofetch
+                export DIRENV_BIN=\"/Users/tom.monaghan/.nix-profile/bin/direnv\"
+                eval \"$($DIRENV_BIN hook zsh)\"
+                export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'";
+    envExtra = ". \"$HOME/.cargo/env\"";
     oh-my-zsh = {
       enable = true;
       plugins = ["git" "thefuck"];
@@ -100,7 +105,7 @@
       opacity = 0.95;
       };
       font.normal = {
-        family = "UDEV Gothic NF";
+        family = "UDEV Gothic 35NF";
         style = "Regular";
       };
       font.size = 15.0;
