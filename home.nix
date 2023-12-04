@@ -4,8 +4,6 @@
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
-    username = "tom.monaghan";
-    homeDirectory = "/Users/tom.monaghan";
     stateVersion = "23.11";
     packages = [
       alacritty
@@ -21,6 +19,7 @@
       python311Packages.python-lsp-server
       yarn
       tree
+      trash-cli
       # TODO: add rectangle once dots file is findable
     ];
   };
