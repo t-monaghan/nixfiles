@@ -113,6 +113,8 @@
       ga = "git add";
       gc = "git commit -m";
       ll = "ls -ltra";
+      gd = "git diff";
+      gdc = "git diff --cached";
     };
   };
   programs.fzf = {
