@@ -82,6 +82,10 @@
     enableAutosuggestions = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
+    autocd = true;
+    history = {
+      ignoreAllDups = true;
+    };
     initExtra = "neofetch
                 export DIRENV_BIN=\"/Users/tom.monaghan/.nix-profile/bin/direnv\"
                 eval \"$($DIRENV_BIN hook zsh)\"
