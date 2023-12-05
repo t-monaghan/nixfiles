@@ -9,6 +9,7 @@
       alacritty
       nodePackages_latest.bash-language-server
       nodePackages_latest.typescript-language-server
+      nodePackages_latest.vscode-langservers-extracted
       nil
       act
       asciinema
@@ -20,6 +21,7 @@
       yarn
       tree
       trash-cli
+      yaml-language-server
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -76,6 +78,12 @@
         C-l = ["goto_line_end" ":append-output echo -n ';'" "normal_mode"];
       };
     };
+    # languages = {
+    #   language = [{
+    #     name = "json";
+    #     language-servers.command = "vscode-json-languageserver";
+    #   }];
+    # };
   };
   programs.zsh = {
     enable = true;
@@ -86,10 +94,12 @@
     history = {
       ignoreAllDups = true;
     };
-    initExtra = "neofetch
-                export DIRENV_BIN=\"/Users/tom.monaghan/.nix-profile/bin/direnv\"
-                eval \"$($DIRENV_BIN hook zsh)\"
-                export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'";
+    initExtra = ''
+                neofetch
+                export DIRENV_BIN="/Users/tom.monaghan/.nix-profile/bin/direnv"
+                eval "$($DIRENV_BIN hook zsh)"
+                export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem\'
+                '';
     envExtra = ". \"$HOME/.cargo/env\"";
     oh-my-zsh = {
       enable = true;
