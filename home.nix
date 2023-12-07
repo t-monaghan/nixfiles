@@ -94,12 +94,6 @@
     history = {
       ignoreAllDups = true;
     };
-    initExtra = ''
-                neofetch
-                export DIRENV_BIN="/Users/tom.monaghan/.nix-profile/bin/direnv"
-                eval "$($DIRENV_BIN hook zsh)"
-                export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem\'
-                '';
     envExtra = ". \"$HOME/.cargo/env\"";
     oh-my-zsh = {
       enable = true;
