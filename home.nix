@@ -77,6 +77,9 @@
         j.k = "normal_mode";
         C-l = ["goto_line_end" ":append-output echo -n ';'" "normal_mode"];
       };
+      editor.file-picker = {
+        hidden = false;
+      };
     };
     # languages = {
     #   language = [{
@@ -100,6 +103,7 @@
       plugins = ["git" "thefuck"];
     };
     shellAliases = {
+      chmox = "chmod a+x";
       f = "fuck";
       # Sometimes colourful language is best kept to ourselves
       woops = "fuck";
