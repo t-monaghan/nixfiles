@@ -35,138 +35,135 @@
   # changes in each release.
 
   # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  programs = {
+    home-manager.enable = true;
 
-  programs.bat = {
-  enable = true;
-  config = {
-    theme = "Monokai Extended";
-  };
-  };
-  programs.gh = {
+    bat = {
     enable = true;
-  };
-  programs.thefuck = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-  programs.helix = {
-    enable = true;
-    defaultEditor = true;
-    themes = {
-      tmonaghan = let
-        transparent = "none"; 
-      in {
-        inherits = "autumn";
-        "ui.background" = transparent;
-        "ui.bufferline.active" = { fg = "#e69875";};
-      };
+    config = {
+      theme = "Monokai Extended";
     };
-    settings = {
-      theme = "tmonaghan"; # This should be tmonaghan for darwin, with transparent bg
-      editor = {
-        line-number = "relative";
-        bufferline = "always";
-        true-color = true;
-      };      
-      editor.statusline = {      
-        left = ["spacer" "version-control" "position" "mode" "diagnostics"];
-        right = ["workspace-diagnostics" "file-name" "spinner"];
-      };
-      keys.insert = {
-        j.k = "normal_mode";
-        C-l = ["goto_line_end" ":append-output echo -n ';'" "normal_mode"];
-      };
-      editor.file-picker = {
-        hidden = false;
-      };
     };
-    # languages = {
-    #   language = [{
-    #     name = "json";
-    #     language-servers.command = "vscode-json-languageserver";
-    #   }];
-    # };
-  };
-  programs.zsh = {
-    enable = true;
-    enableAutosuggestions = true;
-    enableCompletion = true;
-    syntaxHighlighting.enable = true;
-    autocd = true;
-    history = {
-      ignoreAllDups = true;
-    };
-    envExtra = ". \"$HOME/.cargo/env\"";
-    oh-my-zsh = {
+    gh = {
       enable = true;
-      plugins = ["git" "thefuck"];
     };
-    shellAliases = {
-      chmox = "chmod a+x";
-      f = "fuck";
-      # Sometimes colourful language is best kept to ourselves
-      woops = "fuck";
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit -m";
-      ll = "ls -ltra";
-      gd = "git diff";
-      gdc = "git diff --cached";
+    thefuck = {
+      enable = true;
+      enableZshIntegration = true;
     };
-  };
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-  programs.tmux = {
-    enable = true;
-  };
-  programs.oh-my-posh = {
-    enable = true;
-    enableZshIntegration = true;
-    useTheme = "uew";
-  };
-  programs.alacritty = {
-    enable = true;
-    settings = {
-      window = {
-      option_as_alt = "Both";
-      decorations = "buttonless";
-      opacity = 0.95;
+
+    helix = {
+      enable = true;
+      defaultEditor = true;
+      themes = {
+        tmonaghan = let
+          transparent = "none"; 
+        in {
+          inherits = "autumn";
+          "ui.background" = transparent;
+          "ui.bufferline.active" = { fg = "#e69875";};
+        };
       };
-      font.normal = {
-        family = "UDEV Gothic 35NF";
-        style = "Regular";
+      settings = {
+        theme = "tmonaghan"; # This should be tmonaghan for darwin, with transparent bg
+        editor = {
+          line-number = "relative";
+          bufferline = "always";
+          true-color = true;
+        };      
+        editor.statusline = {      
+          left = ["spacer" "version-control" "position" "mode" "diagnostics"];
+          right = ["workspace-diagnostics" "file-name" "spinner"];
+        };
+        keys.insert = {
+          j.k = "normal_mode";
+          C-l = ["goto_line_end" ":append-output echo -n ';'" "normal_mode"];
+        };
+        editor.file-picker = {
+          hidden = false;
+        };
       };
-      font.size = 15.0;
-      schemes = {
-        everforest_dark_medium = "&everforest_dark_medium";
-        primary = {
-          background = "'#2d353b'";
-          foreground = "'#d3c6aa'";
+    };
+    zsh = {
+      enable = true;
+      enableAutosuggestions = true;
+      enableCompletion = true;
+      syntaxHighlighting.enable = true;
+      autocd = true;
+      history = {
+        ignoreAllDups = true;
+      };
+      envExtra = ". \"$HOME/.cargo/env\"";
+      oh-my-zsh = {
+        enable = true;
+        plugins = ["git" "thefuck"];
+      };
+      shellAliases = {
+        chmox = "chmod a+x";
+        f = "fuck";
+        # Sometimes colourful language is best kept to ourselves
+        woops = "fuck";
+        gs = "git status";
+        ga = "git add";
+        gc = "git commit -m";
+        ll = "ls -ltra";
+        gd = "git diff";
+        gdc = "git diff --cached";
+      };
+    };
+    fzf = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+    tmux = {
+      enable = true;
+    };
+    oh-my-posh = {
+      enable = true;
+      enableZshIntegration = true;
+      useTheme = "uew";
+    };
+    alacritty = {
+      enable = true;
+      settings = {
+        window = {
+        option_as_alt = "OnlyRight";
+        decorations = "buttonless";
+        opacity = 0.95;
         };
-        normal = {
-          black   = "'#475258'";
-          red     = "'#e67e80'";
-          green   = "'#a7c080'";
-          yellow  = "'#dbbc7f'";
-          blue    = "'#7fbbb3'";
-          magenta = "'#d699b6'";
-          cyan    = "'#83c092'";
-          white   = "'#d3c6aa'";
+        font.normal = {
+          family = "UDEV Gothic 35NF";
+          style = "Regular";
         };
-        bright = {
-          black  = "'#475258'";
-          red    = "'#e67e80'";
-          green  = "'#a7c080'";
-          yellow = "'#dbbc7f'";
-          blue   = "'#7fbbb3'";
-          magenta= "'#d699b6'";
-          cyan   = "'#83c092'";
-          white  = "'#d3c6aa'";
-        };
-        colors = "*everforest_dark_medium";
+        font.size = 15.0;
+        schemes = {
+          everforest_dark_medium = "&everforest_dark_medium";
+          primary = {
+            background = "'#2d353b'";
+            foreground = "'#d3c6aa'";
+          };
+          normal = {
+            black   = "'#475258'";
+            red     = "'#e67e80'";
+            green   = "'#a7c080'";
+            yellow  = "'#dbbc7f'";
+            blue    = "'#7fbbb3'";
+            magenta = "'#d699b6'";
+            cyan    = "'#83c092'";
+            white   = "'#d3c6aa'";
+          };
+          bright = {
+            black  = "'#475258'";
+            red    = "'#e67e80'";
+            green  = "'#a7c080'";
+            yellow = "'#dbbc7f'";
+            blue   = "'#7fbbb3'";
+            magenta= "'#d699b6'";
+            cyan   = "'#83c092'";
+            white  = "'#d3c6aa'";
+          };
+          colors = "*everforest_dark_medium";
+      };
     };
   };
   };
