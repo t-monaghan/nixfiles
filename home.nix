@@ -22,6 +22,7 @@
       tree
       trash-cli
       yaml-language-server
+      shellcheck
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -50,6 +51,12 @@
     thefuck = {
       enable = true;
       enableZshIntegration = true;
+    };
+
+    git = {
+      enable = true;
+      userName = "t-monaghan";
+      userEmail = "tomaghan+git@gmail.com";
     };
 
     helix = {
@@ -109,6 +116,9 @@
         ll = "ls -ltra";
         gd = "git diff";
         gdc = "git diff --cached";
+        dvsp = "devbox run setup";
+        dvsd = "devbox run seed";
+        dvu = "devbox services up";
       };
     };
     fzf = {
@@ -132,10 +142,10 @@
         opacity = 0.95;
         };
         font.normal = {
-          family = "UDEV Gothic 35NF";
+          family = "FiraCode Nerd Font Mono";
           style = "Regular";
         };
-        font.size = 15.0;
+        font.size = 16.0;
         schemes = {
           everforest_dark_medium = "&everforest_dark_medium";
           primary = {
