@@ -6,7 +6,6 @@
   home = with pkgs; {
     stateVersion = "23.11";
     packages = [
-      alacritty
       nodePackages_latest.bash-language-server
       nodePackages_latest.typescript-language-server
       nodePackages_latest.vscode-langservers-extracted
@@ -15,7 +14,7 @@
       asciinema
       nerdfonts
       udev-gothic-nf
-      neofetch
+      fastfetch
       python3
       python311Packages.python-lsp-server
       yarn
@@ -40,14 +39,16 @@
     home-manager.enable = true;
 
     bat = {
-    enable = true;
-    config = {
-      theme = "Monokai Extended";
+      enable = true;
+      config = {
+        theme = "Monokai Extended";
+      };
     };
-    };
+
     gh = {
       enable = true;
     };
+
     thefuck = {
       enable = true;
       enableZshIntegration = true;
@@ -57,6 +58,9 @@
       enable = true;
       userName = "t-monaghan";
       userEmail = "tomaghan+git@gmail.com";
+      aliases = {
+        cob = "checkout -b";
+      };
     };
 
     helix = {
@@ -91,6 +95,7 @@
         };
       };
     };
+
     zsh = {
       enable = true;
       enableAutosuggestions = true;
@@ -121,18 +126,22 @@
         dvu = "devbox services up";
       };
     };
+
     fzf = {
       enable = true;
       enableZshIntegration = true;
     };
+
     tmux = {
       enable = true;
     };
+
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
       useTheme = "uew";
     };
+
     alacritty = {
       enable = true;
       settings = {
@@ -140,6 +149,10 @@
         option_as_alt = "OnlyRight";
         decorations = "buttonless";
         opacity = 0.95;
+        dimensions = {
+          columns = 100;
+          lines = 32;
+        };
         };
         font.normal = {
           family = "FiraCode Nerd Font Mono";
@@ -172,7 +185,9 @@
             cyan   = "'#83c092'";
             white  = "'#d3c6aa'";
           };
-          colors = "*everforest_dark_medium";
+        # schemes = {
+        #   # TODO: this isn't working, convert files to JSON
+        #   colors = let importYaml = file: builtins.fromJSON (builtins.readFile (pkgs.runCommandNoCC "converted-yaml.json" ''${pkgs.yj}/bin/yj < "${file}" > "$out"'')); in importYaml ./themes/alacritty/everforest_dark_medium.yaml;
       };
     };
   };
