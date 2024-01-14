@@ -37,6 +37,15 @@
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
 
+    tmux.enable = true;
+    gh.enable = true;
+
+    thefuck.enable = true;
+    thefuck.enableZshIntegration = true;
+
+    fzf.enable = true;
+    fzf.enableZshIntegration = true;
+
     bat = {
       enable = true;
       config = {
@@ -44,13 +53,10 @@
       };
     };
 
-    gh = {
-      enable = true;
-    };
-
-    thefuck = {
+    oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
+      useTheme = "uew";
     };
 
     git = {
@@ -124,21 +130,6 @@
         dvsd = "devbox run seed";
         dvu = "devbox services up";
       };
-    };
-
-    fzf = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-
-    tmux = {
-      enable = true;
-    };
-
-    oh-my-posh = {
-      enable = true;
-      enableZshIntegration = true;
-      useTheme = "uew";
     };
 
     alacritty = {
