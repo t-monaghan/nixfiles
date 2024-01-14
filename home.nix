@@ -43,8 +43,11 @@
     thefuck.enable = true;
     thefuck.enableZshIntegration = true;
 
-    fzf.enable = true;
-    fzf.enableZshIntegration = true;
+    mcfly = {
+      enable = true;
+      enableZshIntegration = true;
+      keyScheme = "vim";
+    };
 
     bat = {
       enable = true;
