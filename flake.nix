@@ -6,7 +6,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils, ... }:
+  outputs = { nixpkgs, home-manager, ... }:
     let
       inherit nixpkgs;
     in
