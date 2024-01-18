@@ -8,6 +8,7 @@
       nodePackages.pnpm
       rtx
       yarn
+      rubyPackages_3_2.solargraph
       ];
     };
   programs.zsh.initExtra = ''
