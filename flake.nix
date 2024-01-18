@@ -39,7 +39,7 @@
         };
         modules = [
           ./home.nix
-          ./hosts/personal.nix
+          ./hosts/work-vm.nix
         ];
       };
 
