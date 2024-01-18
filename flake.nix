@@ -32,6 +32,18 @@
         ];
       };
 
+      homeConfigurations."alanturing@Alans-Virtual-Machine.local" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-darwin";
+          config.allowUnfree = true;
+        };
+        modules = [
+          ./home.nix
+          ./hosts/work-vm.nix
+        ];
+      };
+
+
 
     };
 }
