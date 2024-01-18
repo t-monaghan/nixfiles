@@ -68,6 +68,8 @@
       userEmail = "tomaghan+git@gmail.com";
       aliases = {
         cob = "checkout -b";
+        com = "checkout main";
+        ck = "checkout";
       };
       extraConfig = {
         push.autoSetupRemote = true;
