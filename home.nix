@@ -61,6 +61,9 @@
       aliases = {
         cob = "checkout -b";
       };
+      extraConfig = {
+        push.autoSetupRemote = true;
+      };
     };
 
     helix = {
