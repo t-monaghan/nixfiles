@@ -30,6 +30,8 @@
       trash-cli
       yaml-language-server
       shellcheck
+      vlc
+      utm
       # TODO: add rectangle once dots file is findable
     ];
   };
