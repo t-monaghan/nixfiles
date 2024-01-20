@@ -30,8 +30,6 @@
       trash-cli
       yaml-language-server
       shellcheck
-      vlc
-      utm
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -121,10 +119,6 @@
         ignoreAllDups = true;
       };
       envExtra = ". \"$HOME/.cargo/env\"";
-      oh-my-zsh = {
-        enable = true;
-        plugins = ["git" "thefuck"];
-      };
       shellAliases = {
         chmox = "chmod a+x";
         f = "fuck";
