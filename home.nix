@@ -88,6 +88,9 @@
           "ui.bufferline.active" = { fg = "#e69875";};
         };
       };
+      languages = {
+        language = [{name = "json"; auto-format = false;}];
+      };
       settings = {
         theme = "tmonaghan"; # This should be tmonaghan for darwin, with transparent bg
         editor = {
@@ -120,6 +123,8 @@
       };
       envExtra = ". \"$HOME/.cargo/env\"";
       shellAliases = {
+        dr = "devbox run";
+        dsu = "devbox services up";
         chmox = "chmod a+x";
         f = "fuck";
         # Sometimes colourful language is best kept to ourselves
