@@ -21,15 +21,14 @@
       nil
       act
       asciinema
-      nerdfonts
       udev-gothic-nf
-      fastfetch
       python3
       python311Packages.python-lsp-server
       tree
       trash-cli
       yaml-language-server
       shellcheck
+      gopls
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -123,8 +122,6 @@
       };
       envExtra = ". \"$HOME/.cargo/env\"";
       shellAliases = {
-        dr = "devbox run";
-        dsu = "devbox services up";
         chmox = "chmod a+x";
         f = "fuck";
         # Sometimes colourful language is best kept to ourselves
@@ -136,9 +133,10 @@
         ll = "ls -ltra";
         gd = "git diff";
         gdc = "git diff --cached";
-        dvsp = "devbox run setup";
-        dvsd = "devbox run seed";
-        dvu = "devbox services up";
+        dr = "devbox run";
+        drs = "devbox run setup";
+        drp = "devbox run populate";
+        dsu = "devbox services up";
       };
     };
 
@@ -156,7 +154,7 @@
           dynamic_padding = true;
         };
         font.normal = {
-          family = "FiraCode Nerd Font Mono";
+          family = "UDEV Gothic 35NF";
           style = "Regular";
         };
         font.size = 16.0;
