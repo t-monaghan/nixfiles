@@ -4,9 +4,10 @@
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    alacritty-theme.url = "github:alexghr/alacritty-theme.nix";
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, home-manager, alacritty-theme, ... }:
     let
       inherit nixpkgs;
     in
@@ -17,6 +18,9 @@
           config.allowUnfree = true;
         };
         modules = [
+          ({ config, pkgs, ...}: {
+            nixpkgs.overlays = [ alacritty-theme.overlays.default ];
+          })
           ./home.nix
           ./hosts/culture-amp.nix
         ];

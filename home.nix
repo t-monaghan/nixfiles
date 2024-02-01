@@ -158,37 +158,11 @@
           style = "Regular";
         };
         font.size = 16.0;
-        schemes = {
-          everforest_dark_medium = "&everforest_dark_medium";
-          primary = {
-            background = "'#2d353b'";
-            foreground = "'#d3c6aa'";
-          };
-          normal = {
-            black   = "'#475258'";
-            red     = "'#e67e80'";
-            green   = "'#a7c080'";
-            yellow  = "'#dbbc7f'";
-            blue    = "'#7fbbb3'";
-            magenta = "'#d699b6'";
-            cyan    = "'#83c092'";
-            white   = "'#d3c6aa'";
-          };
-          bright = {
-            black  = "'#475258'";
-            red    = "'#e67e80'";
-            green  = "'#a7c080'";
-            yellow = "'#dbbc7f'";
-            blue   = "'#7fbbb3'";
-            magenta= "'#d699b6'";
-            cyan   = "'#83c092'";
-            white  = "'#d3c6aa'";
-          };
+        import = [ pkgs.alacritty-theme.gruvbox_dark ];
         # schemes = {
         #   # TODO: this isn't working, convert files to JSON
         #   colors = let importYaml = file: builtins.fromJSON (builtins.readFile (pkgs.runCommandNoCC "converted-yaml.json" ''${pkgs.yj}/bin/yj < "${file}" > "$out"'')); in importYaml ./themes/alacritty/everforest_dark_medium.yaml;
       };
     };
-  };
   };
 }
