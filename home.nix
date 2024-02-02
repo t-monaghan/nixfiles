@@ -29,6 +29,7 @@
       yaml-language-server
       shellcheck
       gopls
+      macchina
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -157,11 +158,8 @@
           family = "UDEV Gothic 35NF";
           style = "Regular";
         };
-        font.size = 16.0;
+        font.size = 17.0;
         import = [ pkgs.alacritty-theme.gruvbox_dark ];
-        # schemes = {
-        #   # TODO: this isn't working, convert files to JSON
-        #   colors = let importYaml = file: builtins.fromJSON (builtins.readFile (pkgs.runCommandNoCC "converted-yaml.json" ''${pkgs.yj}/bin/yj < "${file}" > "$out"'')); in importYaml ./themes/alacritty/everforest_dark_medium.yaml;
       };
     };
   };
