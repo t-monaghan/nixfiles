@@ -18,7 +18,5 @@
                             export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'
                             fpath+=(/Users/tom.monaghan/.nix-profile/share/zsh/site-functions)
                             eval "$(mise activate zsh)"
-                            # Below is the install for a better zsh vi mode
-                            source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
                             '';
 }
