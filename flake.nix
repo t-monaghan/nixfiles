@@ -31,6 +31,10 @@
           config.allowUnfree = true;
         };
         modules = [
+          # TODO: all modules inherit this within modules
+          ({ config, pkgs, ...}: {
+            nixpkgs.overlays = [ alacritty-theme.overlays.default ];
+          })
           ./home.nix
           ./hosts/personal.nix
         ];
@@ -42,6 +46,9 @@
           config.allowUnfree = true;
         };
         modules = [
+          ({ config, pkgs, ...}: {
+            nixpkgs.overlays = [ alacritty-theme.overlays.default ];
+          })
           ./home.nix
           ./hosts/work-vm.nix
         ];

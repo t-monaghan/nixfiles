@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
@@ -29,7 +27,8 @@
       yaml-language-server
       shellcheck
       gopls
-      macchina
+      jdk11
+      alejandra
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -59,7 +58,7 @@
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
-      useTheme = "uew";
+      settings = builtins.fromJSON (builtins.readFile ./personal-posh.json);
     };
 
     git = {
@@ -67,6 +66,7 @@
       userName = "t-monaghan";
       userEmail = "tomaghan+git@gmail.com";
       aliases = {
+        log = "log --compact-summary --oneline";
         cob = "checkout -b";
         com = "checkout main";
         ck = "checkout";
@@ -81,15 +81,28 @@
       defaultEditor = true;
       themes = {
         tmonaghan = let
-          transparent = "none"; 
+          transparent = "none";
         in {
           inherits = "autumn";
           "ui.background" = transparent;
-          "ui.bufferline.active" = { fg = "#e69875";};
+          "ui.bufferline.active" = {fg = "#e69875";};
         };
       };
       languages = {
-        language = [{name = "json"; auto-format = false;}];
+        language = [
+          {
+            name = "json";
+            auto-format = false;
+          }
+          {
+            name = "nix";
+            auto-format = true;
+            formatter = {
+              command = "alejandra";
+              args = ["--quiet"];
+            };
+          }
+        ];
       };
       settings = {
         theme = "tmonaghan"; # This should be tmonaghan for darwin, with transparent bg
@@ -97,8 +110,8 @@
           line-number = "relative";
           bufferline = "always";
           true-color = true;
-        };      
-        editor.statusline = {      
+        };
+        editor.statusline = {
           left = ["spacer" "version-control" "position" "mode" "diagnostics"];
           right = ["workspace-diagnostics" "file-name" "spinner"];
         };
@@ -151,7 +164,7 @@
           dimensions = {
             columns = 100;
             lines = 32;
-            };
+          };
           dynamic_padding = true;
         };
         font.normal = {
@@ -159,7 +172,7 @@
           style = "Regular";
         };
         font.size = 17.0;
-        import = [ pkgs.alacritty-theme.gruvbox_dark ];
+        import = [pkgs.alacritty-theme.gruvbox_dark];
       };
     };
   };
