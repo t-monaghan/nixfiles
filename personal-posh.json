@@ -13,9 +13,10 @@
           "style": "powerline",
           "foreground": "#282828",
           "background": "#458588",
-          "template": " {{ .Path }} ",
           "properties": {
-            "style": "full"
+            "mapped_locations": {
+              "~/dev": "\uF09B "
+            }
           }
         },
         {

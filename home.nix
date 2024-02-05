@@ -29,7 +29,8 @@
       yaml-language-server
       shellcheck
       gopls
-      macchina
+      jdk11
+      alejandra
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -90,7 +91,10 @@
         };
       };
       languages = {
-        language = [{name = "json"; auto-format = false;}];
+        language = [
+          {name = "json"; auto-format = false;} 
+          {name = "nix"; auto-format = true; formatter = {command = "alejandra"; args = ["--quiet"];};}
+        ];
       };
       settings = {
         theme = "tmonaghan"; # This should be tmonaghan for darwin, with transparent bg
