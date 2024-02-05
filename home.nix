@@ -60,7 +60,7 @@
       enable = true;
       enableZshIntegration = true;
       # TODO: read below from a file
-      settings = builtins.fromJSON (builtins.unsafeDiscardStringContext (builtins.readFile "/Users/tmonaghan/dev/nixfiles/personal-posh.json"));
+      settings = builtins.fromJSON (builtins.readFile ./personal-posh.json);
     };
 
     git = {

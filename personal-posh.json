@@ -127,7 +127,7 @@
             "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
             "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
           ],
-          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}% ",
+          "template": " {{ if not .Error }}{{ .Icon }} {{ .Percentage }}{{ end }}% ",
           "properties": {
             "discharging_icon": "󰚦 ",
             "charging_icon": "󰚥 ",
