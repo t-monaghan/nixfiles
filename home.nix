@@ -66,7 +66,6 @@
       userName = "t-monaghan";
       userEmail = "tomaghan+git@gmail.com";
       aliases = {
-        log = "log --compact-summary --oneline";
         cob = "checkout -b";
         com = "checkout main";
         ck = "checkout";
@@ -144,6 +143,7 @@
         ga = "git add";
         gc = "git commit -m";
         gp = "git push";
+        gl = "git log --compact-summary --oneline";
         ll = "ls -ltra";
         gd = "git diff";
         gdc = "git diff --cached";
