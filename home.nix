@@ -27,7 +27,7 @@
       yaml-language-server
       shellcheck
       gopls
-      jdk11
+      jdk21
       alejandra
       # TODO: add rectangle once dots file is findable
     ];
@@ -58,7 +58,7 @@
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
-      settings = builtins.fromJSON (builtins.readFile ./personal-posh.json);
+      settings = builtins.fromJSON (builtins.readFile ./dots/personal-posh.json);
     };
 
     git = {
