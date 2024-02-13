@@ -11,8 +11,8 @@
         {
           "type": "path",
           "style": "powerline",
-          "foreground": "#282828",
-          "background": "#458588",
+          "foreground": "lightWhite",
+          "background": "blue",
           "properties": {
             "mapped_locations": {
               "~/dev": "\uF09B "
@@ -22,8 +22,8 @@
         {
           "type": "go",
           "style": "powerline",
-          "foreground": "#111111",
-          "background": "#8ED1F7",
+          "foreground": "black",
+          "background": "cyan",
           "template": " \ue626 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "properties": {
             "fetch_version": true
@@ -32,8 +32,8 @@
         {
           "type": "julia",
           "style": "powerline",
-          "foreground": "#111111",
-          "background": "#4063D8",
+          "foreground": "black",
+          "background": "blue",
           "template": " \ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "properties": {
             "fetch_version": true
@@ -42,8 +42,8 @@
         {
           "type": "python",
           "style": "powerline",
-          "foreground": "#111111",
-          "background": "#FFDE57",
+          "foreground": "black",
+          "background": "yellow",
           "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "properties": {
             "display_mode": "files",
@@ -53,8 +53,8 @@
         {
           "type": "ruby",
           "style": "powerline",
-          "foreground": "#ffffff",
-          "background": "#AE1401",
+          "foreground": "white",
+          "background": "red",
           "template": " \ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "properties": {
             "display_mode": "files",
@@ -64,8 +64,8 @@
         {
           "type": "azfunc",
           "style": "powerline",
-          "foreground": "#ffffff",
-          "background": "#FEAC19",
+          "foreground": "white",
+          "background": "magenta",
           "template": " \uf0e7{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "properties": {
             "display_mode": "files",
@@ -75,7 +75,7 @@
         {
           "type": "aws",
           "style": "powerline",
-          "foreground": "#ffffff",
+          "foreground": "white",
           "background_templates": [
             "{{if contains \"default\" .Profile}}#FFA400{{end}}",
             "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
@@ -88,8 +88,8 @@
         {
           "type": "root",
           "style": "powerline",
-          "foreground": "#111111",
-          "background": "#ffff66",
+          "foreground": "black",
+          "background": "yellow",
           "template": " \uf0ad "
         }
       ]
@@ -101,8 +101,8 @@
         {
           "type": "git",
           "style": "powerline",
-          "foreground": "#282828",
-          "background": "#98971A",
+          "foreground": "black",
+          "background": "green",
           "background_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#FF9248{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ff4500{{ end }}",
@@ -121,12 +121,12 @@
         {
           "type": "battery",
           "style": "diamond",
-          "foreground": "#193549",
-          "background": "#ffeb3b",
+          "foreground": "black",
+          "background": "white",
           "background_templates": [
-            "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
-            "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
-            "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
+            "{{if eq \"Charging\" .State.String}}cyan{{end}}",
+            "{{if eq \"Discharging\" .State.String}}yellow{{end}}",
+            "{{if eq \"Full\" .State.String}}green{{end}}"
           ],
           "template": " {{ if not .Error }}{{ .Icon }} {{ .Percentage }}{{ end }}% ",
           "properties": {
@@ -144,7 +144,7 @@
         {
           "type": "status",
           "style": "plain",
-          "foreground": "#BFA8BF",
+          "foreground": "lightMagenta",
           "foreground_templates": [
             "{{ if gt .Code 0 }}#fff{{ end }}"
           ],
@@ -158,7 +158,7 @@
     }
   ],
   "transient_prompt": {
-    "foreground": "#98971A",
+    "foreground": "lightWhite",
     "background": "transparent",
     "template": "\ue285 {{ .PWD }} \uf155 "
   }

@@ -27,7 +27,7 @@
       yaml-language-server
       shellcheck
       gopls
-      jdk21
+      jdk11
       alejandra
       # TODO: add rectangle once dots file is findable
     ];
@@ -46,7 +46,11 @@
       enable = true;
       enableZshIntegration = true;
       keyScheme = "vim";
+      fuzzySearchFactor = 4;
+      fzf.enable = true;
     };
+
+    fzf.enable = true;
 
     bat = {
       enable = true;
@@ -158,7 +162,8 @@
       enable = true;
       settings = {
         window = {
-          option_as_alt = "OnlyRight";
+          option_as_alt = "Both";
+
           decorations = "buttonless";
           opacity = 0.95;
           dimensions = {
@@ -172,7 +177,7 @@
           style = "Regular";
         };
         font.size = 17.0;
-        import = [pkgs.alacritty-theme.gruvbox_dark];
+        import = [pkgs.alacritty-theme.palenight];
       };
     };
   };
