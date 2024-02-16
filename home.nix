@@ -62,7 +62,7 @@
     oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
-      settings = builtins.fromJSON (builtins.readFile ./dots/personal-posh.json);
+      settings = builtins.fromTOML (builtins.readFile ./dots/personal-posh.toml);
     };
 
     git = {
@@ -70,6 +70,7 @@
       userName = "t-monaghan";
       userEmail = "tomaghan+git@gmail.com";
       aliases = {
+        co = "checkout";
         cob = "checkout -b";
         com = "checkout main";
         ck = "checkout";
@@ -86,9 +87,9 @@
         tmonaghan = let
           transparent = "none";
         in {
-          inherits = "autumn";
+          inherits = "catppuccin_frappe";
           "ui.background" = transparent;
-          "ui.bufferline.active" = {fg = "#e69875";};
+          # "ui.bufferline.active" = {fg = "#e69875";};
         };
       };
       languages = {
