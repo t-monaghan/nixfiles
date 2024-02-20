@@ -115,7 +115,7 @@ alignment = "right"
 
   [[blocks.segments]]
   type = "battery"
-  style = "diamond"
+  style = "powerline"
   foreground = "black"
   background = "white"
   background_templates = [

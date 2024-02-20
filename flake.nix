@@ -7,54 +7,66 @@
     alacritty-theme.url = "github:alexghr/alacritty-theme.nix";
   };
 
-  outputs = { nixpkgs, home-manager, alacritty-theme, ... }:
-    let
-      inherit nixpkgs;
-    in
-    {
-      homeConfigurations."tom.monaghan@tmonaghan-9WLJ0K" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-        };
-        modules = [
-          ({ config, pkgs, ...}: {
-            nixpkgs.overlays = [ alacritty-theme.overlays.default ];
-          })
-          ./home.nix
-          ./hosts/culture-amp.nix
-        ];
+  outputs = {
+    nixpkgs,
+    home-manager,
+    alacritty-theme,
+    ...
+  }: let
+    inherit nixpkgs;
+  in {
+    homeConfigurations."tom.monaghan@tmonaghan-9WLJ0K" = home-manager.lib.homeManagerConfiguration {
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+        config.allowUnfree = true;
       };
-      homeConfigurations."tmonaghan@thomass-mbp.lan" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-        };
-        modules = [
-          # TODO: all modules inherit this within modules
-          ({ config, pkgs, ...}: {
-            nixpkgs.overlays = [ alacritty-theme.overlays.default ];
-          })
-          ./home.nix
-          ./hosts/personal.nix
-        ];
-      };
-
-      homeConfigurations."alanturing@Alans-Virtual-Machine.local" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-        };
-        modules = [
-          ({ config, pkgs, ...}: {
-            nixpkgs.overlays = [ alacritty-theme.overlays.default ];
-          })
-          ./home.nix
-          ./hosts/work-vm.nix
-        ];
-      };
-
-
-
+      modules = [
+        ({
+          config,
+          pkgs,
+          ...
+        }: {
+          nixpkgs.overlays = [alacritty-theme.overlays.default];
+        })
+        ./home.nix
+        ./hosts/culture-amp.nix
+      ];
     };
+    homeConfigurations."tmonaghan@thomass-mbp.lan" = home-manager.lib.homeManagerConfiguration {
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+        config.allowUnfree = true;
+      };
+      modules = [
+        # TODO: all modules inherit this within modules
+        ({
+          config,
+          pkgs,
+          ...
+        }: {
+          nixpkgs.overlays = [alacritty-theme.overlays.default];
+        })
+        ./home.nix
+        ./hosts/personal.nix
+      ];
+    };
+
+    homeConfigurations."alanturing@Alans-Virtual-Machine.local" = home-manager.lib.homeManagerConfiguration {
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+        config.allowUnfree = true;
+      };
+      modules = [
+        ({
+          config,
+          pkgs,
+          ...
+        }: {
+          nixpkgs.overlays = [alacritty-theme.overlays.default];
+        })
+        ./home.nix
+        ./hosts/work-vm.nix
+      ];
+    };
+  };
 }

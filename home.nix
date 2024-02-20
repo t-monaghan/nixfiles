@@ -1,4 +1,6 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  read-yaml = import ./helpers/read-yaml.nix {};
+in {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
@@ -29,6 +31,8 @@
       gopls
       jdk11
       alejandra
+      taplo
+      killport
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -83,15 +87,16 @@
     helix = {
       enable = true;
       defaultEditor = true;
-      themes = {
-        tmonaghan = let
-          transparent = "none";
-        in {
-          inherits = "catppuccin_frappe";
-          "ui.background" = transparent;
-          # "ui.bufferline.active" = {fg = "#e69875";};
-        };
-      };
+      # EXAMPLE: Of how to edit theme
+      # themes = {
+      #   tmonaghan = let
+      #     transparent = "none";
+      #   in {
+      #     inherits = "base16_transparent";
+      #     "ui.background" = transparent;
+      #     "ui.bufferline.active" = {fg = "#e69875";};
+      #   };
+      # };
       languages = {
         language = [
           {
@@ -109,7 +114,7 @@
         ];
       };
       settings = {
-        theme = "tmonaghan"; # This should be tmonaghan for darwin, with transparent bg
+        theme = "base16_transparent"; # This should be tmonaghan for darwin, with transparent bg
         editor = {
           line-number = "relative";
           bufferline = "always";
