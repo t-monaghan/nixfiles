@@ -183,7 +183,7 @@ in {
           style = "Regular";
         };
         font.size = 17.0;
-        import = [pkgs.alacritty-theme.palenight];
+        import = [pkgs.alacritty-theme.monokai_pro];
       };
     };
   };
