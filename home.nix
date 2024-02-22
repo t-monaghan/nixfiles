@@ -92,11 +92,16 @@ in {
       themes = {
         tmonaghan = {
           inherits = "sonokai";
-          # TODO: Do the below inherit sonokai's colour definitions?
           "ui.background" = {fg = "white";};
-          "ui.background.separator" = {fg = "gray";};
           "ui.linenr.selected" = "#9ed072";
-          # "ui.bufferline.active" = {fg = "#e69875";};
+          "ui.bufferline" = {bg = "none";};
+          "ui.bufferline.active" = {modifiers = ["reversed"];};
+          "ui.selection.primary" = {bg = "#f39660";};
+          "ui.statusline" = {bg = "none";};
+          "ui.popup" = {bg = "none";};
+          "ui.window" = {bg = "none";};
+          "ui.menu" = {bg = "none";};
+          "ui.help" = {bg = "none";};
         };
       };
       languages = {
