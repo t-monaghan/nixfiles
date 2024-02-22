@@ -173,7 +173,8 @@ in {
           option_as_alt = "Both";
 
           decorations = "buttonless";
-          opacity = 0.85;
+          opacity = 0.70;
+          blur = true;
           dimensions = {
             columns = 100;
             lines = 32;
