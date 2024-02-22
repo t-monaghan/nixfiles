@@ -43,6 +43,8 @@ in {
     tmux.enable = true;
     gh.enable = true;
 
+    jq.enable = true;
+
     thefuck.enable = true;
     thefuck.enableZshIntegration = true;
 
@@ -87,16 +89,16 @@ in {
     helix = {
       enable = true;
       defaultEditor = true;
-      # EXAMPLE: Of how to edit theme
-      # themes = {
-      #   tmonaghan = let
-      #     transparent = "none";
-      #   in {
-      #     inherits = "base16_transparent";
-      #     "ui.background" = transparent;
-      #     "ui.bufferline.active" = {fg = "#e69875";};
-      #   };
-      # };
+      themes = {
+        tmonaghan = {
+          inherits = "sonokai";
+          # TODO: Do the below inherit sonokai's colour definitions?
+          "ui.background" = {fg = "white";};
+          "ui.background.separator" = {fg = "gray";};
+          "ui.linenr.selected" = "#9ed072";
+          # "ui.bufferline.active" = {fg = "#e69875";};
+        };
+      };
       languages = {
         language = [
           {
@@ -114,7 +116,7 @@ in {
         ];
       };
       settings = {
-        theme = "base16_transparent"; # This should be tmonaghan for darwin, with transparent bg
+        theme = "tmonaghan";
         editor = {
           line-number = "relative";
           bufferline = "always";
@@ -171,7 +173,7 @@ in {
           option_as_alt = "Both";
 
           decorations = "buttonless";
-          opacity = 0.95;
+          opacity = 0.85;
           dimensions = {
             columns = 100;
             lines = 32;
@@ -183,7 +185,7 @@ in {
           style = "Regular";
         };
         font.size = 17.0;
-        import = [pkgs.alacritty-theme.monokai_pro];
+        import = [pkgs.alacritty-theme.gruvbox_dark];
       };
     };
   };
