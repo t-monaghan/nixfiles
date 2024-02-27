@@ -1,6 +1,4 @@
-{pkgs, ...}: let
-  read-yaml = import ./helpers/read-yaml.nix {};
-in {
+{pkgs, ...}: {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
