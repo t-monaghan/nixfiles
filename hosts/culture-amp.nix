@@ -1,5 +1,4 @@
-{ pkgs, ...}:
-{
+{pkgs, ...}: {
   home = with pkgs; {
     username = "tom.monaghan";
     homeDirectory = "/Users/tom.monaghan";
@@ -9,13 +8,14 @@
       rtx
       yarn
       rubyPackages_3_2.solargraph
-      ];
-    };
+    ];
+  };
   programs.zsh.initExtra = ''
-                            export DIRENV_BIN="/Users/tom.monaghan/.nix-profile/bin/direnv"
-                            eval "$($DIRENV_BIN hook zsh)"
-                            export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'
-                            fpath+=(/Users/tom.monaghan/.nix-profile/share/zsh/site-functions)
-                            eval "$(mise activate zsh)"
-                            '';
+    export DIRENV_BIN="/Users/tom.monaghan/.nix-profile/bin/direnv"
+    eval "$($DIRENV_BIN hook zsh)"
+    export NIX_SSL_CERT_FILE='/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'
+    fpath+=(/Users/tom.monaghan/.nix-profile/share/zsh/site-functions)
+    eval "$(mise activate zsh)"
+    setopt correctall
+  '';
 }

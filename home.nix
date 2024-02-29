@@ -10,7 +10,6 @@
     # You can update Home Manager without changing this value. See
     # the Home Manager release notes for a list of state version
     # changes in each release.
-
     stateVersion = "23.11";
     packages = [
       nodePackages_latest.bash-language-server
@@ -23,7 +22,6 @@
       python3
       python311Packages.python-lsp-server
       tree
-      trash-cli
       yaml-language-server
       shellcheck
       gopls
@@ -31,6 +29,7 @@
       alejandra
       taplo
       killport
+      trash-cli
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -40,11 +39,19 @@
 
     tmux.enable = true;
     gh.enable = true;
-
     jq.enable = true;
+    fzf.enable = true;
 
-    thefuck.enable = true;
-    thefuck.enableZshIntegration = true;
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+      options = ["--cmd j"];
+    };
+
+    thefuck = {
+      enable = true;
+      enableZshIntegration = true;
+    };
 
     mcfly = {
       enable = true;
@@ -53,8 +60,6 @@
       fuzzySearchFactor = 4;
       fzf.enable = true;
     };
-
-    fzf.enable = true;
 
     bat = {
       enable = true;
@@ -93,6 +98,10 @@
           "ui.background" = {fg = "white";};
           "ui.linenr.selected" = "#9ed072";
           "ui.bufferline" = {bg = "none";};
+          "ui.cursor" = {
+            bg = "none";
+            modifiers = ["reversed"];
+          };
           "ui.bufferline.active" = {modifiers = ["reversed"];};
           "ui.selection.primary" = {bg = "#f39660";};
           "ui.statusline" = {bg = "none";};
@@ -124,10 +133,15 @@
           line-number = "relative";
           bufferline = "always";
           true-color = true;
+          cursor-shape = {
+            normal = "underline";
+            insert = "underline";
+            select = "underline";
+          };
         };
         editor.statusline = {
           left = ["spacer" "version-control" "position" "mode" "diagnostics"];
-          right = ["workspace-diagnostics" "file-name" "spinner"];
+          right = ["workspace-diagnostics" "file-name" "total-line-numbers" "spinner"];
         };
         keys.insert = {
           j.k = "normal_mode";
@@ -166,6 +180,7 @@
         drs = "devbox run setup";
         drp = "devbox run populate";
         dsu = "devbox services up";
+        rt = "trash-put";
       };
     };
 
