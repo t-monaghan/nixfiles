@@ -44,18 +44,18 @@
 
     zoxide = {
       enable = true;
-      enableZshIntegration = true;
+      enableFishIntegration = true;
       options = ["--cmd j"];
     };
 
     thefuck = {
       enable = true;
-      enableZshIntegration = true;
+      enableFishIntegration = true;
     };
 
     mcfly = {
       enable = true;
-      enableZshIntegration = true;
+      enableFishIntegration = true;
       keyScheme = "vim";
       fuzzySearchFactor = 4;
       fzf.enable = true;
@@ -70,7 +70,7 @@
 
     oh-my-posh = {
       enable = true;
-      enableZshIntegration = true;
+      enableFishIntegration = true;
       settings = builtins.fromTOML (builtins.readFile ./dots/personal-posh.toml);
     };
 
@@ -153,16 +153,8 @@
       };
     };
 
-    zsh = {
+    fish = {
       enable = true;
-      enableAutosuggestions = true;
-      enableCompletion = true;
-      syntaxHighlighting.enable = true;
-      autocd = true;
-      history = {
-        ignoreAllDups = true;
-      };
-      envExtra = ". \"$HOME/.cargo/env\"";
       shellAliases = {
         chmox = "chmod a+x";
         f = "fuck";
@@ -183,6 +175,37 @@
         rt = "trash-put";
       };
     };
+
+    # zsh = {
+    #   enable = true;
+    #   enableAutosuggestions = true;
+    #   enableCompletion = true;
+    #   syntaxHighlighting.enable = true;
+    #   autocd = true;
+    #   history = {
+    #     ignoreAllDups = true;
+    #   };
+    #   envExtra = ". \"$HOME/.cargo/env\"";
+    #   shellAliases = {
+    #     chmox = "chmod a+x";
+    #     f = "fuck";
+    #     # Sometimes colourful language is best kept to ourselves
+    #     woops = "fuck";
+    #     gs = "git status";
+    #     ga = "git add";
+    #     gc = "git commit -m";
+    #     gp = "git push";
+    #     gl = "git log --compact-summary --oneline";
+    #     ll = "ls -ltra";
+    #     gd = "git diff";
+    #     gdc = "git diff --cached";
+    #     dr = "devbox run";
+    #     drs = "devbox run setup";
+    #     drp = "devbox run populate";
+    #     dsu = "devbox services up";
+    #     rt = "trash-put";
+    #   };
+    # };
 
     alacritty = {
       enable = true;
