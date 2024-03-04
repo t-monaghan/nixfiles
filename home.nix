@@ -30,6 +30,7 @@
       taplo
       killport
       trash-cli
+      fzf
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -40,7 +41,6 @@
     tmux.enable = true;
     gh.enable = true;
     jq.enable = true;
-    fzf.enable = true;
 
     zoxide = {
       enable = true;
@@ -48,17 +48,12 @@
       options = ["--cmd j"];
     };
 
-    thefuck = {
-      enable = true;
-      enableFishIntegration = true;
-    };
-
     mcfly = {
       enable = true;
       enableFishIntegration = true;
       keyScheme = "vim";
-      fuzzySearchFactor = 4;
       fzf.enable = true;
+      interfaceView = "BOTTOM";
     };
 
     bat = {
@@ -155,11 +150,9 @@
 
     fish = {
       enable = true;
-      shellAliases = {
+      shellAbbrs = {
         chmox = "chmod a+x";
-        f = "fuck";
-        # Sometimes colourful language is best kept to ourselves
-        woops = "fuck";
+
         gs = "git status";
         ga = "git add";
         gc = "git commit -m";
@@ -168,44 +161,28 @@
         ll = "ls -ltra";
         gd = "git diff";
         gdc = "git diff --cached";
+
         dr = "devbox run";
         drs = "devbox run setup";
         drp = "devbox run populate";
         dsu = "devbox services up";
+
         rt = "trash-put";
       };
-    };
 
-    # zsh = {
-    #   enable = true;
-    #   enableAutosuggestions = true;
-    #   enableCompletion = true;
-    #   syntaxHighlighting.enable = true;
-    #   autocd = true;
-    #   history = {
-    #     ignoreAllDups = true;
-    #   };
-    #   envExtra = ". \"$HOME/.cargo/env\"";
-    #   shellAliases = {
-    #     chmox = "chmod a+x";
-    #     f = "fuck";
-    #     # Sometimes colourful language is best kept to ourselves
-    #     woops = "fuck";
-    #     gs = "git status";
-    #     ga = "git add";
-    #     gc = "git commit -m";
-    #     gp = "git push";
-    #     gl = "git log --compact-summary --oneline";
-    #     ll = "ls -ltra";
-    #     gd = "git diff";
-    #     gdc = "git diff --cached";
-    #     dr = "devbox run";
-    #     drs = "devbox run setup";
-    #     drp = "devbox run populate";
-    #     dsu = "devbox services up";
-    #     rt = "trash-put";
-    #   };
-    # };
+      shellInit = ''
+        set -U fish_greeting
+      '';
+
+      plugins = [
+        {inherit (pkgs.fishPlugins.foreign-env) name src;}
+      ];
+
+      loginShellInit = ''
+        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+          fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        end'';
+    };
 
     alacritty = {
       enable = true;
