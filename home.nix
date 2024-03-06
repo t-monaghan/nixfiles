@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = with pkgs; {
@@ -26,11 +26,12 @@
       shellcheck
       gopls
       jdk11
-      alejandra
       taplo
       killport
       trash-cli
       fzf
+      _1password
+      nixpkgs-fmt
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -38,14 +39,20 @@
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
 
-    tmux.enable = true;
+    tmux = {
+      enable = true;
+      mouse = true;
+      escapeTime = 100;
+      keyMode = "vi";
+    };
+
     gh.enable = true;
     jq.enable = true;
 
     zoxide = {
       enable = true;
       enableFishIntegration = true;
-      options = ["--cmd j"];
+      options = [ "--cmd j" ];
     };
 
     mcfly = {
@@ -81,6 +88,7 @@
       };
       extraConfig = {
         push.autoSetupRemote = true;
+        init.defaultBranch = "main";
       };
     };
 
@@ -90,20 +98,20 @@
       themes = {
         tmonaghan = {
           inherits = "sonokai";
-          "ui.background" = {fg = "white";};
+          "ui.background" = { fg = "white"; };
           "ui.linenr.selected" = "#9ed072";
-          "ui.bufferline" = {bg = "none";};
+          "ui.bufferline" = { bg = "none"; };
           "ui.cursor" = {
             bg = "none";
-            modifiers = ["reversed"];
+            modifiers = [ "reversed" ];
           };
-          "ui.bufferline.active" = {modifiers = ["reversed"];};
-          "ui.selection.primary" = {bg = "#f39660";};
-          "ui.statusline" = {bg = "none";};
-          "ui.popup" = {bg = "none";};
-          "ui.window" = {bg = "none";};
-          "ui.menu" = {bg = "none";};
-          "ui.help" = {bg = "none";};
+          "ui.bufferline.active" = { modifiers = [ "reversed" ]; };
+          "ui.selection.primary" = { bg = "#f39660"; };
+          "ui.statusline" = { bg = "none"; };
+          "ui.popup" = { bg = "none"; };
+          "ui.window" = { bg = "none"; };
+          "ui.menu" = { bg = "none"; };
+          "ui.help" = { bg = "none"; };
         };
       };
       languages = {
@@ -116,8 +124,7 @@
             name = "nix";
             auto-format = true;
             formatter = {
-              command = "alejandra";
-              args = ["--quiet"];
+              command = "nixpkgs-fmt";
             };
           }
         ];
@@ -135,12 +142,12 @@
           };
         };
         editor.statusline = {
-          left = ["spacer" "version-control" "position" "mode" "diagnostics"];
-          right = ["workspace-diagnostics" "file-name" "total-line-numbers" "spinner"];
+          left = [ "spacer" "version-control" "position" "mode" "diagnostics" ];
+          right = [ "workspace-diagnostics" "file-name" "total-line-numbers" "spinner" ];
         };
         keys.insert = {
           j.k = "normal_mode";
-          C-l = ["goto_line_end" ":append-output echo -n ';'" "normal_mode"];
+          C-l = [ "goto_line_end" ":append-output echo -n ';'" "normal_mode" ];
         };
         editor.file-picker = {
           hidden = false;
@@ -175,7 +182,7 @@
       '';
 
       plugins = [
-        {inherit (pkgs.fishPlugins.foreign-env) name src;}
+        { inherit (pkgs.fishPlugins.foreign-env) name src; }
       ];
 
       loginShellInit = ''
@@ -204,7 +211,7 @@
           style = "Regular";
         };
         font.size = 17.0;
-        import = [pkgs.alacritty-theme.gruvbox_dark];
+        import = [ pkgs.alacritty-theme.gruvbox_dark ];
       };
     };
   };
