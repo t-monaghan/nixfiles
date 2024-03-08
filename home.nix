@@ -149,6 +149,11 @@
           j.k = "normal_mode";
           C-l = [ "goto_line_end" ":append-output echo -n ';'" "normal_mode" ];
         };
+        keys.normal =
+          {
+            space.F = "file_picker";
+            space.f = "file_picker_in_current_directory";
+          };
         editor.file-picker = {
           hidden = false;
         };
