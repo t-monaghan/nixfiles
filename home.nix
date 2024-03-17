@@ -180,6 +180,7 @@
         dsu = "devbox services up";
 
         rt = "trash-put";
+        clone = "git clone git@github.com:cultureamp/";
       };
 
       shellInit = ''
@@ -188,6 +189,15 @@
 
       plugins = [
         { inherit (pkgs.fishPlugins.foreign-env) name src; }
+        {
+          name = "pnpm-shell-completion";
+          src = pkgs.fetchFromGitHub {
+            owner = "g-plane";
+            repo = "pnpm-shell-completion";
+            rev = "v0.5.2";
+            sha256 = "sha256-VCIT1HobLXWRe3yK2F3NPIuWkyCgckytLPi6yQEsSIE=";
+          };
+        }
       ];
 
       loginShellInit = ''
