@@ -3,5 +3,5 @@
 format = '''
 [┌>](bold green)$directory$direnv$git_state$java$ruby
 [└─>](bold green) '''
-right_format = "$status$gitbranch$git_status$nix_shell$battery$memory_usage"
+right_format = "$status$git_branch$git_status$nix_shell$battery$memory_usage"
 add_newline = true
