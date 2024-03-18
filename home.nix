@@ -171,8 +171,11 @@
         rt = "trash-put";
       };
 
-      shellInit = ''
+      shellInitLast = ''
         set -U fish_greeting
+        function starship_transient_rprompt_func
+          starship module time
+        end
       '';
 
       # functions = {

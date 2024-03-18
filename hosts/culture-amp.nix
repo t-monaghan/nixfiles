@@ -15,8 +15,5 @@
     set -gx DIRENV_BIN /Users/tom.monaghan/.nix-profile/bin/direnv
     \/Users/tom.monaghan/.nix-profile/bin/direnv hook fish | source
     set -gx NIX_SSL_CERT_FILE '/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'
-    function starship_transient_rprompt_func
-      starship module time
-    end
   '';
 }
