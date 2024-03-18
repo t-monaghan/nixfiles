@@ -30,7 +30,6 @@
       taplo
       killport
       trash-cli
-      fzf
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -63,10 +62,11 @@
       };
     };
 
-    oh-my-posh = {
+    starship = {
       enable = true;
       enableFishIntegration = true;
-      settings = builtins.fromTOML (builtins.readFile ./dots/personal-posh.toml);
+      enableTransience = true;
+      settings = builtins.fromTOML (builtins.readFile ./dots/starship.toml);
     };
 
     git = {
@@ -172,6 +172,11 @@
 
       shellInit = ''
         set -U fish_greeting
+        function starship_transient_prompt_func
+          starship module status
+        end
+        starship init fish | source
+        enable_transience
       '';
 
       plugins = [
