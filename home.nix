@@ -30,6 +30,7 @@
       taplo
       killport
       trash-cli
+      fzf
       # TODO: add rectangle once dots file is findable
     ];
   };
@@ -172,12 +173,12 @@
 
       shellInit = ''
         set -U fish_greeting
-        function starship_transient_prompt_func
-          starship module status
-        end
-        starship init fish | source
-        enable_transience
       '';
+
+      # functions = {
+      #   name = "starship_transient_rprompt_func";
+      #   body = "starship module time";
+      # };
 
       plugins = [
         {inherit (pkgs.fishPlugins.foreign-env) name src;}

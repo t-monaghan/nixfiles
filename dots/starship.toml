@@ -5,3 +5,6 @@ format = '''
 [└─>](bold green) '''
 right_format = "$status$git_branch$git_status$nix_shell$battery$memory_usage"
 add_newline = true
+
+[time]
+disabled = false
