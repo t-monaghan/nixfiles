@@ -70,10 +70,11 @@
       };
     };
 
-    oh-my-posh = {
+    starship = {
       enable = true;
       enableFishIntegration = true;
-      settings = builtins.fromTOML (builtins.readFile ./dots/personal-posh.toml);
+      enableTransience = true;
+      settings = builtins.fromTOML (builtins.readFile ./dots/starship.toml);
     };
 
     git = {
@@ -183,9 +184,11 @@
         clone = "git clone git@github.com:cultureamp/";
       };
 
-      shellInit = ''
-        set -U fish_greeting
-      '';
+      functions = {
+        starship_transient_rprompt_func = {
+          body = ''starship module time'';
+        };
+      };
 
       plugins = [
         { inherit (pkgs.fishPlugins.foreign-env) name src; }
@@ -201,8 +204,14 @@
       ];
 
       loginShellInit = ''
+        bind \cx\ce edit_command_buffer
+
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
           fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        end
+            
+        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
         end'';
     };
 
