@@ -171,17 +171,11 @@
         rt = "trash-put";
       };
 
-      shellInitLast = ''
-        set -U fish_greeting
-        function starship_transient_rprompt_func
-          starship module time
-        end
-      '';
-
-      # functions = {
-      #   name = "starship_transient_rprompt_func";
-      #   body = "starship module time";
-      # };
+      functions = {
+        starship_transient_rprompt_func = {
+          body = ''starship module time'';
+        };
+      };
 
       plugins = [
         {inherit (pkgs.fishPlugins.foreign-env) name src;}

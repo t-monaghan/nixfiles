@@ -1,10 +1,38 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = '''
-[┌>](bold green) $directory$direnv$git_state$java$ruby
-[└─>](bold green) '''
-right_format = "$status$git_branch$git_status$nix_shell$battery$memory_usage"
-add_newline = true
+format = '''$directory$git_branch$git_status$git_state$direnv$java$ruby$nix_shell
+$character'''
+
+right_format = "$memory_usage$battery"
 
 [time]
 disabled = false
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+# format ="([\\$all_status$ahead_behind]($style))"
+style = "green"
+stashed = "󰴮 "
+modified = "󰏫 "
+staged = "󰶍 "
+untracked = "󰊇"
+
+[ruby]
+symbol = " "
+
+[git_branch]
+style = "green"
+symbol = " "
+
+[character]
+error_symbol = "[❯](inverted)"
+
+[battery]
+format = "[$symbol $percentage]($style) "
+full_symbol = " "
+charging_symbol = "󰚥 "
+discharging_symbol = "󰚦 "
+
+[[battery.display]]
+threshold = 100
+style = "green"
