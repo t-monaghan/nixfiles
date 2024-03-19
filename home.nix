@@ -81,12 +81,6 @@
       enable = true;
       userName = "t-monaghan";
       userEmail = "tomaghan+git@gmail.com";
-      aliases = {
-        co = "checkout";
-        cob = "checkout -b";
-        com = "checkout main";
-        ck = "checkout";
-      };
       extraConfig = {
         push.autoSetupRemote = true;
         init.defaultBranch = "main";
@@ -150,11 +144,10 @@
           j.k = "normal_mode";
           C-l = [ "goto_line_end" ":append-output echo -n ';'" "normal_mode" ];
         };
-        keys.normal =
-          {
-            space.F = "file_picker";
-            space.f = "file_picker_in_current_directory";
-          };
+        keys.normal = {
+          space.F = "file_picker";
+          space.f = "file_picker_in_current_directory";
+        };
         editor.file-picker = {
           hidden = false;
         };
@@ -169,7 +162,9 @@
         gs = "git status";
         ga = "git add";
         gc = "git commit -m";
+        gco = "git checkout";
         gp = "git push";
+        gpu = "git pull";
         gl = "git log --compact-summary --oneline";
         ll = "ls -ltra";
         gd = "git diff";
@@ -209,7 +204,7 @@
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
           fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         end
-            
+        
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
           fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
         end'';
