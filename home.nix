@@ -50,7 +50,6 @@
       tree
       yaml-language-server
       shellcheck
-      gopls
       jdk11
       taplo
       killport
@@ -60,6 +59,8 @@
       nixpkgs-fmt
       yabai
       skhd
+      rustup
+      lnav
       # TODO: add rectangle once dots file is findable
     ];
     file.yabai.target = ".config/yabai/yabairc";
@@ -80,6 +81,9 @@
 
     gh.enable = true;
     jq.enable = true;
+
+    navi.enable = true;
+    navi.enableFishIntegration = true;
 
     zoxide = {
       enable = true;
@@ -203,7 +207,6 @@
         dsu = "devbox services up";
 
         rt = "trash-put";
-        clone = "git clone git@github.com:cultureamp/";
       };
 
       functions = {
