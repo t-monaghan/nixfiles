@@ -32,8 +32,12 @@
       fzf
       _1password
       nixpkgs-fmt
+      yabai
+      skhd
       # TODO: add rectangle once dots file is findable
     ];
+    file.yabai.target = ".config/yabai/yabairc";
+    file.yabai.source = ./dots/yabairc;
   };
   programs = {
     # Let Home Manager install and manage itself.
