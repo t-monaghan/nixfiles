@@ -1,12 +1,30 @@
 { pkgs, ... }: {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  launchd.agents.skhd = {
-    enable = true;
-    config = {
-      Label = "com.tmonaghan.skhd";
-      ProgramArguments = [ "skhd --start-service" ];
-      RunAtLoad = true;
+  launchd.agents = {
+    skhd = {
+      enable = true;
+      config = {
+        Label = "com.tmonaghan.skhd";
+        ProgramArguments = [ "skhd --start-service" ];
+        RunAtLoad = true;
+      };
+    };
+    yabai = {
+      enable = true;
+      config = {
+        Label = "com.tmonaghan.yabai";
+        ProgramArguments = [ "yabai --start-service" ];
+        RunAtLoad = true;
+        ProcessType = "Interactive";
+        Nice = -20;
+        KeepAlive = {
+          SuccessfulExit = false;
+          Crashed = true;
+        };
+        StandardOutPath = /tmp/yabai.out;
+        StandardErrPath = /tmp/yabai.out;
+      };
     };
   };
   home = with pkgs; {
