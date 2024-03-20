@@ -38,6 +38,8 @@
     ];
     file.yabai.target = ".config/yabai/yabairc";
     file.yabai.source = ./dots/yabairc;
+    file.skhd.target = ".config/skhd/skhdrc";
+    file.skhd.source = ./dots/skhdrc;
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -101,11 +103,11 @@
           "ui.linenr.selected" = "#9ed072";
           "ui.bufferline" = { bg = "none"; };
           "ui.cursor" = {
-            bg = "none";
-            modifiers = [ "reversed" ];
+            bg = "#9ed072";
+            modifiers = [ "dim" ];
           };
           "ui.bufferline.active" = { modifiers = [ "reversed" ]; };
-          "ui.selection.primary" = { bg = "#f39660"; };
+          "ui.selection.primary" = { modifiers = [ "reversed" ]; };
           "ui.statusline" = { bg = "none"; };
           "ui.popup" = { bg = "none"; };
           "ui.window" = { bg = "none"; };
@@ -134,11 +136,6 @@
           line-number = "relative";
           bufferline = "always";
           true-color = true;
-          cursor-shape = {
-            normal = "underline";
-            insert = "underline";
-            select = "underline";
-          };
         };
         editor.statusline = {
           left = [ "spacer" "version-control" "position" "mode" "diagnostics" ];
