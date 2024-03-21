@@ -1,33 +1,8 @@
 { pkgs, ... }: {
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  launchd.agents = {
-    skhd = {
-      enable = true;
-      config = {
-        Label = "com.tmonaghan.skhd";
-        ProgramArguments = [ "skhd --start-service" ];
-        RunAtLoad = true;
-      };
-    };
-    yabai = {
-      enable = true;
-      config = {
-        Label = "com.tmonaghan.yabai";
-        ProgramArguments = [ "yabai --start-service" ];
-        RunAtLoad = true;
-        ProcessType = "Interactive";
-        Nice = -20;
-        KeepAlive = {
-          SuccessfulExit = false;
-          Crashed = true;
-        };
-        StandardOutPath = /tmp/yabai.out;
-        StandardErrPath = /tmp/yabai.out;
-      };
-    };
-  };
-  home = with pkgs; {
+   nixpkgs.config.allowUnfree = true;
+	
+   home = with pkgs; {
+	username = "alanturing";
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
     # when a new Home Manager release introduces backwards
@@ -57,16 +32,12 @@
       fzf
       _1password
       nixpkgs-fmt
-      yabai
-      skhd
-      rustup
+      # yabai
+      # skhd
       lnav
       # TODO: add rectangle once dots file is findable
     ];
-    file.yabai.target = ".config/yabai/yabairc";
-    file.yabai.source = ./dots/yabairc;
-    file.skhd.target = ".config/skhd/skhdrc";
-    file.skhd.source = ./dots/skhdrc;
+    
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -260,7 +231,7 @@
           style = "Regular";
         };
         font.size = 17.0;
-        import = [ pkgs.alacritty-theme.gruvbox_dark ];
+        # import = [ pkgs.alacritty-theme.gruvbox_dark ];
       };
     };
   };
