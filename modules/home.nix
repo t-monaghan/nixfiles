@@ -111,7 +111,7 @@
           "ui.bufferline.active" = { modifiers = [ "reversed" ]; };
           "ui.selection.primary" = { modifiers = [ "reversed" ]; };
           "ui.statusline" = { bg = "none"; };
-          "ui.popup" = { bg = "none"; };
+          "ui.popup" = { bg = "#3b3b3b"; };
           "ui.window" = { bg = "none"; };
           "ui.menu" = { bg = "none"; };
           "ui.help" = { bg = "none"; };
