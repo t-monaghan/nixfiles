@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-nix shell nixpkgs#home-manager --command home-manager switch --flake ".#$(whoami)@$(hostname)"
