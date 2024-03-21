@@ -59,6 +59,14 @@
         services.skhd.skhdConfig = ''
           ctrl + alt - s : yabai -m window --swap recent
 
+          ctrl + alt - r : yabai -m space --mirror y-axis
+
+          ctrl + alt - h : yabai -m window --focus west
+          ctrl + alt - j : yabai -m window --focus south
+          ctrl + alt - k : yabai -m window --focus north
+          ctrl + alt - l : yabai -m window --focus east
+
+          # Not working
           ctrl + alt - n : yabai -m space --create
           ctrl + alt - d : yabai -m space --destroy
 
@@ -68,18 +76,12 @@
           ctrl + alt + shift - left : yabai -m space --display 1
           ctrl + alt + shift - right : yabai -m space --display 2
 
-          ctrl + alt - r : yabai -m space --mirror y-axis
-
-          ctrl + alt - h : yabai -m window --focus west
-          ctrl + alt - j : yabai -m window --focus south
-          ctrl + alt - k : yabai -m window --focus north
-          ctrl + alt - l : yabai -m window --focus east
         '';
       };
     in
     {
       # Build darwin flake using:
-      darwinConfigurations."tmonaghan-9WLJ0K" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.work = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
           home-manager.darwinModules.home-manager
@@ -91,8 +93,20 @@
           }
         ];
       };
+      darwinConfigurations.personal = nix-darwin.lib.darwinSystem {
+        modules = [
+          configuration
+          home-manager.darwinModules.home-manager
+          {
+            users.users."tmonaghan".home = "/Users/tmonaghan";
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users."tmonaghan" = import ../hosts/personal.nix;
+          }
+        ];
+      };
       # TODO: Figure out why this is needed
       # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations."tmonaghan-9WLJ0K".pkgs;
+      darwinPackages = self.darwinConfigurations.personal.pkgs;
     };
 }
