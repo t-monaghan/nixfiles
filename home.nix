@@ -35,9 +35,11 @@
       # skhd
       lnav
       lazygit
+      toml2json
       # TODO: add rectangle once dots file is findable
     ];
-
+    file.alacritty-theme.source = ./dots/alacritty-colors.toml;
+    file.alacritty-theme.target = ".config/alacritty/";
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -218,7 +220,7 @@
           option_as_alt = "Both";
 
           decorations = "buttonless";
-          opacity = 0.70;
+          opacity = 0.75;
           blur = true;
           dimensions = {
             columns = 100;
@@ -231,7 +233,9 @@
           style = "Regular";
         };
         font.size = 17.0;
-        # import = [ pkgs.alacritty-theme.gruvbox_dark ];
+        import = [
+          "~/.config/alacritty/alacritty-colors.toml"
+        ];
       };
     };
   };
