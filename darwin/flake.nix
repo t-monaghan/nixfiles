@@ -54,8 +54,8 @@
           yabai -m config layout bsp
           yabai -m rule --add app="^System Settings$" manage=off
         '';
-        services.skhd.enable = true;
 
+        services.skhd.enable = true;
         services.skhd.skhdConfig = ''
           ctrl + alt - s : yabai -m window --swap recent
 
