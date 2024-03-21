@@ -1,4 +1,7 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
+  imports = [
+    ../home.nix
+  ];
   home = with pkgs; {
     username = "tom.monaghan";
     homeDirectory = "/Users/tom.monaghan";

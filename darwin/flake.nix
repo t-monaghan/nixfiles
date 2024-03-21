@@ -1,5 +1,5 @@
 {
-  description = "Example Darwin system flake";
+  description = "Tom Monaghan's nix-darwin flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -28,7 +28,8 @@
 
         # Necessary for using flakes on this system.
         nix.settings.experimental-features = "nix-command flakes";
-        nix.settings.trusted-users = [ "alanturing" ];
+        # TODO: Make this use a variable
+        nix.settings.trusted-users = [ "tom.monaghan" ];
 
         # Set Git commit hash for darwin-version.
         system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -46,21 +47,20 @@
     in
     {
       # Build darwin flake using:
-      # nix run nix-darwin -- switch --flake .#tmonaghan
-      darwinConfigurations."tmonaghan" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."tmonaghan-9WLJ0K" = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
           home-manager.darwinModules.home-manager
           {
-            users.users.tmonaghan.home = "/Users/tmonaghan";
+            users.users."tom.monaghan".home = "/Users/tom.monaghan";
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.tmonaghan = import ../hosts/personal.nix;
+            home-manager.users."tom.monaghan" = import ../hosts/culture-amp.nix;
           }
         ];
       };
-
+      # TODO: Figure out why this is needed
       # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations."simple".pkgs;
+      darwinPackages = self.darwinConfigurations."tmonaghan-9WLJ0K".pkgs;
     };
 }
