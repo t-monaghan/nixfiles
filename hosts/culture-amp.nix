@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   imports = [
-    ../home.nix
+    ../modules/home.nix
   ];
   home = with pkgs; {
     username = "tom.monaghan";
