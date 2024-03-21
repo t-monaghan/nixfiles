@@ -1,8 +1,7 @@
 { pkgs, ... }: {
-   nixpkgs.config.allowUnfree = true;
-	
-   home = with pkgs; {
-	username = "alanturing";
+  nixpkgs.config.allowUnfree = true;
+
+  home = with pkgs; {
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
     # when a new Home Manager release introduces backwards
@@ -35,9 +34,10 @@
       # yabai
       # skhd
       lnav
+      lazygit
       # TODO: add rectangle once dots file is findable
     ];
-    
+
   };
   programs = {
     # Let Home Manager install and manage itself.
