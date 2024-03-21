@@ -51,6 +51,7 @@
     };
 
     gh.enable = true;
+    gh-dash.enable = true;
     jq.enable = true;
 
     navi.enable = true;
