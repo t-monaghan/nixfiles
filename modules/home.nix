@@ -36,7 +36,7 @@
       toml2json
       # TODO: add rectangle once dots file is findable
     ];
-    file.alacritty-theme.source = ./dots/alacritty-colors.toml;
+    file.alacritty-theme.source = ../dots/alacritty-colors.toml;
     file.alacritty-theme.target = ".config/alacritty/";
   };
   programs = {
@@ -81,7 +81,7 @@
       enable = true;
       enableFishIntegration = true;
       enableTransience = true;
-      settings = builtins.fromTOML (builtins.readFile ./dots/starship.toml);
+      settings = builtins.fromTOML (builtins.readFile ../dots/starship.toml);
     };
 
     git = {
