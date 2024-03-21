@@ -31,8 +31,6 @@
       fzf
       _1password
       nixpkgs-fmt
-      # yabai
-      # skhd
       lnav
       lazygit
       toml2json
