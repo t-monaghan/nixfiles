@@ -1,5 +1,0 @@
-High level
-	Gruv, with collapsing command (collapse down to dir)
-	 - No macos logo
-	 - all git stuff on right side?
-	 - Command lower than info

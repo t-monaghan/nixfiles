@@ -1,32 +1,6 @@
 { pkgs, ... }: {
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  launchd.agents = {
-    skhd = {
-      enable = true;
-      config = {
-        Label = "com.tmonaghan.skhd";
-        ProgramArguments = [ "skhd --start-service" ];
-        RunAtLoad = true;
-      };
-    };
-    yabai = {
-      enable = true;
-      config = {
-        Label = "com.tmonaghan.yabai";
-        ProgramArguments = [ "yabai --start-service" ];
-        RunAtLoad = true;
-        ProcessType = "Interactive";
-        Nice = -20;
-        KeepAlive = {
-          SuccessfulExit = false;
-          Crashed = true;
-        };
-        StandardOutPath = /tmp/yabai.out;
-        StandardErrPath = /tmp/yabai.out;
-      };
-    };
-  };
+  nixpkgs.config.allowUnfree = true;
+
   home = with pkgs; {
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
@@ -57,16 +31,13 @@
       fzf
       _1password
       nixpkgs-fmt
-      yabai
-      skhd
-      rustup
       lnav
+      lazygit
+      toml2json
       # TODO: add rectangle once dots file is findable
     ];
-    file.yabai.target = ".config/yabai/yabairc";
-    file.yabai.source = ./dots/yabairc;
-    file.skhd.target = ".config/skhd/skhdrc";
-    file.skhd.source = ./dots/skhdrc;
+    file.alacritty-theme.source = ../dots/alacritty-colors.toml;
+    file.alacritty-theme.target = ".config/alacritty/";
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -80,6 +51,7 @@
     };
 
     gh.enable = true;
+    gh-dash.enable = true;
     jq.enable = true;
 
     navi.enable = true;
@@ -110,7 +82,7 @@
       enable = true;
       enableFishIntegration = true;
       enableTransience = true;
-      settings = builtins.fromTOML (builtins.readFile ./dots/starship.toml);
+      settings = builtins.fromTOML (builtins.readFile ../dots/starship.toml);
     };
 
     git = {
@@ -247,7 +219,7 @@
           option_as_alt = "Both";
 
           decorations = "buttonless";
-          opacity = 0.70;
+          opacity = 0.75;
           blur = true;
           dimensions = {
             columns = 100;
@@ -260,7 +232,9 @@
           style = "Regular";
         };
         font.size = 17.0;
-        import = [ pkgs.alacritty-theme.gruvbox_dark ];
+        import = [
+          "~/.config/alacritty/alacritty-colors.toml"
+        ];
       };
     };
   };
