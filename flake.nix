@@ -90,6 +90,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users."tom.monaghan" = import ./hosts/culture-amp.nix;
+            nix.settings.ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
           }
         ];
       };
