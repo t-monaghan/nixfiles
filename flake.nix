@@ -43,40 +43,17 @@
         # The platform the configuration will be used on.
         nixpkgs.hostPlatform = "aarch64-darwin";
 
-        services.yabai.enable = true;
-        services.yabai.config = {
-          focus_follows_mouse = "autoraise";
-          mouse_follows_focus = "on";
-          window_placement = "second_child";
-          window_opacity = "off";
+        services.skhd.enable = false;
+        services.yabai.enable = false;
+        system.defaults.dock.autohide = true;
+
+        homebrew = {
+          enable = true;
+          caskArgs.no_quarantine = true;
+          global.brewfile = true;
+          masApps = { };
+          casks = [ "nikitabobko/tap/aerospace" "raycast" ];
         };
-        services.yabai.extraConfig = ''
-          yabai -m config layout bsp
-          yabai -m rule --add app="^System Settings$" manage=off
-        '';
-
-        services.skhd.enable = true;
-        services.skhd.skhdConfig = ''
-          ctrl + alt - s : yabai -m window --swap recent
-
-          ctrl + alt - r : yabai -m space --mirror y-axis
-
-          ctrl + alt - h : yabai -m window --focus west
-          ctrl + alt - j : yabai -m window --focus south
-          ctrl + alt - k : yabai -m window --focus north
-          ctrl + alt - l : yabai -m window --focus east
-
-          # Not working
-          ctrl + alt - n : yabai -m space --create
-          ctrl + alt - d : yabai -m space --destroy
-
-          ctrl + alt - left : yabai -m space --move prev
-          ctrl + alt - right : yabai -m space --move next
-
-          ctrl + alt + shift - left : yabai -m space --display 1
-          ctrl + alt + shift - right : yabai -m space --display 2
-
-        '';
       };
     in
     {

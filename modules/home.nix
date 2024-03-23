@@ -38,6 +38,8 @@
     ];
     file.alacritty-theme.source = ../dots/alacritty-colors.toml;
     file.alacritty-theme.target = ".config/alacritty/";
+    file.aerospace.source = ../dots/aerospace.toml;
+    file.aerospace.target = ".aerospace.toml";
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -201,6 +203,7 @@
       ];
 
       loginShellInit = ''
+        eval "$(/opt/homebrew/bin/brew shellenv)"
         bind \cx\ce edit_command_buffer
 
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
