@@ -140,10 +140,10 @@ alt-f = 'workspace 4'
 # alt-z = 'workspace Z'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-a = 'move-node-to-workspace 1'
-alt-shift-s = 'move-node-to-workspace 2'
-alt-shift-d = 'move-node-to-workspace 3'
-alt-shift-f = 'move-node-to-workspace 4'
+alt-shift-a = ['move-node-to-workspace 1', 'workspace 1']
+alt-shift-s = ['move-node-to-workspace 2', 'workspace 2']
+alt-shift-d = ['move-node-to-workspace 3', 'workspace 3']
+alt-shift-f = ['move-node-to-workspace 4', 'workspace 4']
 # alt-shift-5 = 'move-node-to-workspace 5'
 # alt-shift-6 = 'move-node-to-workspace 6'
 # alt-shift-7 = 'move-node-to-workspace 7'
