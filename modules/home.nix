@@ -95,6 +95,7 @@
         push.autoSetupRemote = true;
         init.defaultBranch = "main";
       };
+      difftastic.enable = true;
     };
 
     helix = {
@@ -171,6 +172,7 @@
         gp = "git push";
         gpu = "git pull";
         gl = "git log --compact-summary --oneline";
+        show = "git show --ext-diff";
         ll = "ls -ltra";
         gd = "git diff";
         gdc = "git diff --cached";
