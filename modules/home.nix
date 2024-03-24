@@ -96,6 +96,7 @@
         init.defaultBranch = "main";
       };
       difftastic.enable = true;
+      difftastic.background = "dark";
     };
 
     helix = {
