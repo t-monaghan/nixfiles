@@ -1,6 +1,13 @@
 { pkgs, aerospace, ... }: {
   nixpkgs.config.allowUnfree = true;
 
+  launchd.agents.aerospace.enable = true;
+  launchd.agents.aerospace.config = {
+    Label = "com.bobko.aerospace";
+    Program = "/usr/bin/open";
+    ProgramArguments = [ "-a" "Aerospace" "--started-at-login" ];
+    RunAtLoad = true;
+  };
   home = with pkgs; {
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
