@@ -24,7 +24,7 @@ outer.right      = 0
 
 [mode.main.binding]
 
-ctrl-alt-enter = 'exec-and-forget open -a Alacritty'
+ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
 
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
