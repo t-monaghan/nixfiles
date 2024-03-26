@@ -7,6 +7,8 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    aerospace.url = "github:t-monaghan/aerospace-flake";
+    aerospace.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -14,6 +16,7 @@
     , nix-darwin
     , nixpkgs
     , home-manager
+    , aerospace
     ,
     }:
     let
@@ -37,23 +40,22 @@
         # $ darwin-rebuild changelog
         system.stateVersion = 4;
 
+        # TODO: Investigate why this **MUST** be zsh. Breaks config if changed to fish/bash
         programs.zsh.enable = true;
 
         nixpkgs.config.allowUnfree = true;
         # The platform the configuration will be used on.
         nixpkgs.hostPlatform = "aarch64-darwin";
 
-        services.skhd.enable = false;
-        services.yabai.enable = false;
         system.defaults.dock.autohide = true;
 
-        homebrew = {
-          enable = true;
-          caskArgs.no_quarantine = true;
-          global.brewfile = true;
-          masApps = { };
-          casks = [ "nikitabobko/tap/aerospace" "raycast" ];
-        };
+        # homebrew = {
+        #   enable = true;
+        #   caskArgs.no_quarantine = true;
+        #   global.brewfile = true;
+        #   masApps = { };
+        #   casks = [ "nikitabobko/tap/aerospace" "raycast" ];
+        # };
       };
     in
     {
@@ -64,19 +66,24 @@
           home-manager.darwinModules.home-manager
           {
             users.users."tom.monaghan".home = "/Users/tom.monaghan";
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users."tom.monaghan" = import ./hosts/culture-amp.nix;
-            nix.settings.ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users."tom.monaghan" = import ./hosts/culture-amp.nix;
+              extraSpecialArgs = {
+                inherit aerospace;
+              };
+            };
+            nix. settings. ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
           }
         ];
       };
-      darwinConfigurations.personal = nix-darwin.lib.darwinSystem {
+      darwinConfigurations. personal = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
           home-manager.darwinModules.home-manager
           {
-            users.users."tmonaghan".home = "/Users/tmonaghan";
+            users. users."tmonaghan". home = "/Users/tmonaghan";
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users."tmonaghan" = import ./hosts/personal.nix;

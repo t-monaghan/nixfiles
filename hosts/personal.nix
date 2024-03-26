@@ -13,9 +13,7 @@
   # TODO: could be good to config around the ENV print on reload
   programs.direnv = {
     enable = true;
-    enableZshIntegration = true;
+    enableFishIntegration = true;
     nix-direnv.enable = true;
   };
-
-  programs.zsh.initExtra = "fpath+=(/Users/tmonaghan/.nix-profile/share/zsh/site-functions)";
 }

@@ -36,3 +36,10 @@ discharging_symbol = "󰚦 "
 [[battery.display]]
 threshold = 100
 style = "green"
+
+[nix_shell]
+disabled = false
+impure_msg = '[impure shell](bold red)'
+pure_msg = '[pure shell](bold green)'
+unknown_msg = '[unknown shell](bold yellow)'
+format = 'via [☃️ $state( \($name\))](bold blue) '

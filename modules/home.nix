@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, aerospace, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   home = with pkgs; {
@@ -12,6 +12,7 @@
     # changes in each release.
     stateVersion = "23.11";
     packages = [
+      aerospace.packages.aarch64-darwin.default
       nodePackages_latest.bash-language-server
       nodePackages_latest.typescript-language-server
       nodePackages_latest.vscode-langservers-extracted
@@ -34,6 +35,7 @@
       lnav
       lazygit
       toml2json
+      marksman
       # TODO: add rectangle once dots file is findable
     ];
     file.alacritty-theme.source = ../dots/alacritty-colors.toml;
