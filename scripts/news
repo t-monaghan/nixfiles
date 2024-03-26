@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-home-manager news --flake .
+nix run home-manager -- news --flake .
