@@ -28,10 +28,16 @@
         # Auto upgrade nix package and the daemon service.
         services.nix-daemon.enable = true;
 
+        nix.nixPath = [
+          {
+            darwin-config = "$HOME/.nixpkgs/darwin-configuration.nix";
+            nixpkgs = nixpkgs;
+          }
+          "/nix/var/nix/profiles/per-user/root/channels"
+        ];
+
         # Necessary for using flakes on this system.
         nix.settings.experimental-features = "nix-command flakes";
-        # TODO: Make this use a variable
-        nix.settings.trusted-users = [ "tom.monaghan" ];
 
         # Set Git commit hash for darwin-version.
         system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -48,14 +54,6 @@
         nixpkgs.hostPlatform = "aarch64-darwin";
 
         system.defaults.dock.autohide = true;
-
-        # homebrew = {
-        #   enable = true;
-        #   caskArgs.no_quarantine = true;
-        #   global.brewfile = true;
-        #   masApps = { };
-        #   casks = [ "nikitabobko/tap/aerospace" "raycast" ];
-        # };
       };
     in
     {
@@ -74,19 +72,26 @@
                 inherit aerospace;
               };
             };
-            nix. settings. ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
+            nix.settings.trusted-users = [ "tom.monaghan" ];
+            nix.settings.ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
           }
         ];
       };
-      darwinConfigurations. personal = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.personal = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
           home-manager.darwinModules.home-manager
           {
-            users. users."tmonaghan". home = "/Users/tmonaghan";
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users."tmonaghan" = import ./hosts/personal.nix;
+            users.users."tmonaghan". home = "/Users/tmonaghan";
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users."tmonaghan" = import ./hosts/personal.nix;
+              extraSpecialArgs = {
+                inherit aerospace;
+              };
+            };
+            nix.settings.trusted-users = [ "tmonaghan" ];
           }
         ];
       };
