@@ -20,19 +20,24 @@
   programs = {
     home-manager.enable = true;
 
+    helix = import ./helix.nix;
+
+    alacritty = import ./alacritty.nix;
+
+    gh.enable = true;
+    gh-dash.enable = true;
+
+    jq.enable = true;
+
+    navi.enable = true;
+    navi.enableFishIntegration = true;
+
     tmux = {
       enable = true;
       mouse = true;
       escapeTime = 100;
       keyMode = "vi";
     };
-
-    gh.enable = true;
-    gh-dash.enable = true;
-    jq.enable = true;
-
-    navi.enable = true;
-    navi.enableFishIntegration = true;
 
     zoxide = {
       enable = true;
@@ -76,23 +81,25 @@
       };
     };
 
-    helix = import ./helix.nix;
-
     fish = {
       enable = true;
+
+      loginShellInit = import ./fish-init.nix;
+
       shellAbbrs = {
         chmox = "chmod a+x";
 
-        gs = "git status";
-        ga = "git add";
-        gc = "git commit -m";
         gco = "git checkout";
         gp = "git push";
         gpu = "git pull";
+        gs = "git status";
         gl = "git log --compact-summary --oneline";
-        ll = "ls -ltra";
         gd = "git difftool";
         gdc = "git difftool --cached";
+        ga = "git add";
+        gc = "git commit -m";
+
+        ll = "ls -ltra";
 
         dr = "devbox run";
         drs = "devbox run setup";
@@ -121,43 +128,7 @@
         }
       ];
 
-      loginShellInit = ''
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-        bind \cx\ce edit_command_buffer
-
-        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-          fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        end
-        
-        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-        end'';
     };
 
-    alacritty = {
-      enable = true;
-      settings = {
-        window = {
-          option_as_alt = "Both";
-
-          decorations = "buttonless";
-          opacity = 0.75;
-          blur = true;
-          dimensions = {
-            columns = 100;
-            lines = 32;
-          };
-          dynamic_padding = true;
-        };
-        font.normal = {
-          family = "UDEV Gothic 35NF";
-          style = "Regular";
-        };
-        font.size = 17.0;
-        import = [
-          "~/.config/alacritty/alacritty-colors.toml"
-        ];
-      };
-    };
   };
 }
