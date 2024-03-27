@@ -20,13 +20,13 @@
     ,
     }:
     let
-      configuration = import ./modules/nix-darwin.nix { pkgs = nixpkgs; self = self; };
+      nix-darwin-configuration = import ./modules/nix-darwin.nix { pkgs = nixpkgs; self = self; };
     in
     {
       # Build darwin flake using:
       darwinConfigurations.work = nix-darwin.lib.darwinSystem {
         modules = [
-          configuration
+          nix-darwin-configuration
           home-manager.darwinModules.home-manager
           {
             users.users."tom.monaghan".home = "/Users/tom.monaghan";
@@ -45,7 +45,7 @@
       };
       darwinConfigurations.personal = nix-darwin.lib.darwinSystem {
         modules = [
-          configuration
+          nix-darwin-configuration
           home-manager.darwinModules.home-manager
           {
             users.users."tmonaghan". home = "/Users/tmonaghan";
