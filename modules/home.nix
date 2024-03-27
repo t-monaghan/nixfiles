@@ -18,34 +18,7 @@
     # the Home Manager release notes for a list of state version
     # changes in each release.
     stateVersion = "23.11";
-    packages = [
-      aerospace.packages.aarch64-darwin.default
-      nodePackages_latest.bash-language-server
-      nodePackages_latest.typescript-language-server
-      nodePackages_latest.vscode-langservers-extracted
-      nil
-      act
-      asciinema
-      udev-gothic-nf
-      python3
-      python311Packages.python-lsp-server
-      tree
-      yaml-language-server
-      shellcheck
-      jdk11
-      taplo
-      killport
-      trash-cli
-      fzf
-      _1password
-      nixpkgs-fmt
-      lnav
-      lazygit
-      toml2json
-      marksman
-      difftastic
-      # TODO: add rectangle once dots file is findable
-    ];
+    packages = import ./packages.nix { aerospace = aerospace; pkgs = pkgs; };
     file.alacritty-theme.source = ../dots/alacritty-colors.toml;
     file.alacritty-theme.target = ".config/alacritty/";
     file.aerospace.source = ../dots/aerospace.toml;
