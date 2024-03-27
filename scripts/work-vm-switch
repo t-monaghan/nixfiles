@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+nix shell nixpkgs#home-manager --command home-manager switch --flake .#work-vm

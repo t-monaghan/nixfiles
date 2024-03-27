@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, aerospace, ... }: {
   imports = [
     ../modules/home.nix
   ];
@@ -11,6 +11,7 @@
       rtx
       yarn
       rubyPackages_3_2.solargraph
+      aerospace.packages.aarch64-darwin.default
     ];
   };
 

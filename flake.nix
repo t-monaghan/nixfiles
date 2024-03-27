@@ -72,7 +72,7 @@
       # Expose the package set, including overlays, for convenience.
       darwinPackages = self.darwinConfigurations.personal.pkgs;
 
-      homeConfigurations.workvm = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.work-vm = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
           config.allowUnfree = true;

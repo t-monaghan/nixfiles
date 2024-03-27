@@ -1,7 +1,6 @@
-{ aerospace, pkgs }:
+{ pkgs }:
 with pkgs;
 [
-  aerospace.packages.aarch64-darwin.default
   nodePackages_latest.bash-language-server
   nodePackages_latest.typescript-language-server
   nodePackages_latest.vscode-langservers-extracted

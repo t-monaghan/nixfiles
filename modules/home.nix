@@ -1,11 +1,9 @@
-{ pkgs, aerospace, ... }: {
+{ pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
-
-  launchd.agents.aerospace = import ./aerospace-launchd-agent.nix;
 
   home = with pkgs; {
     stateVersion = "23.11";
-    packages = import ./packages.nix { aerospace = aerospace; pkgs = pkgs; };
+    packages = import ./packages.nix { pkgs = pkgs; };
     file = import ./dots-importer.nix;
   };
   programs = {
