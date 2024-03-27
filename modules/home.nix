@@ -43,6 +43,7 @@
       lazygit
       toml2json
       marksman
+      difftastic
       # TODO: add rectangle once dots file is findable
     ];
     file.alacritty-theme.source = ../dots/alacritty-colors.toml;
@@ -103,9 +104,11 @@
       extraConfig = {
         push.autoSetupRemote = true;
         init.defaultBranch = "main";
+        diff.tool = "difftastic";
+        difftool.prompt = false;
+        "difftool \"difftastic\"".cmd = ''difft "$LOCAL" "$REMOTE"'';
+        pager.difftool = true;
       };
-      difftastic.enable = true;
-      difftastic.background = "dark";
     };
 
     helix = {
@@ -182,10 +185,9 @@
         gp = "git push";
         gpu = "git pull";
         gl = "git log --compact-summary --oneline";
-        show = "git show --ext-diff";
         ll = "ls -ltra";
-        gd = "git diff";
-        gdc = "git diff --cached";
+        gd = "git difftool";
+        gdc = "git difftool --cached";
 
         dr = "devbox run";
         drs = "devbox run setup";

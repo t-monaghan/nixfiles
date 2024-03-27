@@ -19,6 +19,7 @@ untracked = "󰊇"
 
 [ruby]
 symbol = " "
+format = "[$symbol($version )]($style)"
 
 [git_branch]
 style = "green"
@@ -39,7 +40,5 @@ style = "green"
 
 [nix_shell]
 disabled = false
-impure_msg = '[impure shell](bold red)'
-pure_msg = '[pure shell](bold green)'
-unknown_msg = '[unknown shell](bold yellow)'
-format = 'via [☃️ $state( \($name\))](bold blue) '
+format = "[$symbol$state( \\($name\\))]($style) "
+symbol = '󰜗 '
