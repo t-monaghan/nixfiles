@@ -1,13 +1,7 @@
 { pkgs, aerospace, ... }: {
   nixpkgs.config.allowUnfree = true;
 
-  launchd.agents.aerospace.enable = true;
-  launchd.agents.aerospace.config = {
-    Label = "com.bobko.aerospace";
-    Program = "/usr/bin/open";
-    ProgramArguments = [ "-a" "Aerospace" "--started-at-login" ];
-    RunAtLoad = true;
-  };
+  launchd.agents.aerospace = import ./aerospace-launchd-agent.nix;
 
   home = with pkgs; {
     stateVersion = "23.11";
