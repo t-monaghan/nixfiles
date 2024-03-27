@@ -14,6 +14,9 @@
       aerospace.packages.aarch64-darwin.default
     ];
   };
+  launchd.agents.aerospace = import ./aerospace-launchd-agent.nix;
+
+  programs.home-manager.path = "$HOME/dev/home-manager";
 
   programs.fish.functions = {
     clone = {
