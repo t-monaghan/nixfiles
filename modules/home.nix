@@ -9,6 +9,7 @@
     file = import ./dots-importer.nix;
   };
   programs = {
+
     home-manager.enable = true;
 
     helix = import ./helix.nix;
@@ -16,6 +17,7 @@
     alacritty = import ./alacritty.nix;
 
     fish = import ./fish.nix { pkgs = pkgs; };
+
     gh.enable = true;
     gh-dash.enable = true;
 
@@ -72,7 +74,6 @@
         pager.difftool = true;
       };
     };
-
 
   };
 }
