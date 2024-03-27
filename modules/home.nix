@@ -6,10 +6,7 @@
   home = with pkgs; {
     stateVersion = "23.11";
     packages = import ./packages.nix { aerospace = aerospace; pkgs = pkgs; };
-    file.alacritty-theme.source = ../dots/alacritty-colors.toml;
-    file.alacritty-theme.target = ".config/alacritty/";
-    file.aerospace.source = ../dots/aerospace.toml;
-    file.aerospace.target = ".aerospace.toml";
+    file = import ./dots-importer.nix;
   };
   programs = {
     home-manager.enable = true;
