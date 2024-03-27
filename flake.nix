@@ -1,5 +1,5 @@
 {
-  description = "Tom Monaghan's nix-darwin flake";
+  description = "Tom Monaghan's flake for system configuration across machines";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -23,46 +23,64 @@
       nix-darwin-configuration = import ./modules/nix-darwin.nix { pkgs = nixpkgs; self = self; };
     in
     {
-      # Build darwin flake using:
-      darwinConfigurations.work = nix-darwin.lib.darwinSystem {
-        modules = [
-          nix-darwin-configuration
-          home-manager.darwinModules.home-manager
-          {
-            users.users."tom.monaghan".home = "/Users/tom.monaghan";
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users."tom.monaghan" = import ./hosts/culture-amp.nix;
-              extraSpecialArgs = {
-                inherit aerospace;
+      darwinConfigurations.work =
+        let
+          username = "tom.monaghan";
+        in
+        nix-darwin.lib.darwinSystem {
+          modules = [
+            nix-darwin-configuration
+            home-manager.darwinModules.home-manager
+            {
+              users.users.${username}.home = "/Users/${username}";
+              nix.settings.trusted-users = [ "${username}" ];
+              nix.settings.ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.${username} = import ./hosts/culture-amp.nix;
+                extraSpecialArgs = {
+                  inherit aerospace;
+                };
               };
-            };
-            nix.settings.trusted-users = [ "tom.monaghan" ];
-            nix.settings.ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
-          }
-        ];
-      };
-      darwinConfigurations.personal = nix-darwin.lib.darwinSystem {
-        modules = [
-          nix-darwin-configuration
-          home-manager.darwinModules.home-manager
-          {
-            users.users."tmonaghan". home = "/Users/tmonaghan";
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users."tmonaghan" = import ./hosts/personal.nix;
-              extraSpecialArgs = {
-                inherit aerospace;
+            }
+          ];
+        };
+      darwinConfigurations.personal =
+        let
+          username = "tmonaghan";
+        in
+        nix-darwin.lib.darwinSystem {
+          modules = [
+            nix-darwin-configuration
+            home-manager.darwinModules.home-manager
+            {
+              users.users.${username}.home = "/Users/${username}";
+              nix.settings.trusted-users = [ "${username}" ];
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.${username} = import ./hosts/personal.nix;
+                extraSpecialArgs = {
+                  inherit aerospace;
+                };
               };
-            };
-            nix.settings.trusted-users = [ "tmonaghan" ];
-          }
-        ];
-      };
+            }
+          ];
+        };
       # TODO: Figure out why this is needed
       # Expose the package set, including overlays, for convenience.
       darwinPackages = self.darwinConfigurations.personal.pkgs;
+
+      homeConfigurations.workvm = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-darwin";
+          config.allowUnfree = true;
+        };
+        modules = [
+          ./modules/home.nix
+          ./hosts/work-vm.nix
+        ];
+      };
     };
 }
