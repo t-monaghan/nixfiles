@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "aerospace": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1711406287,
-        "narHash": "sha256-iQmTdGdwSFWBHbibC1oz8MJ7Yl1lzC+PA74Q/oEhlss=",
-        "owner": "t-monaghan",
-        "repo": "aerospace-flake",
-        "rev": "a6b96ef394f6922e82688489f208940d30519d84",
-        "type": "github"
-      },
-      "original": {
-        "owner": "t-monaghan",
-        "repo": "aerospace-flake",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -63,23 +43,22 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1710889954,
-        "narHash": "sha256-Pr6F5Pmd7JnNEMHHmspZ0qVqIBVxyZ13ik1pJtm2QXk=",
-        "owner": "NixOS",
+        "lastModified": 1711580367,
+        "narHash": "sha256-Xu601xXsrilEUgqpO4b9SyyIKzROAFVZEUpqcvqSmsE=",
+        "owner": "t-monaghan",
         "repo": "nixpkgs",
-        "rev": "7872526e9c5332274ea5932a0c3270d6e4724f3b",
+        "rev": "83deb8c24fbd79a323453ebd31f3bdee839bfbe9",
         "type": "github"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
+        "owner": "t-monaghan",
+        "ref": "add-aerospace",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
-        "aerospace": "aerospace",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs"

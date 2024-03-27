@@ -1,4 +1,4 @@
-{ pkgs, aerospace, ... }:
+{ pkgs, ... }:
 {
   imports = [
     ../modules/home.nix
@@ -13,7 +13,6 @@
 
   darwin.windowManager.aerospace = {
     enable = true;
-    package = aerospace.packages.aarch64-darwin.default;
     settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
   };
 
