@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:t-monaghan/home-manager?rev=765f199c3704832b6a4c9aa89d6940cf157355a3";
+    home-manager.url = "github:t-monaghan/home-manager/add-aerospace";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     aerospace.url = "github:t-monaghan/aerospace-flake";
     aerospace.inputs.nixpkgs.follows = "nixpkgs";
