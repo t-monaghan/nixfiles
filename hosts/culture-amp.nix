@@ -14,11 +14,6 @@
     ];
   };
 
-  darwin.windowManager.aerospace = {
-    enable = true;
-    settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
-  };
-
   programs.fish.functions = {
     clone = {
       description = "Clone a cultureamp repo";

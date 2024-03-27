@@ -11,11 +11,6 @@
     ];
   };
 
-  darwin.windowManager.aerospace = {
-    enable = true;
-    settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
-  };
-
   # TODO: could be good to config around the ENV print on reload
   programs.direnv = {
     enable = true;

@@ -8,6 +8,12 @@
     packages = import ./packages.nix { pkgs = pkgs; };
     file = import ./dots-importer.nix;
   };
+
+  darwin.windowManager.aerospace = {
+    enable = true;
+    settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
+  };
+
   programs = {
 
     home-manager.enable = true;
