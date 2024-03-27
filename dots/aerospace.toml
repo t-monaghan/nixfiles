@@ -24,7 +24,8 @@ outer.right      = 0
 
 [mode.main.binding]
 
-ctrl-alt-enter = 'exec-and-forget open -na Alacritty'
+ctrl-alt-j = 'exec-and-forget open -na Alacritty'
+ctrl-alt-k = 'exec-and-forget open -na Firefox'
 
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'

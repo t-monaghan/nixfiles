@@ -1,6 +1,8 @@
 { pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
 
+  nix.gc.automatic = true;
+
   home = with pkgs; {
     stateVersion = "23.11";
     packages = import ./packages.nix { pkgs = pkgs; };

@@ -11,12 +11,14 @@
       rtx
       yarn
       rubyPackages_3_2.solargraph
-      aerospace.packages.aarch64-darwin.default
     ];
   };
-  launchd.agents.aerospace = import ./aerospace-launchd-agent.nix;
 
-  programs.home-manager.path = "$HOME/dev/home-manager";
+  darwin.windowManager.aerospace = {
+    enable = true;
+    package = aerospace.packages.aarch64-darwin.default;
+    settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
+  };
 
   programs.fish.functions = {
     clone = {

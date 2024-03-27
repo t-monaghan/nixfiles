@@ -30,15 +30,35 @@ error_symbol = "[❯](inverted)"
 
 [battery]
 format = "[$symbol $percentage]($style) "
-full_symbol = " "
-charging_symbol = "󰚥 "
-discharging_symbol = "󰚦 "
+full_symbol = "󱊣"
+charging_symbol = "󰚥"
+unknown_symbol = "󱈑"
 
 [[battery.display]]
 threshold = 100
 style = "green"
+discharging_symbol = "󱊣"
+
+[[battery.display]]
+threshold = 75
+style = "green"
+
+[[battery.display]]
+threshold = 50
+style = "yellow"
+discharging_symbol = "󱊢"
+
+[[battery.display]]
+threshold = 20
+style = "yellow"
+discharging_symbol = "󱊡"
+
+[[battery.display]]
+threshold = 0
+style = "red"
+discharging_symbol = "󰂃"
 
 [nix_shell]
 disabled = false
 format = "[$symbol$state( \\($name\\))]($style) "
-symbol = '󰜗 '
+symbol = "󰜗 "
