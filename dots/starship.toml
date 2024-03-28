@@ -67,24 +67,29 @@ format = "[$symbol$state( \\($name\\))]($style) "
 symbol = "󰜗 "
 
 [custom.devbox]
-description = "Shows the devbox version if inside a devbox directory"
-detect_files = ["devbox.json"]
+description = "Shows the devbox version if inside a devbox project"
+shell = 'sh'
+when = '''
+[[ -n $DEVBOX_INIT_PATH ]]
+'''
 command = "devbox version"
 style="bold blue"
 symbol = ""
 format = "[$symbol v($output )]($style)"
 
 [custom.direnv]
-description = "Shows the status of direnv if inside a directory with a .envrc and devbox.json"
-detect_files = [".envrc"]
+description = "Shows if direnv has not been allowed if inside a project with a .envrc and devbox.json"
 shell = "sh"
+when = '''
+[[ -n $DIRENV_FILE ]]
+'''
 command = '''
 if [[ -f ./devbox.json ]]; then
   direnv_output=$(direnv status)
   if echo $direnv_output | grep -q "Found RC allowed true"; then
     echo ""
   else
-    echo " direnv is blocked"
+    echo " direnv is not allowed"
   fi
 fi
 '''

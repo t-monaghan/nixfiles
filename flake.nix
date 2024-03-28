@@ -36,6 +36,9 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 users.${username} = import ./hosts/culture-amp.nix;
+                extraSpecialArgs = {
+                  inherit username;
+                };
               };
             }
           ];
@@ -55,6 +58,9 @@
                 useGlobalPkgs = true;
                 useUserPackages = true;
                 users.${username} = import ./hosts/personal.nix;
+                extraSpecialArgs = {
+                  inherit username;
+                };
               };
             }
           ];

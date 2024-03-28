@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, username, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
@@ -6,9 +6,17 @@
   home = with pkgs; {
     stateVersion = "23.11";
     packages = import ./packages.nix { pkgs = pkgs; };
-    # file = import ./dots-importer.nix;
   };
 
+  launchd.agents.jankyborders = {
+    enable = true;
+    config = {
+      Label = "com.felixkratz.jankyborders";
+      Program = "/etc/profiles/per-user/${username}/bin/borders";
+      ProgramArguments = [ "width=8" "active_color=0xffcff1bf" ];
+      RunAtLoad = true;
+    };
+  };
   darwin.windowManager.aerospace = {
     enable = true;
     settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);

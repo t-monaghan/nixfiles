@@ -25,4 +25,5 @@ with pkgs;
   toml2json
   marksman
   difftastic
+  jankyborders
 ]
