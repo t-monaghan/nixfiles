@@ -1,6 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = '''$directory$git_branch$git_status$git_state$direnv$java$ruby$nix_shell
+format = '''$directory$git_branch$git_status$git_state$direnv$java$ruby$node$custom
 $character'''
 
 right_format = "$memory_usage$battery"
@@ -8,24 +8,27 @@ right_format = "$memory_usage$battery"
 [time]
 disabled = false
 
+[directory]
+style = "bold cyan"
+
 [git_status]
 format = "([$all_status$ahead_behind]($style) )"
-# format ="([\\$all_status$ahead_behind]($style))"
-style = "green"
+style = "yellow"
 stashed = "󰴮 "
-modified = "󰏫 "
+modified = "󰏫 ($count) "
 staged = "󰶍 "
-untracked = "󰊇"
+untracked = "󰊇 ($count) "
 
 [ruby]
 symbol = " "
 format = "[$symbol($version )]($style)"
 
 [git_branch]
-style = "green"
+style = "yellow"
 symbol = " "
 
 [character]
+success_symbol = "[❯](bold cyan)"
 error_symbol = "[❯](inverted)"
 
 [battery]
@@ -62,3 +65,26 @@ discharging_symbol = "󰂃"
 disabled = false
 format = "[$symbol$state( \\($name\\))]($style) "
 symbol = "󰜗 "
+
+[custom.devbox]
+description = "Shows the devbox version if inside a devbox directory"
+detect_files = ["devbox.json"]
+command = "devbox version"
+style="bold blue"
+symbol = ""
+format = "[$symbol v($output )]($style)"
+
+[custom.direnv]
+description = "Shows the status of direnv if inside a directory with a .envrc and devbox.json"
+detect_files = [".envrc"]
+shell = "sh"
+command = '''
+if [[ -f ./devbox.json ]]; then
+  direnv_output=$(direnv status)
+  if echo $direnv_output | grep -q "Found RC allowed true"; then
+    echo ""
+  else
+    echo " direnv is blocked"
+  fi
+fi
+'''

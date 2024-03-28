@@ -25,5 +25,4 @@ with pkgs;
   toml2json
   marksman
   difftastic
-  # TODO: add rectangle once dots file is findable
 ]

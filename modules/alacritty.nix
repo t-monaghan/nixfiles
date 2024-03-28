@@ -5,7 +5,7 @@
       option_as_alt = "Both";
 
       decorations = "buttonless";
-      opacity = 0.75;
+      opacity = 0.65;
       blur = true;
       dimensions = {
         columns = 100;
@@ -18,8 +18,6 @@
       style = "Regular";
     };
     font.size = 17.0;
-    import = [
-      "~/.config/alacritty/alacritty-colors.toml"
-    ];
+    colors = builtins.fromTOML (builtins.readFile ../dots/alacritty-colors.toml);
   };
 }

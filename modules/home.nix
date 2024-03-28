@@ -6,7 +6,7 @@
   home = with pkgs; {
     stateVersion = "23.11";
     packages = import ./packages.nix { pkgs = pkgs; };
-    file = import ./dots-importer.nix;
+    # file = import ./dots-importer.nix;
   };
 
   darwin.windowManager.aerospace = {
