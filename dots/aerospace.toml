@@ -58,6 +58,8 @@ alt-shift-equal = 'resize smart +50'
 
 alt-shift-semicolon = 'mode service'
 
+cmd-ctrl-alt-shift-a = 'mode move'
+
 [mode.service.binding]
 r         = ['flatten-workspace-tree', 'mode main'] # reset layout
 s         = [ 'split opposite', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
@@ -65,6 +67,20 @@ f         = [ 'layout floating tiling', 'mode main'] # Toggle between floating a
 backspace = ['close-all-windows-but-current', 'mode main']
 esc       = ['mode main']
 
+[mode.move.binding]
+h = 'focus left'
+j = 'focus down'
+k = 'focus up'
+l = 'focus right'
+n = 'focus-monitor next --wrap-around'
+z = 'fullscreen'
+a = 'workspace 1'
+s = 'workspace 2'
+d = 'workspace 3'
+f = 'workspace 4'
+t = 'move-node-to-monitor next --wrap-around'
+tab = 'move-workspace-to-monitor --wrap-around next'
+esc = ['mode main']
 # TODO:
 # Fix workspaces to windows, throw windows to workspaces
 
