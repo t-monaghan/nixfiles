@@ -1,6 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = '''$directory$git_branch$git_status$git_state$direnv$java$ruby$node$custom
+format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom
 $character'''
 
 right_format = "$memory_usage$battery"
@@ -65,6 +65,10 @@ discharging_symbol = "󰂃"
 disabled = false
 format = "[$symbol$state( \\($name\\))]($style) "
 symbol = "󰜗 "
+
+[golang]
+symbol = "󰟓 "
+style = "bold green"
 
 [custom.devbox]
 description = "Shows the devbox version if inside a devbox project"

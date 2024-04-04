@@ -45,6 +45,7 @@
       mouse = true;
       escapeTime = 100;
       keyMode = "vi";
+      customPaneNavigationAndResize = true;
     };
 
     zoxide = {

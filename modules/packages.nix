@@ -26,4 +26,5 @@ with pkgs;
   marksman
   difftastic
   jankyborders
+  gopls
 ]
