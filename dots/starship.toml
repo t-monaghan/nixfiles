@@ -18,6 +18,7 @@ stashed = "󰴮 "
 modified = "󰏫 ($count) "
 staged = "󰶍 "
 untracked = "󰊇 ($count) "
+deleted = " "
 
 [ruby]
 symbol = " "
