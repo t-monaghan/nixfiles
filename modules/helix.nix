@@ -5,16 +5,16 @@
     tmonaghan = {
       inherits = "sonokai";
       "ui.background" = { fg = "white"; };
-      "ui.linenr.selected" = "#9ed072";
+      "ui.linenr.selected" = "bright cyan";
       "ui.bufferline" = { bg = "none"; };
       "ui.cursor" = {
-        bg = "#9ed072";
-        modifiers = [ "dim" ];
+        bg = "cyan";
+        modifiers = [ "bright" ];
       };
       "ui.bufferline.active" = { modifiers = [ "reversed" ]; };
       "ui.selection.primary" = { modifiers = [ "reversed" ]; };
       "ui.statusline" = { bg = "none"; };
-      "ui.popup" = { bg = "#3b3b3b"; };
+      "ui.popup" = { bg = "black"; };
       "ui.window" = { bg = "none"; };
       "ui.menu" = { bg = "none"; };
       "ui.help" = { bg = "none"; };

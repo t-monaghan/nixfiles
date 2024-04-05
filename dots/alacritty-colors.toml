@@ -1,30 +1,33 @@
-# Colors (Gruvbox dark)
+# Colors (Challenger Deep)
 
+transparent_background_colors = true
 # Default colors
 [primary]
-background = '#1d2021'
-# background = '#282828'
-# soft contrast background = = '#32302f'
-foreground = '#ebdbb2'
+background = '#1e1c31'
+foreground = '#cbe1e7'
+
+[cursor]
+text = '#ff271d'
+cursor = '#fbfcfc'
 
 # Normal colors
 [normal]
-black   = '#282828'
-red     = '#cc241d'
-green   = '#98971a'
-yellow  = '#d79921'
-blue    = '#458588'
-magenta = '#db649a'
-cyan    = '#689d6a'
-white   = '#a89984'
+black   = '#141228'
+red     = '#ff5458'
+green   = '#62d196'
+yellow  = '#ffb378'
+blue    = '#65b2ff'
+magenta = '#906cff'
+cyan    = '#63f2f1'
+white   = '#a6b3cc'
 
 # Bright colors
 [bright]
-black   = '#928374'
-red     = '#fb4934'
-green   = '#b8bb26'
-yellow  = '#fabd2f'
-blue    = '#83a598'
-magenta = '#d3869b'
-cyan    = '#8ec07c'
-white   = '#ebdbb2'
+black   = '#565575'
+red     = '#ff8080'
+green   = '#95ffa4'
+yellow  = '#ffe9aa'
+blue    = '#91ddff'
+magenta = '#c991e1'
+cyan    = '#aaffe4'
+white   = '#cbe3e7'

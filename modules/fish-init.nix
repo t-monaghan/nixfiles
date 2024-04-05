@@ -1,4 +1,5 @@
 ''
+  set -gx fish_color_autosuggestion brblue
   eval "$(/opt/homebrew/bin/brew shellenv)"
   bind \cx\ce edit_command_buffer
 
