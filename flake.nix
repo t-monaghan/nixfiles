@@ -69,15 +69,22 @@
       # Expose the package set, including overlays, for convenience.
       darwinPackages = self.darwinConfigurations.personal.pkgs;
 
-      homeConfigurations.work-vm = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
+      homeConfigurations.work-vm =
+        let
+          username = "alanturing";
+        in
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "aarch64-darwin";
+            config.allowUnfree = true;
+          };
+          modules = [
+            ./modules/home.nix
+            ./hosts/work-vm.nix
+          ];
+          extraSpecialArgs = {
+            inherit username;
+          };
         };
-        modules = [
-          ./modules/home.nix
-          ./hosts/work-vm.nix
-        ];
-      };
     };
 }
