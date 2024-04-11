@@ -27,4 +27,5 @@ with pkgs;
   difftastic
   jankyborders
   gopls
+  shell_gpt
 ]

@@ -19,5 +19,6 @@
     };
     font.size = 17.0;
     colors = builtins.fromTOML (builtins.readFile ../dots/alacritty-colors.toml);
+    mouse.hide_when_typing = true;
   };
 }
