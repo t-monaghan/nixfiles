@@ -15,7 +15,5 @@
     refetchIntervalMinutes = 30;
   };
   repoPaths = { ":owner/:repo" = "~/dev/:repo"; };
-  keybindings = null;
-  theme = null;
   pager = { diff = "less"; };
 }
