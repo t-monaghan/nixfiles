@@ -1,6 +1,9 @@
 {
   enable = true;
   settings = {
+    selection = {
+      save_to_clipboard = true;
+    };
     window = {
       option_as_alt = "Both";
 

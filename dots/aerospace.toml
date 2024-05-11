@@ -35,20 +35,24 @@ alt-j = 'focus down'
 alt-k = 'focus up'
 alt-l = 'focus right'
 
-alt-a = 'workspace 1'
-alt-s = 'workspace 2'
-alt-d = 'workspace 3'
-alt-f = 'workspace 4'
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
 
 alt-shift-h = ['join-with left']
 alt-shift-j = ['join-with down']
 alt-shift-k = ['join-with up']
 alt-shift-l = ['join-with right']
 
-alt-shift-a = ['move-node-to-workspace 1', 'workspace 1']
-alt-shift-s = ['move-node-to-workspace 2', 'workspace 2']
-alt-shift-d = ['move-node-to-workspace 3', 'workspace 3']
-alt-shift-f = ['move-node-to-workspace 4', 'workspace 4']
+alt-q = ['move-node-to-workspace 1', 'workspace 1']
+alt-w = ['move-node-to-workspace 2', 'workspace 2']
+alt-e = ['move-node-to-workspace 3', 'workspace 3']
+alt-r = ['move-node-to-workspace 4', 'workspace 4']
+alt-t = ['move-node-to-workspace 5', 'workspace 5']
+alt-y = ['move-node-to-workspace 6', 'workspace 6']
 
 alt-tab       = 'workspace-back-and-forth'
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
@@ -56,31 +60,31 @@ alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
-alt-shift-semicolon = 'mode service'
+# alt-shift-semicolon = 'mode service'
 
-cmd-ctrl-alt-shift-a = 'mode move'
+# cmd-ctrl-alt-shift-a = 'mode move'
 
-[mode.service.binding]
-r         = ['flatten-workspace-tree', 'mode main'] # reset layout
-s         = [ 'split opposite', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
-f         = [ 'layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
-backspace = ['close-all-windows-but-current', 'mode main']
-esc       = ['mode main']
+# [mode.service.binding]
+# r         = ['flatten-workspace-tree', 'mode main'] # reset layout
+# s         = [ 'split opposite', 'mode main'] # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
+# f         = [ 'layout floating tiling', 'mode main'] # Toggle between floating and tiling layout
+# backspace = ['close-all-windows-but-current', 'mode main']
+# esc       = ['mode main']
 
-[mode.move.binding]
-h = 'focus left'
-j = 'focus down'
-k = 'focus up'
-l = 'focus right'
-n = 'focus-monitor next --wrap-around'
-z = 'fullscreen'
-a = 'workspace 1'
-s = 'workspace 2'
-d = 'workspace 3'
-f = 'workspace 4'
-t = 'move-node-to-monitor next --wrap-around'
-tab = 'move-workspace-to-monitor --wrap-around next'
-esc = ['mode main']
+# [mode.move.binding]
+# h = 'focus left'
+# j = 'focus down'
+# k = 'focus up'
+# l = 'focus right'
+# n = 'focus-monitor next --wrap-around'
+# z = 'fullscreen'
+# a = 'workspace 1'
+# s = 'workspace 2'
+# d = 'workspace 3'
+# f = 'workspace 4'
+# t = 'move-node-to-monitor next --wrap-around'
+# tab = 'move-workspace-to-monitor --wrap-around next'
+# esc = ['mode main']
 # TODO:
 # Fix workspaces to windows, throw windows to workspaces
 
