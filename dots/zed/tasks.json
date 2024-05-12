@@ -1,0 +1,18 @@
+[
+  {
+    "label": "Devbox Test",
+    "command": "devbox run test",
+    "use_new_terminal": true,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "Devbox Services Up",
+    "command": "devbox services up",
+    "use_new_terminal": true,
+    // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]
