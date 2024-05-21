@@ -33,7 +33,6 @@
     fish = import ./fish.nix { pkgs = pkgs; };
 
     gh.enable = true;
-    gh-dash.enable = true;
 
     jq.enable = true;
 

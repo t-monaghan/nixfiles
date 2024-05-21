@@ -10,7 +10,6 @@
       devbox
     ];
   };
-  programs.gh-dash.settings = import ../dots/gh-dash.nix;
 
   # TODO: could be good to config around the ENV print on reload
   programs.direnv = {

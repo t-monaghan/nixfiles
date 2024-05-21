@@ -24,6 +24,8 @@
     drp = "devbox run populate";
     dsu = "devbox services up";
 
+    cop = "gh copilot";
+
     rt = "trash-put";
   };
 
