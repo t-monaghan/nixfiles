@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, aerospace }:
 with pkgs;
 [
   nodePackages_latest.bash-language-server
@@ -29,5 +29,6 @@ with pkgs;
   gopls
   golangci-lint
   golangci-lint-langserver
-  shell_gpt
+  shell-gpt
+  aerospace
 ]

@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "aerospace": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1711406287,
+        "narHash": "sha256-iQmTdGdwSFWBHbibC1oz8MJ7Yl1lzC+PA74Q/oEhlss=",
+        "owner": "t-monaghan",
+        "repo": "aerospace-flake",
+        "rev": "a6b96ef394f6922e82688489f208940d30519d84",
+        "type": "github"
+      },
+      "original": {
+        "owner": "t-monaghan",
+        "repo": "aerospace-flake",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -7,16 +27,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1711585183,
-        "narHash": "sha256-wyNPFEC2j0n0WZ9FVp/0HwD7dxoTCo13QwYU4oMXHxA=",
-        "owner": "t-monaghan",
+        "lastModified": 1717525419,
+        "narHash": "sha256-5z2422pzWnPXHgq2ms8lcCfttM0dz+hg+x1pCcNkAws=",
+        "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "df5b9da7daad40d83fa6450cbed69410f09481e1",
+        "rev": "a7117efb3725e6197dd95424136f79147aa35e5b",
         "type": "github"
       },
       "original": {
-        "owner": "t-monaghan",
-        "ref": "add-aerospace",
+        "owner": "nix-community",
         "repo": "home-manager",
         "type": "github"
       }
@@ -28,11 +47,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1716240091,
-        "narHash": "sha256-++gJuNv0X8naF1VkaO2sAiM3T4wLx1NtdfubEsRzX7U=",
+        "lastModified": 1716993688,
+        "narHash": "sha256-vo5k2wQekfeoq/2aleQkBN41dQiQHNTniZeVONWiWLs=",
         "owner": "LnL7",
         "repo": "nix-darwin",
-        "rev": "8bf083c992e2bc0a8c07f5860d3866739b698883",
+        "rev": "c0d5b8c54d6828516c97f6be9f2d00c63a363df4",
         "type": "github"
       },
       "original": {
@@ -43,22 +62,23 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1715495445,
-        "narHash": "sha256-6AV05gBAmuGk1QXOniA+pAmKGoSzyNgMJC4/8fHZxkA=",
-        "owner": "t-monaghan",
+        "lastModified": 1717196966,
+        "narHash": "sha256-yZKhxVIKd2lsbOqYd5iDoUIwsRZFqE87smE2Vzf6Ck0=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ed101dcd4f14b10c044a6c7b2442da3800d2be05",
+        "rev": "57610d2f8f0937f39dbd72251e9614b1561942d8",
         "type": "github"
       },
       "original": {
-        "owner": "t-monaghan",
-        "ref": "add-aerospace",
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
     },
     "root": {
       "inputs": {
+        "aerospace": "aerospace",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs"

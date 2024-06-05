@@ -1,11 +1,15 @@
-{ pkgs, username, ... }: {
+{ pkgs, username, aerospace, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
 
   home = with pkgs; {
     stateVersion = "23.11";
-    packages = import ./packages.nix { pkgs = pkgs; };
+    packages = import ./packages.nix { pkgs = pkgs; aerospace = aerospace; };
+    file.aerospace = {
+      source = ../dots/aerospace.toml;
+      target = ".config/aerospace/aerospace.toml";
+    };
   };
 
   launchd.agents.jankyborders = {
@@ -16,10 +20,6 @@
       ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf hidpi=on" ];
       RunAtLoad = true;
     };
-  };
-  darwin.windowManager.aerospace = {
-    enable = true;
-    settings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
   };
 
   programs = {

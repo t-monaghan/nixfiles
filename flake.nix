@@ -2,11 +2,13 @@
   description = "Tom Monaghan's flake for system configuration across machines";
 
   inputs = {
-    nixpkgs.url = "github:t-monaghan/nixpkgs/add-aerospace";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.url = "github:t-monaghan/home-manager/add-aerospace";
+    home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    aerospace.url = "github:t-monaghan/aerospace-flake";
+    aerospace.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -14,6 +16,7 @@
     , nix-darwin
     , nixpkgs
     , home-manager
+    , aerospace
     ,
     }:
     let
@@ -37,7 +40,7 @@
                 useUserPackages = true;
                 users.${username} = import ./hosts/culture-amp.nix;
                 extraSpecialArgs = {
-                  inherit username;
+                  inherit username aerospace;
                 };
               };
             }
@@ -59,7 +62,7 @@
                 useUserPackages = true;
                 users.${username} = import ./hosts/personal.nix;
                 extraSpecialArgs = {
-                  inherit username;
+                  inherit username aerospace;
                 };
               };
             }
