@@ -17,7 +17,11 @@
   programs.fish.functions = {
     clone = {
       description = "Clone a cultureamp repo";
-      body = ''git clone git@github.com:cultureamp/"$argv[1]"'';
+      body = ''if set -q argv[2]
+                  git clone git@github.com:cultureamp/"$argv[1]" "$argv[2..-1]"
+               else
+                  git clone git@github.com:cultureamp/"$argv[1]"
+               end'';
     };
   };
 

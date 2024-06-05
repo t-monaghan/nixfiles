@@ -27,5 +27,7 @@ with pkgs;
   difftastic
   jankyborders
   gopls
+  golangci-lint
+  golangci-lint-langserver
   shell_gpt
 ]

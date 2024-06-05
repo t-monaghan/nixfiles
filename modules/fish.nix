@@ -26,7 +26,12 @@
 
     cop = "gh copilot";
 
+    zed = "open -a Zed . && exit";
     rt = "trash-put";
+  };
+
+  shellAliases = {
+    assume = "source /usr/local/bin/assume.fish";
   };
 
   functions = {
