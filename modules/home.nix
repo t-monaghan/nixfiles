@@ -17,7 +17,7 @@
     config = rec {
       Label = "com.felixkratz.jankyborders";
       Program = "/etc/profiles/per-user/${username}/bin/borders";
-      ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf hidpi=on" ];
+      ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf" "hidpi=on" ];
       RunAtLoad = true;
     };
   };
@@ -64,7 +64,7 @@
     bat = {
       enable = true;
       config = {
-        theme = "Monokai Extended";
+        theme = "gruvbox-light";
       };
     };
 
