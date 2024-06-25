@@ -22,7 +22,8 @@
     dr = "devbox run";
     drs = "devbox run setup";
     drp = "devbox run populate";
-    dsu = "devbox services up";
+    dsu = "devbox services up --pcflags '--keep-tui'";
+    rmd = "rm -rf .devbox";
 
     cop = "gh copilot";
 
