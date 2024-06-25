@@ -13,12 +13,24 @@
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
 
-  # Set Git commit hash for darwin-version.
-  system.configurationRevision = self.rev or self.dirtyRev or null;
-
-  # Used for backwards compatibility, please read the changelog before changing.
-  # $ darwin-rebuild changelog
-  system.stateVersion = 4;
+  system = {
+    # Used for backwards compatibility, please read the changelog before changing.
+    # $ darwin-rebuild changelog
+    stateVersion = 4;
+    # Set Git commit hash for darwin-version.
+    configurationRevision = self.rev or self.dirtyRev or null;
+    # Darwin config
+    defaults = {
+      dock.autohide = true;
+      spaces.spans-displays = false;
+      trackpad = {
+        Clicking = true;
+        Dragging = true;
+        TrackpadRightClick = true;
+        TrackpadThreeFingerDrag = true;
+      };
+    };
+  };
 
   # TODO: Investigate why this **MUST** be zsh. Breaks config if changed to fish/bash
   programs.zsh.enable = true;
@@ -27,5 +39,5 @@
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
 
-  system.defaults.dock.autohide = true;
+
 }
