@@ -20,8 +20,21 @@
     # Set Git commit hash for darwin-version.
     configurationRevision = self.rev or self.dirtyRev or null;
     # Darwin config
+    # https://daiderd.com/nix-darwin/manual/index.html
     defaults = {
-      dock.autohide = true;
+      dock = {
+        autohide = true;
+        # can be one of {null, "genie", "suck", "scale"}
+        mineffect = "scale";
+        minimize-to-application = true;
+        show-recents = false;
+        # makes hidden apps translucent
+        showhidden = true;
+      };
+      finder = {
+        AppleShowAllFiles = true;
+        ShowPathbar = true;
+      };
       spaces.spans-displays = false;
       trackpad = {
         Clicking = true;
@@ -29,6 +42,11 @@
         TrackpadRightClick = true;
         TrackpadThreeFingerDrag = true;
       };
+      NSGlobalDomain.NSWindowShouldDragOnGesture = true;
+      NSGlobalDomain.NSNavPanelExpandedStateForSaveMode = true;
+      NSGlobalDomain.NSNavPanelExpandedStateForSaveMode2 = true;
+      # Whether to enable natural scroll direction
+      NSGlobalDomain."com.apple.swipescrolldirection" = false;
     };
   };
 
