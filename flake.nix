@@ -86,7 +86,7 @@
             ./hosts/work-vm.nix
           ];
           extraSpecialArgs = {
-            inherit username;
+            inherit username aerospace;
           };
         };
     };
