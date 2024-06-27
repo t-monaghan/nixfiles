@@ -8,7 +8,7 @@ enable-normalization-flatten-containers = false
 default-root-container-orientation = 'auto'
 default-root-container-layout      = 'accordion'
 
-indent-for-nested-containers-with-the-same-orientation = 30
+# indent-for-nested-containers-with-the-same-orientation = 30
 
 key-mapping.preset = 'qwerty'
 

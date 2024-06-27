@@ -7,7 +7,6 @@ with pkgs;
   nil
   act
   asciinema
-  udev-gothic-nf
   python3
   python311Packages.python-lsp-server
   tree
@@ -31,4 +30,5 @@ with pkgs;
   golangci-lint-langserver
   shell-gpt
   aerospace
+  udev-gothic-nf
 ]

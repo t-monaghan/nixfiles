@@ -36,6 +36,9 @@
   };
 
   functions = {
+    fish_greeting = {
+      body = ''fastfetch'';
+    };
     starship_transient_rprompt_func = {
       body = ''starship module time'';
     };

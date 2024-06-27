@@ -13,6 +13,8 @@
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
 
+  environment.shells = [ /etc/profiles/per-user/tom.monaghan/bin/fish ];
+
   system = {
     # Used for backwards compatibility, please read the changelog before changing.
     # $ darwin-rebuild changelog
@@ -51,7 +53,10 @@
   };
 
   # TODO: Investigate why this **MUST** be zsh. Breaks config if changed to fish/bash
-  programs.zsh.enable = true;
+  programs = {
+zsh.enable = true;
+    fish.enable = true;
+  };
 
   nixpkgs.config.allowUnfree = true;
   # The platform the configuration will be used on.

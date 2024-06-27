@@ -39,6 +39,8 @@
     navi.enable = true;
     navi.enableFishIntegration = true;
 
+    fastfetch.enable = true;
+
     tmux = {
       enable = true;
       mouse = true;
