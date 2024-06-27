@@ -2,6 +2,7 @@
   {
     "context": "Workspace",
     "bindings": {
+      "cmd-shift-d": "diagnostics::Deploy",
       "alt-cmd-o": [
         "projects::OpenRecent",
         {

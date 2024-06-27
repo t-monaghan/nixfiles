@@ -7,31 +7,76 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "preview_tabs": { "enable_preview_from_file_finder": true },
+  "preview_tabs": {
+    "enable_preview_from_file_finder": true
+  },
   "auto_update_extensions": {
     "toml": false
   },
-  "theme": "Solarized Light",
+  "tabs": {
+    "git_status": true
+  },
+  "theme": {
+    "mode": "system",
+    "dark": "Gruvbox Dark Soft",
+    "light": "Solarized Light"
+  },
   "telemetry": {
     "diagnostics": false,
     "metrics": false
   },
-  "languages": {
-    "Markdown": { "soft_wrap": "editor_width" },
-    "Plain Text": { "soft_wrap": "editor_width" }
-  },
+  "soft_wrap": "none",
   "relative_line_numbers": true,
   "cursor_blink": false,
   "vim_mode": true,
-  "vim": { "use_system_clipboard": "on_yank" },
+  "vim": {
+    "use_system_clipboard": "on_yank"
+  },
   "ui_font_size": 15,
   "buffer_font_size": 15,
   "ui_font_family": "UDEV Gothic 35NF",
   "buffer_font_family": "UDEV Gothic 35NF",
   "terminal": {
+    "button": false,
     "font_size": 15,
     "copy_on_select": true,
     "font_family": "UDEV Gothic 35NF"
   },
-  "autosave": "on_window_change"
+  "chat_panel": {
+    "button": false
+  },
+  "notification_panel": {
+    "button": false
+  },
+  "autosave": "on_focus_change",
+  "lsp": {
+    "golangci-lint": {
+      "binary": {
+        "path": "golangci-lint-langserver",
+        "arguments": ["run", "--out-format", "json", "--issues-exit-code=1"]
+      }
+    }
+  },
+  "languages": {
+    "Go": {
+      "language_servers": ["golangci-lint", "gopls"]
+    },
+    "Markdown": {
+      "soft_wrap": "editor_width"
+    }
+    // "Plain Text": { "soft_wrap": "editor_width" }
+  },
+  "assistant": {
+    "version": "1",
+    "provider": {
+      "default_model": {
+        "name": "phi3:latest",
+        "max_tokens": 2048,
+        "keep_alive": "10m"
+      },
+      "name": "ollama",
+      // Recommended setting to allow for model startup
+      "low_speed_timeout_in_seconds": null
+    }
+  }
 }

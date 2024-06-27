@@ -14,5 +14,12 @@
     // Whether to allow multiple instances of the same task to be run, or rather wait for the existing ones to finish, defaults to `false`.
     "allow_concurrent_runs": false,
     "reveal": "always"
+  },
+  {
+    "label": "Watch GitHub Run",
+    "command": "gh run watch",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true,
+    "reveal": "always"
   }
 ]
