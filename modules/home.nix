@@ -6,12 +6,9 @@
   home = with pkgs; {
     stateVersion = "23.11";
     packages = import ./packages.nix { pkgs = pkgs; aerospace = aerospace; };
-    file.aerospace = {
-      source = ../dots/aerospace.toml;
-      target = ".config/aerospace/aerospace.toml";
-    };
   };
 
+  # TODO: aerospace plist
   launchd.agents.jankyborders = {
     enable = true;
     config = rec {
@@ -20,6 +17,11 @@
       ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf" "hidpi=on" ];
       RunAtLoad = true;
     };
+  };
+
+  xdg.configFile.aerospace = {
+    source = ../dots/aerospace.toml;
+    target = "aerospace/aerospace.toml";
   };
 
   programs = {
@@ -39,6 +41,20 @@
     navi.enable = true;
     navi.enableFishIntegration = true;
 
+    # Config to look like example 6 with
+    # - os
+    # - host
+    # - uptime
+    # - loadavg
+    # - packages
+    # - shell
+    # - terminal
+    # archey example style colors after terminal
+    # - terminal font
+    # - cpu usage
+    # - mem usage
+    # - disk
+    # - weather
     fastfetch.enable = true;
 
     tmux = {
