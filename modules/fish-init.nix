@@ -1,4 +1,5 @@
 ''
+  fish_add_path $HOME/.rd/bin
   set -gx fish_color_autosuggestion brblue
   bind \cx\ce edit_command_buffer
 
