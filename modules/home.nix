@@ -3,7 +3,7 @@
 
   nix.gc.automatic = true;
 
-  home = with pkgs; {
+  home = {
     stateVersion = "23.11";
     packages = import ./packages.nix { pkgs = pkgs; aerospace = aerospace; };
   };
