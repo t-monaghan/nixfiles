@@ -23,9 +23,8 @@
     drs = "devbox run setup";
     drp = "devbox run populate";
     dsu = "devbox services up --pcflags '--keep-tui'";
+    hs = "hotel services";
     rmd = "rm -rf .devbox";
-
-    cop = "gh copilot";
 
     zed = "open -a Zed . && exit";
     rt = "trash-put";
