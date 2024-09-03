@@ -48,7 +48,7 @@
       NSGlobalDomain.NSNavPanelExpandedStateForSaveMode = true;
       NSGlobalDomain.NSNavPanelExpandedStateForSaveMode2 = true;
       # Whether to enable natural scroll direction
-      NSGlobalDomain."com.apple.swipescrolldirection" = false;
+      NSGlobalDomain."com.apple.swipescrolldirection" = true;
     };
   };
 
