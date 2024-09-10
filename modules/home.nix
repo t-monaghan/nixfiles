@@ -1,4 +1,4 @@
-{ pkgs, username, aerospace, ... }: {
+{ lib, pkgs, username, aerospace, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
@@ -55,7 +55,10 @@
     # - mem usage
     # - disk
     # - weather
-    fastfetch.enable = true;
+    fastfetch = {
+      enable = true;
+      settings = builtins.fromJSON (builtins.readFile ../dots/fastfetch.jsonc);
+    };
 
     tmux = {
       enable = true;
