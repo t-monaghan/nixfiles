@@ -7,6 +7,12 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "language_models": {
+    "ollama": {}
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
   "preview_tabs": {
     "enable_preview_from_file_finder": true
   },
@@ -18,7 +24,7 @@
   },
   "theme": {
     "mode": "system",
-    "dark": "Gruvbox Dark Soft",
+    "dark": "Gruvbox Dark",
     "light": "Solarized Light"
   },
   "telemetry": {
@@ -30,17 +36,21 @@
   "cursor_blink": false,
   "vim_mode": true,
   "vim": {
+    "toggle_relative_line_numbers": true,
     "use_system_clipboard": "on_yank"
   },
+  "scroll_beyond_last_line": "off",
   "ui_font_size": 15,
-  "buffer_font_size": 15,
-  "ui_font_family": "UDEV Gothic 35",
-  "buffer_font_family": "UDEV Gothic 35",
+  "buffer_font_size": 16,
+  "ui_font_family": "UDEV Gothic 35NF",
+  "buffer_font_family": "UDEV Gothic 35NF",
+  "buffer_font_weight": 500,
   "terminal": {
     "button": false,
-    "font_size": 15,
+    "font_size": 16,
     "copy_on_select": true,
-    "font_family": "UDEV Gothic 35NF"
+    "font_family": "UDEV Gothic 35NF",
+    "line_height": "standard"
   },
   "chat_panel": {
     "button": false
@@ -49,34 +59,26 @@
     "button": false
   },
   "autosave": "on_focus_change",
-  "lsp": {
-    "golangci-lint": {
-      "binary": {
-        "path": "golangci-lint-langserver",
-        "arguments": ["run", "--out-format", "json", "--issues-exit-code=1"]
-      }
-    }
-  },
+  // "lsp": {
+  //   "golangci-lint": {
+  //     "binary": {
+  //       "path": "golangci-lint-langserver",
+  //       "arguments": ["run", "--out-format", "json", "--issues-exit-code=1"]
+  //     }
+  //   }
+  // },
   "languages": {
-    "Go": {
-      "language_servers": ["golangci-lint", "gopls"]
-    },
     "Markdown": {
       "soft_wrap": "editor_width"
     }
     // "Plain Text": { "soft_wrap": "editor_width" }
   },
   "assistant": {
-    "version": "1",
-    "provider": {
-      "default_model": {
-        "name": "phi3:latest",
-        "max_tokens": 2048,
-        "keep_alive": "10m"
-      },
-      "name": "ollama",
-      // Recommended setting to allow for model startup
-      "low_speed_timeout_in_seconds": null
-    }
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-4"
+    },
+    "version": "2",
+    "provider": null
   }
 }
