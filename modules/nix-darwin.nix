@@ -1,14 +1,7 @@
 { pkgs, self }: {
-  # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
 
-  nix.nixPath = [
-    {
-      darwin-config = "$HOME/.nixpkgs/darwin-configuration.nix";
-      nixpkgs = pkgs;
-    }
-    "/nix/var/nix/profiles/per-user/root/channels"
-  ];
+  nix.nixPath = [{ nixpkgs = pkgs; }];
 
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
