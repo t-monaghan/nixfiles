@@ -30,11 +30,6 @@
           };
           modules =
             [
-              ({ config
-               , pkgs
-               , ...
-               }: { })
-              ./modules/home.nix
               ./hosts/culture-amp.nix
             ];
           extraSpecialArgs = {
