@@ -1,11 +1,11 @@
-{ lib, pkgs, username, aerospace, ... }: {
+{ lib, pkgs, username,  ... }: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
 
   home = {
     stateVersion = "23.11";
-    packages = import ./packages.nix { pkgs = pkgs; aerospace = aerospace; };
+    packages = import ./packages.nix { pkgs = pkgs; };
   };
 
   # TODO: aerospace plist

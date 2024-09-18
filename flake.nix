@@ -7,8 +7,6 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    aerospace.url = "github:t-monaghan/aerospace-flake";
-    aerospace.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -16,58 +14,57 @@
     , nix-darwin
     , nixpkgs
     , home-manager
-    , aerospace
     ,
     }:
-    let
-      nix-darwin-configuration = import ./modules/nix-darwin.nix { pkgs = nixpkgs; self = self; };
-    in
     {
-      darwinConfigurations.work =
-        let
-          username = "tom.monaghan";
-        in
-        nix-darwin.lib.darwinSystem {
-          modules = [
-            nix-darwin-configuration
-            home-manager.darwinModules.home-manager
-            {
-              users.users.${username}.home = "/Users/${username}";
-              nix.settings.trusted-users = [ "${username}" ];
-              nix.settings.ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${username} = import ./hosts/culture-amp.nix;
-                extraSpecialArgs = {
-                  inherit username aerospace;
-                };
-              };
-            }
-          ];
-        };
-      darwinConfigurations.personal =
-        let
-          username = "tmonaghan";
-        in
-        nix-darwin.lib.darwinSystem {
-          modules = [
-            nix-darwin-configuration
-            home-manager.darwinModules.home-manager
-            {
-              users.users.${username}.home = "/Users/${username}";
-              nix.settings.trusted-users = [ "${username}" ];
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${username} = import ./hosts/personal.nix;
-                extraSpecialArgs = {
-                  inherit username aerospace;
-                };
-              };
-            }
-          ];
-        };
+
+    homeConfigurations.work =
+    let
+        username = "tom.monaghan";
+    in
+    home-manager.lib.homeManagerConfiguration {
+      pkgs = import nixpkgs {
+        system = "aarch64-darwin";
+        username = username;
+        config.allowUnfree = true;
+      };
+      modules =
+      [
+        ({
+          config,
+          pkgs,
+          ...
+        }:{})
+        ./modules/home.nix
+        ./hosts/culture-amp.nix
+      ];
+      extraSpecialArgs = {
+        inherit username;
+      };
+    };
+
+      # darwinConfigurations.personal =
+      #   let
+      #     username = "tmonaghan";
+      #   in
+      #   nix-darwin.lib.darwinSystem {
+      #     modules = [
+      #       nix-darwin-configuration
+      #       home-manager.darwinModules.home-manager
+      #       {
+      #         users.users.${username}.home = "/Users/${username}";
+      #         nix.settings.trusted-users = [ "${username}" ];
+      #         home-manager = {
+      #           useGlobalPkgs = true;
+      #           useUserPackages = true;
+      #           users.${username} = import ./hosts/personal.nix;
+      #           extraSpecialArgs = {
+      #             inherit username aerospace;
+      #           };
+      #         };
+      #       }
+      #     ];
+      #   };
       # TODO: Figure out why this is needed
       # Expose the package set, including overlays, for convenience.
       darwinPackages = self.darwinConfigurations.personal.pkgs;
@@ -86,7 +83,7 @@
             ./hosts/work-vm.nix
           ];
           extraSpecialArgs = {
-            inherit username aerospace;
+            inherit username ;
           };
         };
     };

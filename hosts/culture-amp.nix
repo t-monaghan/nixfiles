@@ -8,12 +8,13 @@
     packages = [
       nodejs_18
       nodePackages.pnpm
-      yarn
       rubyPackages_3_2.solargraph
-      ollama
     ];
   };
-
+    # nix.settings = {
+    # ssl-cert-file = "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem";
+    # trusted-users = [ "tom.monaghan" ];
+    # };
   xdg.configFile.direnv-fish = {
     target = "fish/conf.d/direnv/fish";
     text = "set -gx DIRENV_WARN_TIMEOUT '1h'";
