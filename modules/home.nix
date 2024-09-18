@@ -13,7 +13,7 @@
     enable = true;
     config = rec {
       Label = "com.felixkratz.jankyborders";
-      Program = "/etc/profiles/per-user/${username}/bin/borders";
+      Program = "/Users/${username}/.nix-profile/bin/borders";
       ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf" "hidpi=on" ];
       RunAtLoad = true;
     };
