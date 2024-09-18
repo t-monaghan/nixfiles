@@ -16,6 +16,7 @@
     gdc = "git difftool --cached";
     ga = "git add";
     gc = "git commit -m";
+    gpr = "gh pr view --web";
 
     ll = "ls -ltra";
 
@@ -36,7 +37,7 @@
 
   functions = {
     fish_greeting = {
-      body = ''fastfetch'';
+      body = '''';
     };
     starship_transient_rprompt_func = {
       body = ''starship module time'';
