@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-if [ "$1" ]; then
-nix --extra-experimental-features nix-command --extra-experimental-features flakes run nix-darwin -- switch --flake .#"$1"
-else
-  echo "usage: ./scripts/darwin-switch {\"personal\", \"work\"}"
-fi

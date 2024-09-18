@@ -1,11 +1,11 @@
-{ lib, pkgs, username, aerospace, ... }: {
+{ lib, pkgs, username,  ... }: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
 
   home = {
     stateVersion = "23.11";
-    packages = import ./packages.nix { pkgs = pkgs; aerospace = aerospace; };
+    packages = import ./packages.nix { pkgs = pkgs; };
   };
 
   # TODO: aerospace plist
@@ -13,7 +13,7 @@
     enable = true;
     config = rec {
       Label = "com.felixkratz.jankyborders";
-      Program = "/etc/profiles/per-user/${username}/bin/borders";
+      Program = "/Users/${username}/.nix-profile/bin/borders";
       ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf" "hidpi=on" ];
       RunAtLoad = true;
     };
