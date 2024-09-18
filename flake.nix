@@ -18,56 +18,51 @@
     }:
     {
 
-    homeConfigurations.work =
-    let
-        username = "tom.monaghan";
-    in
-    home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs {
-        system = "aarch64-darwin";
-        username = username;
-        config.allowUnfree = true;
-      };
-      modules =
-      [
-        ({
-          config,
-          pkgs,
-          ...
-        }:{})
-        ./modules/home.nix
-        ./hosts/culture-amp.nix
-      ];
-      extraSpecialArgs = {
-        inherit username;
-      };
-    };
+      homeConfigurations.work =
+        let
+          username = "tom.monaghan";
+        in
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "aarch64-darwin";
+            username = username;
+            config.allowUnfree = true;
+          };
+          modules =
+            [
+              ({ config
+               , pkgs
+               , ...
+               }: { })
+              ./modules/home.nix
+              ./hosts/culture-amp.nix
+            ];
+          extraSpecialArgs = {
+            inherit username;
+          };
+        };
 
-      # darwinConfigurations.personal =
-      #   let
-      #     username = "tmonaghan";
-      #   in
-      #   nix-darwin.lib.darwinSystem {
-      #     modules = [
-      #       nix-darwin-configuration
-      #       home-manager.darwinModules.home-manager
-      #       {
-      #         users.users.${username}.home = "/Users/${username}";
-      #         nix.settings.trusted-users = [ "${username}" ];
-      #         home-manager = {
-      #           useGlobalPkgs = true;
-      #           useUserPackages = true;
-      #           users.${username} = import ./hosts/personal.nix;
-      #           extraSpecialArgs = {
-      #             inherit username aerospace;
-      #           };
-      #         };
-      #       }
-      #     ];
-      #   };
-      # TODO: Figure out why this is needed
-      # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations.personal.pkgs;
+      darwinConfigurations.personal =
+        let
+          username = "tmonaghan";
+        in
+        nix-darwin.lib.darwinSystem {
+          modules = [
+            home-manager.darwinModules.home-manager
+            {
+              users.users.${username}.home = "/Users/${username}";
+              nix.settings.trusted-users = [ "${username}" ];
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.${username} = import ./hosts/personal.nix;
+                extraSpecialArgs = {
+                  inherit username;
+                };
+              };
+            }
+          ];
+        };
 
       homeConfigurations.work-vm =
         let
@@ -83,7 +78,7 @@
             ./hosts/work-vm.nix
           ];
           extraSpecialArgs = {
-            inherit username ;
+            inherit username;
           };
         };
     };
