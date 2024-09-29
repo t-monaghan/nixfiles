@@ -1,4 +1,4 @@
-{ lib, pkgs, username,  ... }: {
+{ lib, pkgs, username, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
@@ -33,8 +33,6 @@
     alacritty = import ./alacritty.nix;
 
     fish = import ./fish.nix { pkgs = pkgs; };
-
-    gh.enable = true;
 
     jq.enable = true;
 
