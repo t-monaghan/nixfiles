@@ -20,4 +20,5 @@ with pkgs;
   jankyborders
   gopls
   udev-gothic-nf
+  fblog
 ]

@@ -39,23 +39,8 @@
     navi.enable = true;
     navi.enableFishIntegration = true;
 
-    # Config to look like example 6 with
-    # - os
-    # - host
-    # - uptime
-    # - loadavg
-    # - packages
-    # - shell
-    # - terminal
-    # archey example style colors after terminal
-    # - terminal font
-    # - cpu usage
-    # - mem usage
-    # - disk
-    # - weather
-    fastfetch = {
+    eza = {
       enable = true;
-      settings = builtins.fromJSON (builtins.readFile ../dots/fastfetch.jsonc);
     };
 
     tmux = {
@@ -100,12 +85,14 @@
       userEmail = "tomaghan+git@gmail.com";
       extraConfig = {
         push.autoSetupRemote = true;
+        pull.rebase = true;
         init.defaultBranch = "main";
         diff.tool = "difftastic";
         difftool.prompt = false;
         "difftool \"difftastic\"".cmd = ''difft "$LOCAL" "$REMOTE"'';
         pager.difftool = true;
       };
+      ignores = [ ".DS_Store" ];
     };
 
   };

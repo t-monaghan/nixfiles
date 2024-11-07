@@ -2,7 +2,7 @@
 start-at-login = true
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
-enable-normalization-opposite-orientation-for-nested-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = false
 enable-normalization-flatten-containers = false
 
 default-root-container-orientation = 'auto'
@@ -65,6 +65,10 @@ cmd-tab       = 'move-node-to-monitor --wrap-around next'
 
 alt-shift-minus = 'resize smart -200'
 alt-shift-equal = 'resize smart +200'
+
+[[on-window-detected]]
+if.window-title-regex-substring = 'picture-in-picture'
+run = ['layout floating']
 
 # alt-shift-semicolon = 'mode service'
 

@@ -1,11 +1,15 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom
-$character'''
+$status$character'''
 
 right_format = "$memory_usage$battery"
 
 [time]
+disabled = false
+
+[status]
+format = "[$status]($style)"
 disabled = false
 
 [directory]
@@ -34,7 +38,7 @@ symbol = " "
 
 [character]
 success_symbol = "[❯](bold cyan)"
-error_symbol = "[❯](inverted)"
+error_symbol = "[❯](red)"
 
 [battery]
 format = "[$symbol $percentage]($style) "
