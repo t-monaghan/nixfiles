@@ -19,7 +19,7 @@
     gpr = "gh pr view --web";
 
 
-    ll = "ls -l --time-style relative";
+    ll = "ls -ltra";
 
     dr = "devbox run";
     drs = "devbox run setup";

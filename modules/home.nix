@@ -39,10 +39,6 @@
     navi.enable = true;
     navi.enableFishIntegration = true;
 
-    eza = {
-      enable = true;
-    };
-
     tmux = {
       enable = true;
       mouse = true;
