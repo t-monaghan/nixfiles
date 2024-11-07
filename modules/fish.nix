@@ -18,7 +18,8 @@
     gc = "git commit -m";
     gpr = "gh pr view --web";
 
-    ll = "ls -ltra";
+
+    ll = "ls -l --time-style relative";
 
     dr = "devbox run";
     drs = "devbox run setup";
@@ -27,8 +28,9 @@
     hs = "hotel services";
     rmd = "rm -rf .devbox";
 
-    zed = "open -a Zed . && exit";
+    zed = "open -a 'Zed Preview' . && exit";
     rt = "trash-put";
+    hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
   };
 
   shellAliases = {
