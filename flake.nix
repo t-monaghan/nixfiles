@@ -37,26 +37,23 @@
           };
         };
 
-      darwinConfigurations.personal =
+      homeConfigurations.personal =
         let
           username = "tmonaghan";
         in
-        nix-darwin.lib.darwinSystem {
-          modules = [
-            home-manager.darwinModules.home-manager
-            {
-              users.users.${username}.home = "/Users/${username}";
-              nix.settings.trusted-users = [ "${username}" ];
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${username} = import ./hosts/personal.nix;
-                extraSpecialArgs = {
-                  inherit username;
-                };
-              };
-            }
-          ];
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "aarch64-darwin";
+            username = username;
+            config.allowUnfree = true;
+          };
+          modules =
+            [
+              ./hosts/personal.nix
+            ];
+          extraSpecialArgs = {
+            inherit username;
+          };
         };
 
       homeConfigurations.work-vm =
