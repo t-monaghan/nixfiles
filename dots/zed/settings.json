@@ -1,14 +1,6 @@
-// Zed settings
-//
-// For information on how to configure Zed, see the Zed
-// documentation: https://zed.dev/docs/configuring-zed
-//
-// To see all of Zed's default settings without changing your
-// custom settings, run the `open default settings` command
-// from the command palette or from `Zed` application menu.
 {
-  "language_models": {
-    "ollama": {}
+  "project_panel": {
+    "indent_size": 10
   },
   "outline_panel": {
     "dock": "right"
@@ -20,7 +12,8 @@
     "toml": false
   },
   "tabs": {
-    "git_status": true
+    "git_status": true,
+    "file_icons": true
   },
   "theme": {
     "mode": "system",
@@ -46,11 +39,16 @@
   "buffer_font_family": "UDEV Gothic 35NF",
   "buffer_font_weight": 500,
   "terminal": {
-    "button": false,
+    // "button": false,
     "font_size": 16,
     "copy_on_select": true,
     "font_family": "UDEV Gothic 35NF",
     "line_height": "standard"
+  },
+  "git": {
+    "inline_blame": {
+      "show_commit_summary": true
+    }
   },
   "chat_panel": {
     "button": false
@@ -68,6 +66,9 @@
   //   }
   // },
   "languages": {
+    "Plain Text": {
+      "show_inline_completions": false
+    },
     "Markdown": {
       "soft_wrap": "editor_width"
     }
@@ -76,7 +77,7 @@
   "assistant": {
     "default_model": {
       "provider": "copilot_chat",
-      "model": "gpt-4"
+      "model": "gpt-4o"
     },
     "version": "2",
     "provider": null
