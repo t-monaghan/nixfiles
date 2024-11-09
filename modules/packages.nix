@@ -16,7 +16,6 @@ with pkgs;
   fzf
   nixpkgs-fmt
   marksman
-  difftastic
   jankyborders
   gopls
   udev-gothic-nf
