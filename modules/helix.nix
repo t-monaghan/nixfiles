@@ -32,8 +32,16 @@
         formatter = {
           command = "nixpkgs-fmt";
         };
+        language-servers = [ "nixd" ];
       }
     ];
+    language-server.nixd = {
+      command = "nixd";
+      args = [
+        "--inlay-hints"
+        "--semantic-tokens"
+      ];
+    };
   };
   settings = {
     theme = "tmonaghan";

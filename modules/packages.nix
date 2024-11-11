@@ -5,7 +5,7 @@ with pkgs;
   nodePackages_latest.typescript-language-server
   nodePackages_latest.vscode-langservers-extracted
   nodePackages_latest.prettier
-  nil
+  nixd
   python3
   python311Packages.python-lsp-server
   tree
