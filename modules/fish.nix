@@ -31,6 +31,7 @@
     zed = "open -a 'Zed Preview' . && exit";
     rt = "trash-put";
     hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
+    disu = "caffeinate -disu";
   };
 
   shellAliases = {
