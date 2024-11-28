@@ -12,8 +12,8 @@
     gpu = "git pull";
     gs = "git status";
     gl = "git log --compact-summary --oneline";
-    gd = "git diff";
-    gdc = "git diff --cached";
+    gd = "git difftool";
+    gdc = "git difftool --cached";
     ga = "git add";
     gc = "git commit -m";
     gpr = "gh pr view --web";

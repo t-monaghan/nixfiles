@@ -77,16 +77,16 @@
 
     git = {
       enable = true;
-      delta = {
-        enable = true;
-        options = { navigate = true; line-numbers = true; };
-      };
       userName = "t-monaghan";
       userEmail = "tomaghan+git@gmail.com";
       extraConfig = {
         push.autoSetupRemote = true;
         pull.rebase = true;
         init.defaultBranch = "main";
+        diff.tool = "difftastic";
+        difftool.prompt = false;
+        "difftool \"difftastic\"".cmd = ''difft "$LOCAL" "$REMOTE"'';
+        pager.difftool = true;
       };
       ignores = [ ".DS_Store" ];
     };
