@@ -26,6 +26,7 @@ outer.right      = 15
 
 ctrl-alt-j = 'exec-and-forget open -na Alacritty'
 ctrl-alt-k = 'exec-and-forget open -na Firefox'
+ctrl-alt-l = 'exec-and-forget open -a "Google Meet"'
 
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
