@@ -7,6 +7,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   outputs =
@@ -14,6 +15,7 @@
     , nix-darwin
     , nixpkgs
     , home-manager
+    , mac-app-util
     ,
     }:
     {
@@ -30,6 +32,7 @@
           };
           modules =
             [
+              mac-app-util.homeManagerModules.default
               ./hosts/culture-amp.nix
             ];
           extraSpecialArgs = {
