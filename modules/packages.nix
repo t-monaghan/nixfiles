@@ -21,4 +21,5 @@ with pkgs;
   gopls
   udev-gothic-nf
   fblog
+  ghostty
 ]
