@@ -1,6 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom
+format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$aws$custom
 $status$character'''
 
 right_format = "$memory_usage$battery"
@@ -39,6 +39,8 @@ symbol = " "
 [character]
 success_symbol = "[❯](bold cyan)"
 error_symbol = "[❯](red)"
+vimcmd_symbol = "[ ](green)"
+vimcmd_visual_symbol = "[ ](yellow)"
 
 [battery]
 format = "[$symbol $percentage]($style) "
@@ -96,7 +98,7 @@ else
 fi
 '''
 style="bold blue"
-symbol = ""
+symbol = " "
 format = "[$symbol v($output )]($style)"
 
 [custom.direnv]

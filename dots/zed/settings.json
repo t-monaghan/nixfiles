@@ -1,4 +1,7 @@
 {
+  "collaboration_panel": {
+    "dock": "right"
+  },
   "project_panel": {
     "indent_size": 10
   },
@@ -13,11 +16,12 @@
   },
   "tabs": {
     "git_status": true,
-    "file_icons": true
+    "file_icons": true,
+    "show_diagnostics": "all"
   },
   "theme": {
     "mode": "system",
-    "dark": "Gruvbox Dark",
+    "dark": "One Dark",
     "light": "Solarized Light"
   },
   "telemetry": {
@@ -30,7 +34,7 @@
   "vim_mode": true,
   "vim": {
     "toggle_relative_line_numbers": true,
-    "use_system_clipboard": "on_yank"
+    "use_system_clipboard": "always"
   },
   "scroll_beyond_last_line": "off",
   "ui_font_size": 15,
@@ -39,6 +43,7 @@
   "buffer_font_family": "UDEV Gothic 35NF",
   "buffer_font_weight": 500,
   "terminal": {
+    "env": { "DFT_BACKGROUND": "light", "BAT_THEME": "Solarized (light)" },
     // "button": false,
     "font_size": 16,
     "copy_on_select": true,
@@ -51,7 +56,7 @@
     }
   },
   "chat_panel": {
-    "button": false
+    "button": "never"
   },
   "notification_panel": {
     "button": false
@@ -66,6 +71,12 @@
   //   }
   // },
   "languages": {
+    "Dockerfile": {
+      "format_on_save": "off"
+    },
+    "TypeScript": {
+      "format_on_save": "off"
+    },
     "Plain Text": {
       "show_inline_completions": false
     },
@@ -75,11 +86,15 @@
     // "Plain Text": { "soft_wrap": "editor_width" }
   },
   "assistant": {
+    "version": "2",
     "default_model": {
       "provider": "copilot_chat",
       "model": "gpt-4o"
     },
-    "version": "2",
-    "provider": null
-  }
+    "inline_alternatives": [
+      { "provider": "copilot_chat", "model": "gpt-4o" },
+      { "provider": "copilot_chat", "model": "gpt-4" }
+    ]
+  },
+  "show_diagnostics": true
 }

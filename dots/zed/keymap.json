@@ -1,8 +1,8 @@
 [
   {
-    "context": "Workspace",
     "bindings": {
-      "cmd-shift-d": "diagnostics::Deploy"
+      "cmd-shift-d": "diagnostics::Deploy",
+      "cmd-o": "projects::OpenRecent"
     }
   },
   {

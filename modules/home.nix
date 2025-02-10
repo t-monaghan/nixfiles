@@ -19,10 +19,7 @@
     };
   };
 
-  xdg.configFile.aerospace = {
-    source = ../dots/aerospace.toml;
-    target = "aerospace/aerospace.toml";
-  };
+  xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
   programs = {
 
@@ -38,6 +35,11 @@
 
     navi.enable = true;
     navi.enableFishIntegration = true;
+
+    aerospace = {
+      enable = true;
+      userSettings = ../dots/aerospace.nix;
+    };
 
     tmux = {
       enable = true;
@@ -64,7 +66,7 @@
     bat = {
       enable = true;
       config = {
-        theme = "gruvbox-light";
+        theme = "gruvbox-dark";
       };
     };
 
