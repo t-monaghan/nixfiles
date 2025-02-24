@@ -1,33 +1,33 @@
-# Colors (Challenger Deep)
+# Colors (Tomorrow Night Eighties)
 
-transparent_background_colors = true
-# Default colors
-[primary]
-background = '#1e1c31'
-foreground = '#cbe1e7'
+[bright]
+black = '#000000'
+blue = '#6699cc'
+cyan = '#66cccc'
+green = '#99cc99'
+magenta = '#cc99cc'
+red = '#f2777a'
+white = '#ffffff'
+yellow = '#ffcc66'
 
 [cursor]
-text = '#ff271d'
-cursor = '#fbfcfc'
+cursor = '#cccccc'
+text = '#2d2d2d'
 
-# Normal colors
 [normal]
-black   = '#141228'
-red     = '#ff5458'
-green   = '#62d196'
-yellow  = '#ffb378'
-blue    = '#65b2ff'
-magenta = '#906cff'
-cyan    = '#63f2f1'
-white   = '#a6b3cc'
+black = '#000000'
+blue = '#6699cc'
+cyan = '#66cccc'
+green = '#99cc99'
+magenta = '#cc99cc'
+red = '#f2777a'
+white = '#ffffff'
+yellow = '#ffcc66'
 
-# Bright colors
-[bright]
-black   = '#565575'
-red     = '#ff8080'
-green   = '#95ffa4'
-yellow  = '#ffe9aa'
-blue    = '#91ddff'
-magenta = '#c991e1'
-cyan    = '#aaffe4'
-white   = '#cbe3e7'
+[primary]
+background = '#2d2d2d'
+foreground = '#cccccc'
+
+[selection]
+background = '#515151'
+text = '#cccccc'

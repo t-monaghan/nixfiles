@@ -8,7 +8,7 @@
       option_as_alt = "Both";
 
       decorations = "buttonless";
-      opacity = 0.65;
+      opacity = 0.75;
       blur = true;
       dimensions = {
         columns = 100;
@@ -20,7 +20,7 @@
       family = "UDEV Gothic 35NF";
       style = "Regular";
     };
-    font.size = 17.0;
+    font.size = 16.0;
     colors = builtins.fromTOML (builtins.readFile ../dots/alacritty-colors.toml);
     mouse.hide_when_typing = true;
     scrolling.multiplier = 2;
