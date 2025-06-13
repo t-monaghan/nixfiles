@@ -17,6 +17,7 @@
     ga = "git add";
     gc = "git commit -m";
     gpr = "gh pr view --web";
+    gsc = "git stash clear";
 
 
     ll = "ls -ltra";
