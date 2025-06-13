@@ -1,6 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$aws$custom
+format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom
 $status$character'''
 
 right_format = "$memory_usage$battery"
