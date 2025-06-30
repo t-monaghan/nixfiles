@@ -16,9 +16,10 @@ with pkgs;
   fzf
   nixpkgs-fmt
   marksman
-  difftastic
   jankyborders
   gopls
   udev-gothic-nf
   fblog
+  kotlin-language-server
+  hyperfine
 ]

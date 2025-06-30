@@ -46,6 +46,10 @@
     starship_transient_rprompt_func = {
       body = ''starship module time'';
     };
+    gw = {
+      wraps = ''gradle'';
+      body = ''./gradlew $argv'';
+    };
   };
 
   plugins = [

@@ -1,4 +1,12 @@
 {
+  "show_edit_predictions": true,
+  "edit_predictions": {
+    "enabled_in_text_threads": false,
+    "mode": "subtle"
+  },
+  "features": {
+    "edit_prediction_provider": "copilot"
+  },
   "collaboration_panel": {
     "dock": "right"
   },
@@ -22,23 +30,23 @@
   "theme": {
     "mode": "system",
     "dark": "One Dark",
-    "light": "Solarized Light"
+    "light": "Zed Legacy: Solarized Light"
   },
   "telemetry": {
     "diagnostics": false,
     "metrics": false
   },
   "soft_wrap": "none",
-  "relative_line_numbers": true,
+  // "relative_line_numbers": true,
   "cursor_blink": false,
   "vim_mode": true,
   "vim": {
-    "toggle_relative_line_numbers": true,
+    // "toggle_relative_line_numbers": true,
     "use_system_clipboard": "always"
   },
   "scroll_beyond_last_line": "off",
   "ui_font_size": 15,
-  "buffer_font_size": 16,
+  "buffer_font_size": 14.0,
   "ui_font_family": "UDEV Gothic 35NF",
   "buffer_font_family": "UDEV Gothic 35NF",
   "buffer_font_weight": 500,
@@ -71,6 +79,12 @@
   //   }
   // },
   "languages": {
+    "JSONC": {
+      "show_edit_predictions": false
+    },
+    "Kotlin": {
+      "format_on_save": "off"
+    },
     "Dockerfile": {
       "format_on_save": "off"
     },
@@ -78,23 +92,44 @@
       "format_on_save": "off"
     },
     "Plain Text": {
-      "show_inline_completions": false
+      "show_edit_predictions": false
     },
     "Markdown": {
       "soft_wrap": "editor_width"
     }
     // "Plain Text": { "soft_wrap": "editor_width" }
   },
-  "assistant": {
+  "language_models": { "zed.dev": { "available_models": [] } },
+  "agent": {
     "version": "2",
     "default_model": {
       "provider": "copilot_chat",
-      "model": "gpt-4o"
+      "model": "claude-3.7-sonnet-thought"
     },
     "inline_alternatives": [
       { "provider": "copilot_chat", "model": "gpt-4o" },
       { "provider": "copilot_chat", "model": "gpt-4" }
     ]
   },
-  "show_diagnostics": true
+  "show_diagnostics": true,
+  "lsp": {
+    "biome": {
+      "settings": {
+        "require_config_file": true
+      }
+    },
+    "yaml-language-server": {
+      "settings": {
+        "yaml": {
+          "schemas": {
+            "https://raw.githubusercontent.com/cultureamp/devbox-extras/main/process-compose/schema.yaml": "/process-compose.yaml"
+          }
+        }
+      }
+    }
+  },
+  "code_actions_on_format": {
+    "source.fixAll.biome": true,
+    "source.organizeImports.biome": true
+  }
 }

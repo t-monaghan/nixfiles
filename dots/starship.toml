@@ -2,7 +2,6 @@
 
 format = '''$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom
 $status$character'''
-
 right_format = "$memory_usage$battery"
 
 [time]
