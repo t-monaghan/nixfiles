@@ -53,10 +53,6 @@
       escapeTime = 100;
       keyMode = "vi";
       customPaneNavigationAndResize = true;
-      extraConfig = ''
-        set-option -g automatic-rename on
-        set-option -g automatic-rename-format '#{b:pane_current_path}'
-      '';
     };
 
     zoxide = {
@@ -95,9 +91,10 @@
         push.autoSetupRemote = true;
         pull.rebase = true;
         init.defaultBranch = "main";
-        difftastic = {
-          enableAsDifftool = true;
-        };
+        diff.tool = "difftastic";
+        difftool.prompt = false;
+        "difftool \"difftastic\"".cmd = ''difft "$LOCAL" "$REMOTE"'';
+        pager.difftool = true;
       };
       ignores = [ ".DS_Store" ];
     };
