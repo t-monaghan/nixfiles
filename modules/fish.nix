@@ -9,14 +9,14 @@
 
     gco = "git checkout";
     gp = "git push";
-    gpu = "git pull";
+    gpu = "git pull --autostash --rebase";
     gs = "git status";
     gl = "git log --compact-summary --oneline";
     gd = "git difftool";
     gdc = "git difftool --cached";
     ga = "git add";
     gc = "git commit -m";
-    gpr = "gh pr view --web";
+    ghpr = "gh pr view --web";
     gsc = "git stash clear";
 
 
