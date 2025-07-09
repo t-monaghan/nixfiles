@@ -16,7 +16,7 @@
     gdc = "git difftool --cached";
     ga = "git add";
     gc = "git commit -m";
-    ghpr = "gh pr view --web";
+    ghpr = "gh pr checkout";
     gsc = "git stash clear";
     gsa = "git stash apply";
 
