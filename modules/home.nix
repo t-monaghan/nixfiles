@@ -23,6 +23,12 @@
 
   programs = {
 
+    neovim.enable = true;
+
+    ripgrep.enable = true;
+
+    fd.enable = true;
+
     home-manager.enable = true;
 
     helix = import ./helix.nix;
