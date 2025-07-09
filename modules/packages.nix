@@ -22,4 +22,5 @@ with pkgs;
   fblog
   kotlin-language-server
   hyperfine
+  difftastic
 ]
