@@ -18,6 +18,7 @@
     gc = "git commit -m";
     ghpr = "gh pr view --web";
     gsc = "git stash clear";
+    gsa = "git stash apply";
 
 
     ll = "ls -ltra";
