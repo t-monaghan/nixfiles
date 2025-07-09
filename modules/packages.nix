@@ -23,4 +23,5 @@ with pkgs;
   kotlin-language-server
   hyperfine
   difftastic
+  golangci-lint
 ]
