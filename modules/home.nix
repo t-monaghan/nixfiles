@@ -1,11 +1,15 @@
-{ pkgs, username, ... }: {
+{
+  pkgs,
+  username,
+  ...
+}: {
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
 
   home = {
     stateVersion = "23.11";
-    packages = import ./packages.nix { pkgs = pkgs; };
+    packages = import ./packages.nix {pkgs = pkgs;};
   };
 
   # TODO: aerospace plist
@@ -14,7 +18,7 @@
     config = rec {
       Label = "com.felixkratz.jankyborders";
       Program = "/Users/${username}/.nix-profile/bin/borders";
-      ProgramArguments = [ Program "width=8" "active_color=0xffcff1bf" "hidpi=on" ];
+      ProgramArguments = [Program "width=8" "active_color=0xffcff1bf" "hidpi=on"];
       RunAtLoad = true;
     };
   };
@@ -22,8 +26,10 @@
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
   programs = {
-
-    neovim.enable = true;
+    neovim = {
+      enable = true;
+      defaultEditor = true;
+    };
 
     ripgrep.enable = true;
 
@@ -35,7 +41,7 @@
 
     alacritty = import ./alacritty.nix;
 
-    fish = import ./fish.nix { pkgs = pkgs; };
+    fish = import ./fish.nix {pkgs = pkgs;};
 
     jq.enable = true;
 
@@ -58,7 +64,7 @@
     zoxide = {
       enable = true;
       enableFishIntegration = true;
-      options = [ "--cmd j" ];
+      options = ["--cmd j"];
     };
 
     mcfly = {
@@ -96,8 +102,7 @@
         "difftool \"difftastic\"".cmd = ''difft "$LOCAL" "$REMOTE"'';
         pager.difftool = true;
       };
-      ignores = [ ".DS_Store" ];
+      ignores = [".DS_Store"];
     };
-
   };
 }

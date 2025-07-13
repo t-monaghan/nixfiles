@@ -1,6 +1,5 @@
-{ pkgs }:
-with pkgs;
-[
+{pkgs}:
+with pkgs; [
   nodePackages_latest.bash-language-server
   nodePackages_latest.typescript-language-server
   nodePackages_latest.vscode-langservers-extracted
@@ -24,4 +23,7 @@ with pkgs;
   hyperfine
   difftastic
   golangci-lint
+  stylua
+  lua-language-server
+  alejandra
 ]
