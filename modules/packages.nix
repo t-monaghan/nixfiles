@@ -26,4 +26,6 @@ with pkgs; [
   stylua
   lua-language-server
   alejandra
+  nil
+  gopls
 ]
