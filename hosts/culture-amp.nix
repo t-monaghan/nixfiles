@@ -1,5 +1,8 @@
-{ pkgs, username, ... }: {
-
+{
+  pkgs,
+  username,
+  ...
+}: {
   imports = [
     ../modules/home.nix
   ];
@@ -19,6 +22,12 @@
       hide_env_diff = true
       warn_timeout = "1h"
     '';
+  };
+
+  programs.fish.shellAbbrs = {
+    "hsu" = "hotel services up";
+    "hsl" = "hotel services logs --follow --all";
+    "hsd" = "hotel services down";
   };
 
   programs.fish.functions = {
