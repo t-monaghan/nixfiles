@@ -1,10 +1,12 @@
-{ pkgs }:
-{
+{pkgs}: {
   enable = true;
 
   loginShellInit = import ./fish-init.nix;
 
   shellAbbrs = {
+    ci = "gh altar ci > /dev/null 2>&1 & disown";
+    stats = "curl 'http://192.168.1.97/api/stats' | jq";
+
     chmox = "chmod a+x";
 
     gco = "git checkout";
@@ -19,7 +21,6 @@
     ghpr = "gh pr checkout";
     gsc = "git stash clear";
     gsa = "git stash apply";
-
 
     ll = "ls -ltra";
 
@@ -54,7 +55,7 @@
   };
 
   plugins = [
-    { inherit (pkgs.fishPlugins.foreign-env) name src; }
+    {inherit (pkgs.fishPlugins.foreign-env) name src;}
     {
       name = "pnpm-shell-completion";
       src = pkgs.fetchFromGitHub {
@@ -65,5 +66,4 @@
       };
     }
   ];
-
 }
