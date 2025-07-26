@@ -5,6 +5,7 @@
 
   shellAbbrs = {
     ci = "gh altar ci > /dev/null 2>&1 & disown";
+    dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
     stats = "curl 'http://192.168.1.97/api/stats' | jq";
 
     chmox = "chmod a+x";
