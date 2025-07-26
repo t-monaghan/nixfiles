@@ -5,8 +5,6 @@ with pkgs; [
   nodePackages_latest.vscode-langservers-extracted
   nodePackages_latest.prettier
   nixd
-  python3
-  python311Packages.python-lsp-server
   tree
   yaml-language-server
   shellcheck
