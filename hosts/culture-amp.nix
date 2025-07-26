@@ -28,6 +28,7 @@
     "hsu" = "hotel services up";
     "hsl" = "hotel services logs --follow --all";
     "hsd" = "hotel services down";
+    "hsls" = "hotel services list";
   };
 
   programs.fish.functions = {
