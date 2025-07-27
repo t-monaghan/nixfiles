@@ -14,7 +14,7 @@
     outer.bottom = 15;
   };
   mode.main.binding = {
-    "ctrl-alt-j" = "exec-and-forget open -na Alacritty";
+    "ctrl-alt-j" = "exec-and-forget open -na Ghostty";
     "ctrl-alt-k" = "exec-and-forget open -na Firefox";
     "ctrl-alt-l" = "exec-and-forget open -a 'Google Meet'";
 
