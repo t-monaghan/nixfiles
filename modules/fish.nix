@@ -22,6 +22,7 @@
     ghpr = "gh pr checkout";
     gsc = "git stash clear";
     gsa = "git stash apply";
+    gcob = "git checkout -b";
 
     ll = "ls -ltra";
 
