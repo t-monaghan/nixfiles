@@ -18,19 +18,18 @@
     };
   };
 
-  # TODO: aerospace plist
-  launchd.agents.jankyborders = {
-    enable = true;
-    config = rec {
-      Label = "com.felixkratz.jankyborders";
-      Program = "/Users/${username}/.nix-profile/bin/borders";
-      ProgramArguments = [Program "width=8" "active_color=0xffcff1bf" "hidpi=on"];
-      RunAtLoad = true;
-    };
-  };
-
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
+  services = {
+    jankyborders = {
+      enable = true;
+      settings = {
+        active_color = "0xffcff1bf";
+        hidpi = "on";
+        width = 8;
+      };
+    };
+  };
   programs = {
     ripgrep.enable = true;
 

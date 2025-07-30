@@ -13,7 +13,6 @@ with pkgs; [
   fzf
   nixpkgs-fmt
   marksman
-  jankyborders
   gopls
   udev-gothic-nf
   fblog
