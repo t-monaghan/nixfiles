@@ -15,6 +15,8 @@
     file = {
       # TODO: create absolute links from home variables
       "/Users/tom.monaghan/.config/zed/settings.json".source = config.lib.file.mkOutOfStoreSymlink /Users/tom.monaghan/dev/nixfiles/dots/zed/settings.json;
+      "/Users/tom.monaghan/.config/nvim".source = config.lib.file.mkOutOfStoreSymlink /Users/tom.monaghan/dev/nixfiles/dots/kickstart.nvim;
+      # TODO: symlink to nvim repo as submodule in nixfiles
     };
   };
 
