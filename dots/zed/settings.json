@@ -1,14 +1,11 @@
 {
-  "show_edit_predictions": true,
+  "collaboration_panel": { "button": false },
+  "lsp_document_colors": "background",
+  "show_edit_predictions": false,
+  "debugger": { "button": false },
   "edit_predictions": {
-    "enabled_in_text_threads": false,
-    "mode": "subtle"
-  },
-  "features": {
-    "edit_prediction_provider": "copilot"
-  },
-  "collaboration_panel": {
-    "dock": "right"
+    "disabled_globs": ["*"],
+    "enabled_in_text_threads": false
   },
   "project_panel": {
     "indent_size": 10
@@ -29,30 +26,31 @@
   },
   "theme": {
     "mode": "system",
-    "dark": "One Dark",
-    "light": "Zed Legacy: Solarized Light"
+    "dark": "Everforest Dark Soft",
+    "light": "Everforest Dark Soft"
   },
   "telemetry": {
     "diagnostics": false,
     "metrics": false
   },
   "soft_wrap": "none",
-  // "relative_line_numbers": true,
   "cursor_blink": false,
   "vim_mode": true,
   "vim": {
-    // "toggle_relative_line_numbers": true,
     "use_system_clipboard": "always"
   },
   "scroll_beyond_last_line": "off",
   "ui_font_size": 15,
-  "buffer_font_size": 14.0,
+  "buffer_font_size": 16,
   "ui_font_family": "UDEV Gothic 35NF",
   "buffer_font_family": "UDEV Gothic 35NF",
   "buffer_font_weight": 500,
   "terminal": {
-    "env": { "DFT_BACKGROUND": "light", "BAT_THEME": "Solarized (light)" },
-    // "button": false,
+    "env": {
+      "DFT_BACKGROUND": "light",
+      "BAT_THEME": "Solarized (light)",
+      "EDITOR": "nvim"
+    },
     "font_size": 16,
     "copy_on_select": true,
     "font_family": "UDEV Gothic 35NF",
@@ -70,21 +68,7 @@
     "button": false
   },
   "autosave": "on_focus_change",
-  // "lsp": {
-  //   "golangci-lint": {
-  //     "binary": {
-  //       "path": "golangci-lint-langserver",
-  //       "arguments": ["run", "--out-format", "json", "--issues-exit-code=1"]
-  //     }
-  //   }
-  // },
   "languages": {
-    "JSONC": {
-      "show_edit_predictions": false
-    },
-    "Kotlin": {
-      "format_on_save": "off"
-    },
     "Dockerfile": {
       "format_on_save": "off"
     },
@@ -97,39 +81,44 @@
     "Markdown": {
       "soft_wrap": "editor_width"
     }
-    // "Plain Text": { "soft_wrap": "editor_width" }
   },
-  "language_models": { "zed.dev": { "available_models": [] } },
   "agent": {
-    "version": "2",
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
+    },
     "default_model": {
       "provider": "copilot_chat",
-      "model": "claude-3.7-sonnet-thought"
+      "model": "gpt-4.1"
     },
     "inline_alternatives": [
       { "provider": "copilot_chat", "model": "gpt-4o" },
       { "provider": "copilot_chat", "model": "gpt-4" }
     ]
   },
-  "show_diagnostics": true,
   "lsp": {
-    "biome": {
-      "settings": {
-        "require_config_file": true
-      }
-    },
     "yaml-language-server": {
       "settings": {
         "yaml": {
+          "format": {
+            "singleQuote": true
+          },
           "schemas": {
             "https://raw.githubusercontent.com/cultureamp/devbox-extras/main/process-compose/schema.yaml": "/process-compose.yaml"
           }
         }
       }
+    },
+    "golangci-lint": {
+      "initialization_options": {
+        "command": [
+          "golangci-lint",
+          "run",
+          "--output.json.path=stdout",
+          "--show-stats=false",
+          "--issues-exit-code=1"
+        ]
+      }
     }
-  },
-  "code_actions_on_format": {
-    "source.fixAll.biome": true,
-    "source.organizeImports.biome": true
   }
 }

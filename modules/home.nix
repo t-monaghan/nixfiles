@@ -1,6 +1,7 @@
 {
   pkgs,
   username,
+  config,
   ...
 }: {
   nixpkgs.config.allowUnfree = true;
@@ -10,6 +11,11 @@
   home = {
     stateVersion = "23.11";
     packages = import ./packages.nix {pkgs = pkgs;};
+
+    file = {
+      # TODO: create absolute links from home variables
+      "/Users/tom.monaghan/.config/zed/settings.json".source = config.lib.file.mkOutOfStoreSymlink /Users/tom.monaghan/dev/nixfiles/dots/zed/settings.json;
+    };
   };
 
   # TODO: aerospace plist
@@ -26,11 +32,6 @@
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
   programs = {
-    neovim = {
-      enable = true;
-      defaultEditor = true;
-    };
-
     ripgrep.enable = true;
 
     fd.enable = true;
@@ -45,8 +46,15 @@
 
     jq.enable = true;
 
-    navi.enable = true;
-    navi.enableFishIntegration = true;
+    neovim = {
+      enable = true;
+      defaultEditor = true;
+    };
+
+    navi = {
+      enable = true;
+      enableFishIntegration = true;
+    };
 
     aerospace = {
       enable = true;
