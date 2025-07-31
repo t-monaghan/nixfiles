@@ -4,7 +4,6 @@ with pkgs; [
   # cli tools
   tree
   killport
-  fzf
   fblog
   hyperfine
   difftastic
