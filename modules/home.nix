@@ -13,10 +13,10 @@
     packages = import ./packages.nix {pkgs = pkgs;};
 
     file = {
-      # TODO: create absolute links from home variables
-      "/Users/tom.monaghan/.config/zed/settings.json".source = config.lib.file.mkOutOfStoreSymlink /Users/tom.monaghan/dev/nixfiles/dots/zed/settings.json;
-      "/Users/tom.monaghan/.config/nvim".source = config.lib.file.mkOutOfStoreSymlink /Users/tom.monaghan/dev/nixfiles/dots/kickstart.nvim;
-      # TODO: symlink to nvim repo as submodule in nixfiles
+      "${config.home.homeDirectory}/.config/zed/settings.json".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/zed/settings.json";
+      "${config.home.homeDirectory}/.config/nvim".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/kickstart.nvim";
     };
   };
 
