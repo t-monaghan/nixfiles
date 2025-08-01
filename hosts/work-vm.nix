@@ -1,5 +1,7 @@
-{ ... }:
-{
+{...}: {
+  imports = [
+    ../modules/home.nix
+  ];
   home = {
     username = "alanturing";
     homeDirectory = "/Users/alanturing";
@@ -11,4 +13,3 @@
     set -gx NIX_SSL_CERT_FILE '/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem'
   '';
 }
-

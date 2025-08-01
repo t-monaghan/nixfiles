@@ -42,6 +42,7 @@
           config.allowUnfree = true;
         };
         modules = [
+          mac-app-util.homeManagerModules.default
           ./hosts/personal.nix
         ];
         extraSpecialArgs = {
@@ -58,7 +59,6 @@
           config.allowUnfree = true;
         };
         modules = [
-          ./modules/home.nix
           ./hosts/work-vm.nix
         ];
         extraSpecialArgs = {
