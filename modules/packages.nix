@@ -6,7 +6,6 @@ with pkgs; [
   killport
   fblog
   hyperfine
-  difftastic
   # linters
   golangci-lint
   shellcheck
@@ -17,7 +16,6 @@ with pkgs; [
   # lsps
   gopls
   nil
-  gopls
   taplo
   nixd
   marksman

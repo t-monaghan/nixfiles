@@ -12,6 +12,7 @@
     stateVersion = "23.11";
     packages = import ./packages.nix {pkgs = pkgs;};
 
+    # symlinked configuration files for writeable config that is still tracked by this repository
     file = {
       "${config.home.homeDirectory}/.config/zed/settings.json".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/zed/settings.json";
@@ -34,35 +35,23 @@
   };
 
   programs = {
-    fzf.enable = true;
-    ripgrep.enable = true;
-
-    fd.enable = true;
-
     home-manager.enable = true;
 
-    helix = import ./helix.nix;
-
-    alacritty = import ./alacritty.nix;
-
     fish = import ./fish.nix {pkgs = pkgs;};
-
-    jq.enable = true;
 
     neovim = {
       enable = true;
       defaultEditor = true;
     };
 
-    navi = {
-      enable = true;
-      enableFishIntegration = true;
-    };
+    helix = import ./helix.nix;
 
     aerospace = {
       enable = true;
       userSettings = ../dots/aerospace.nix;
     };
+
+    alacritty = import ./alacritty.nix;
 
     tmux = {
       enable = true;
@@ -70,6 +59,19 @@
       escapeTime = 100;
       keyMode = "vi";
       customPaneNavigationAndResize = true;
+    };
+
+    jq.enable = true;
+
+    fzf.enable = true;
+
+    ripgrep.enable = true;
+
+    fd.enable = true;
+
+    navi = {
+      enable = true;
+      enableFishIntegration = true;
     };
 
     zoxide = {
