@@ -111,6 +111,7 @@
         pull.rebase = true;
         init.defaultBranch = "main";
         difftool.prompt = false;
+        pager.difftool = true;
       };
       difftastic = {
         enable = false;
