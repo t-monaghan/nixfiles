@@ -49,6 +49,10 @@
       defaultEditor = true;
     };
 
+    sesh = {
+      enable = true;
+    };
+
     helix = import ./helix.nix;
 
     aerospace = {
@@ -68,7 +72,10 @@
 
     jq.enable = true;
 
-    fzf.enable = true;
+    fzf = {
+      enable = true;
+      tmux.enableShellIntegration = true;
+    };
 
     ripgrep.enable = true;
 
