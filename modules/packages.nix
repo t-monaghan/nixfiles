@@ -26,4 +26,5 @@ with pkgs; [
   nodePackages_latest.vscode-langservers-extracted
   nodePackages_latest.prettier
   kotlin-language-server
+  claude-code
 ]
