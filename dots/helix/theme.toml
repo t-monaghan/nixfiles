@@ -1,0 +1,34 @@
+
+inherits = "sonokai"
+"ui.linenr.selected" = "bright cyan"
+
+["ui.background"]
+fg = "white"
+
+["ui.bufferline"]
+bg = "none"
+
+["ui.bufferline.active"]
+modifiers = ["reversed"]
+
+["ui.cursor"]
+bg = "cyan"
+modifiers = ["bright"]
+
+["ui.help"]
+bg = "none"
+
+["ui.menu"]
+bg = "none"
+
+["ui.popup"]
+bg = "black"
+
+["ui.selection.primary"]
+modifiers = ["reversed"]
+
+["ui.statusline"]
+bg = "none"
+
+["ui.window"]
+bg = "none"

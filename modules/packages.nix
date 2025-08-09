@@ -1,4 +1,4 @@
-{pkgs}:
+{ pkgs }:
 with pkgs; [
   udev-gothic-nf # great font
   # cli tools
@@ -27,4 +27,5 @@ with pkgs; [
   nodePackages_latest.prettier
   kotlin-language-server
   claude-code
+  evil-helix
 ]

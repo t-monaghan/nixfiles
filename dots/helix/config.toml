@@ -1,0 +1,24 @@
+theme = "t-monaghan"
+
+[editor]
+bufferline = "always"
+line-number = "relative"
+true-color = true
+
+[editor.file-picker]
+hidden = false
+
+[editor.statusline]
+left = ["spacer", "version-control", "position", "mode", "diagnostics"]
+right = ["workspace-diagnostics", "file-name", "total-line-numbers", "spinner"]
+
+[keys.insert]
+C-l = ["goto_line_end", ":append-output echo -n ';'", "normal_mode"]
+
+[keys.insert.j]
+k = "normal_mode"
+
+[keys.normal.space]
+F = "file_picker"
+f = "file_picker_in_current_directory"
+
