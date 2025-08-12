@@ -27,5 +27,4 @@ with pkgs; [
   nodePackages_latest.prettier
   kotlin-language-server
   claude-code
-  evil-helix
 ]

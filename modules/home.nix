@@ -1,7 +1,7 @@
-{ pkgs
-, username
-, config
-, ...
+{
+  pkgs,
+  config,
+  ...
 }: {
   nixpkgs.config.allowUnfree = true;
 
@@ -9,14 +9,10 @@
 
   home = {
     stateVersion = "23.11";
-    packages = import ./packages.nix { pkgs = pkgs; };
+    packages = import ./packages.nix {pkgs = pkgs;};
 
     # symlinked configuration files for writeable config that is still tracked by this repository
     file = {
-      "${config.home.homeDirectory}/.config/helix/config.toml".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/helix/config.toml";
-      "${config.home.homeDirectory}/.config/helix/themes/t-monaghan.toml".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/helix/theme.toml";
       "${config.home.homeDirectory}/.config/ghostty/config".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/ghostty";
       "${config.home.homeDirectory}/.config/zed/settings.json".source =
@@ -56,8 +52,6 @@
       enable = true;
     };
 
-    # helix = import ./helix.nix;
-
     aerospace = {
       enable = true;
       userSettings = ../dots/aerospace.nix;
@@ -92,7 +86,7 @@
     zoxide = {
       enable = true;
       enableFishIntegration = true;
-      options = [ "--cmd j" ];
+      options = ["--cmd j"];
     };
 
     mcfly = {
@@ -132,7 +126,7 @@
         enable = false;
         enableAsDifftool = true;
       };
-      ignores = [ ".DS_Store" ];
+      ignores = [".DS_Store"];
     };
   };
 }
