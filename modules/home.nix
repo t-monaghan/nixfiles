@@ -41,7 +41,7 @@
   programs = {
     home-manager.enable = true;
 
-    fish = import ./fish.nix { pkgs = pkgs; };
+    fish = import ./fish.nix {pkgs = pkgs;};
 
     neovim = {
       enable = true;
@@ -50,6 +50,9 @@
 
     sesh = {
       enable = true;
+      enableAlias = false;
+      settings = ../dots/sesh.nix;
+      enableTmuxIntegration = false;
     };
 
     aerospace = {

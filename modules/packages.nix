@@ -1,6 +1,7 @@
-{ pkgs }:
+{pkgs}:
 with pkgs; [
   udev-gothic-nf # great font
+  eza
   # cli tools
   tree
   killport
