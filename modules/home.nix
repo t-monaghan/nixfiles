@@ -52,7 +52,7 @@
       enable = true;
       enableAlias = false;
       settings = ../dots/sesh.nix;
-      enableTmuxIntegration = false;
+      enableTmuxIntegration = true;
     };
 
     aerospace = {
