@@ -53,9 +53,7 @@
 
     sesh = {
       enable = true;
-      enableAlias = false;
-      settings = ../dots/sesh.nix;
-      enableTmuxIntegration = true;
+      settings.blacklist = ["/dev"];
     };
 
     aerospace = {
@@ -71,6 +69,8 @@
       escapeTime = 100;
       keyMode = "vi";
       customPaneNavigationAndResize = true;
+      sensibleOnTop = true;
+      tmuxinator.enable = true;
     };
 
     jq.enable = true;
