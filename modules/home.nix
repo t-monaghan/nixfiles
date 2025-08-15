@@ -13,8 +13,6 @@
 
     # symlinked configuration files for writeable config that is still tracked by this repository
     file = {
-      "${config.home.homeDirectory}/.config/ghostty/config".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/ghostty";
       "${config.home.homeDirectory}/.config/zed/settings.json".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/zed/settings.json";
       "${config.home.homeDirectory}/.config/nvim".source =
@@ -22,6 +20,11 @@
       "${config.home.homeDirectory}/.claude/CLAUDE.md".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/claude/CLAUDE.md";
     };
+  };
+
+  xdg.configFile.ghostty = {
+    source = ../dots/ghostty;
+    target = "ghostty/config";
   };
 
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
