@@ -24,6 +24,8 @@
     '';
   };
 
+  programs.fish.interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";
+
   programs.fish.shellAbbrs = {
     "hsu" = "hotel services up";
     "hsl" = "hotel services logs --follow --all";
