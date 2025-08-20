@@ -28,7 +28,11 @@
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
   services = {
-    home-manager.autoExpire.enable = true;
+    home-manager.autoExpire = {
+      enable = true;
+      store.cleanup = true;
+    };
+
     jankyborders = {
       enable = true;
       settings = {
