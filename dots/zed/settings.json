@@ -1,99 +1,25 @@
 {
-  "collaboration_panel": { "button": false },
-  "lsp_document_colors": "background",
-  "show_edit_predictions": false,
-  "debugger": { "button": false },
+  // "show_edit_predictions": false,
+  "features": {
+    "edit_prediction_provider": "copilot"
+  },
   "edit_predictions": {
-    "disabled_globs": ["*"],
     "enabled_in_text_threads": false
   },
-  "project_panel": {
-    "indent_size": 10
-  },
-  "outline_panel": {
-    "dock": "right"
-  },
-  "preview_tabs": {
-    "enable_preview_from_file_finder": true
-  },
-  "auto_update_extensions": {
-    "toml": false
-  },
-  "tabs": {
-    "git_status": true,
-    "file_icons": true,
-    "show_diagnostics": "all"
-  },
-  "theme": {
-    "mode": "system",
-    "dark": "Everforest Dark Soft",
-    "light": "Everforest Dark Soft"
-  },
-  "telemetry": {
-    "diagnostics": false,
-    "metrics": false
-  },
-  "soft_wrap": "none",
-  "cursor_blink": false,
-  "vim_mode": true,
-  "vim": {
-    "use_system_clipboard": "always"
-  },
-  "scroll_beyond_last_line": "off",
-  "ui_font_size": 15,
-  "buffer_font_size": 16,
-  "ui_font_family": "UDEV Gothic 35NF",
-  "buffer_font_family": "UDEV Gothic 35NF",
-  "buffer_font_weight": 500,
-  "terminal": {
-    "env": {
-      "DFT_BACKGROUND": "light",
-      "BAT_THEME": "Solarized (light)",
-      "EDITOR": "nvim"
-    },
-    "font_size": 16,
-    "copy_on_select": true,
-    "font_family": "UDEV Gothic 35NF",
-    "line_height": "standard"
-  },
-  "git": {
-    "inline_blame": {
-      "show_commit_summary": true
-    }
-  },
-  "chat_panel": {
-    "button": "never"
-  },
-  "notification_panel": {
-    "button": false
-  },
-  "autosave": "on_focus_change",
-  "languages": {
-    "Dockerfile": {
-      "format_on_save": "off"
-    },
-    "TypeScript": {
-      "format_on_save": "off"
-    },
-    "Plain Text": {
-      "show_edit_predictions": false
-    },
-    "Markdown": {
-      "soft_wrap": "editor_width"
-    }
-  },
   "agent": {
-    "inline_assistant_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4"
-    },
     "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-3.7-sonnet-thought"
+    },
+    "inline_assistant_model": {
       "provider": "copilot_chat",
       "model": "gpt-4.1"
     },
     "inline_alternatives": [
-      { "provider": "copilot_chat", "model": "gpt-4o" },
-      { "provider": "copilot_chat", "model": "gpt-4" }
+      {
+        "provider": "copilot_chat",
+        "model": "gpt-4o"
+      }
     ]
   },
   "lsp": {
@@ -119,6 +45,84 @@
           "--issues-exit-code=1"
         ]
       }
+    }
+  },
+  "project_panel": {
+    "indent_size": 10
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "auto_update_extensions": {
+    "toml": false
+  },
+  "tabs": {
+    "git_status": true,
+    "file_icons": true,
+    "show_diagnostics": "all"
+  },
+  "theme": {
+    "mode": "system",
+    "dark": "Gruvbox Dark Soft",
+    "light": "Everforest Dark Soft"
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "soft_wrap": "none",
+  "cursor_blink": false,
+  "vim_mode": true,
+  "vim": {
+    "use_system_clipboard": "always"
+  },
+  "scroll_beyond_last_line": "off",
+  "ui_font_size": 15,
+  "buffer_font_size": 16,
+  "ui_font_family": "UDEV Gothic 35NF",
+  "buffer_font_family": "UDEV Gothic 35NF",
+  "buffer_font_weight": 500,
+  "terminal": {
+    "env": {
+      // "DFT_BACKGROUND": "light",
+      // "BAT_THEME": "Solarized (light)",
+      "EDITOR": "nvim"
+    },
+    "font_size": 16,
+    "copy_on_select": true,
+    "font_family": "UDEV Gothic 35NF",
+    "line_height": "standard"
+  },
+  "git": {
+    "inline_blame": {
+      "show_commit_summary": true
+    }
+  },
+  "chat_panel": {
+    "button": "never"
+  },
+  "notification_panel": {
+    "button": false
+  },
+  "collaboration_panel": {
+    "button": false
+  },
+  "debugger": {
+    "button": false
+  },
+  "autosave": "on_focus_change",
+  "languages": {
+    "Dockerfile": {
+      "format_on_save": "off"
+    },
+    "TypeScript": {
+      "format_on_save": "off"
+    },
+    "Plain Text": {
+      "show_edit_predictions": false
+    },
+    "Markdown": {
+      "soft_wrap": "editor_width"
     }
   }
 }
