@@ -17,8 +17,6 @@
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/zed/settings.json";
       "${config.home.homeDirectory}/.config/nvim".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/kickstart.nvim";
-      "${config.home.homeDirectory}/.claude/CLAUDE.md".source =
-        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/claude/CLAUDE.md";
     };
   };
 
