@@ -3,6 +3,13 @@
 
   loginShellInit = import ./fish-init.nix;
 
+  functions = {
+    git-https = {
+      description = "Changes the git remote to https from ssh";
+      body = builtins.readFile ../dots/fish/scripts/ssh-to-https.fish;
+    };
+  };
+
   shellAbbrs = {
     nv = "nvim";
     mx = "tmuxinator";

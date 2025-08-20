@@ -38,10 +38,6 @@
       description = "Clone a cultureamp repo";
       body = builtins.readFile ../dots/fish/scripts/clone.fish;
     };
-    git-https = {
-      description = "Changes the git remote to https from ssh";
-      body = builtins.readFile ../dots/fish/scripts/ssh-to-https.fish;
-    };
   };
 
   programs.awscli = {
