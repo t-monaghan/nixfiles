@@ -8,6 +8,7 @@ with pkgs; [
   fblog
   hyperfine
   claude-code
+  watchexec
   # linters
   golangci-lint
   shellcheck
