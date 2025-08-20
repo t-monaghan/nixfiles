@@ -15,6 +15,7 @@ with pkgs; [
   stylua
   nixpkgs-fmt
   alejandra
+  ruff
   # lsps
   gopls
   nil
@@ -28,5 +29,11 @@ with pkgs; [
   nodePackages_latest.vscode-langservers-extracted
   nodePackages_latest.prettier
   kotlin-language-server
-  claude-code
+  python313Full
+  python313Packages.python-lsp-server
+  python313Packages.python-lsp-ruff
+  python313Packages.jedi-language-server
+  python313Packages.jedi-language-server
+  python313Packages.pyls-isort
+  python313Packages.black
 ]
