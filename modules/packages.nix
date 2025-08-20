@@ -7,6 +7,7 @@ with pkgs; [
   killport
   fblog
   hyperfine
+  claude-code
   # linters
   golangci-lint
   shellcheck
