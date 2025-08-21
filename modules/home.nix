@@ -78,6 +78,29 @@
 
     jq.enable = true;
 
+    nix-search-tv = {
+      enable = true;
+      enableTelevisionIntegration = true;
+    };
+
+    television = {
+      enable = true;
+      enableFishIntegration = true;
+      settings = {
+        ui.orientation = "portrait";
+        ui.theme_overrides = {
+          selection_fg = "bright-yellow";
+          selection_bg = "black";
+          result_name_fg = "green";
+          match_fg = "bright-yellow";
+          input_text_fg = "yellow";
+          preview_title_fg = "bright-yellow";
+          result_count_fg = "blue";
+          border_fg = "green";
+        };
+      };
+    };
+
     fzf = {
       enable = true;
       tmux.enableShellIntegration = true;
