@@ -88,6 +88,7 @@
       enableFishIntegration = true;
       settings = {
         ui.orientation = "portrait";
+        ui.status_bar.hidden = true;
         ui.theme_overrides = {
           selection_fg = "bright-yellow";
           selection_bg = "black";
