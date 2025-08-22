@@ -15,7 +15,7 @@
   };
   mode.main.binding = {
     "ctrl-alt-j" = "exec-and-forget open -na Ghostty";
-    "ctrl-alt-k" = "exec-and-forget /usr/bin/osascript -e 'tell application \"Safari\" to make new document' && sleep 0.2 &&  /usr/bin/osascript -e 'tell application \"Safari\" to activate'";
+    "ctrl-alt-k" = "exec-and-forget open -na Firefox";
 
     "ctrl-alt-l" = "exec-and-forget open -a 'Google Meet'";
 
