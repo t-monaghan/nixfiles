@@ -35,6 +35,7 @@
     gsc = "git stash clear";
     gsa = "git stash apply";
     gcob = "git checkout -b";
+    grs = "git restore --staged";
 
     ll = "ls -ltra";
 
