@@ -56,7 +56,12 @@
     sesh = {
       enable = true;
       enableAlias = false; # saves 's' alias for sesh's television channel
-      settings.blacklist = ["/dev"];
+      settings = {
+        blacklist = ["/dev"];
+        default_session = {
+          preview_command = "eza --all --classify=always --color=always --icons=always --tree --level=2 --sort=created --git {}";
+        };
+      };
     };
 
     aerospace = {

@@ -54,7 +54,6 @@
       # TODO: have this return user to the window - fork doesn't work as expected w/ or w/o && exit
       mode = "execute";
     };
-    # check if input is a valid tmux session and tmux preview if so, if not, eza
-    preview.command = "eza --all --classify=always --color=always --icons=always --tree --level=2 --sort=created --git {strip_ansi}";
+    preview.command = "sesh preview {}";
   };
 }
