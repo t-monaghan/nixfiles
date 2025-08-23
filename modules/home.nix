@@ -55,6 +55,7 @@
 
     sesh = {
       enable = true;
+      enableAlias = false; # saves 's' alias for sesh's television channel
       settings.blacklist = ["/dev"];
     };
 

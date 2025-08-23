@@ -11,6 +11,7 @@
   };
 
   shellAbbrs = {
+    s = "tv sesh";
     nv = "nvim";
     mx = "tmuxinator";
 
