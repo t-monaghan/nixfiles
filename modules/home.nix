@@ -59,7 +59,7 @@
       settings = {
         blacklist = ["/dev"];
         default_session = {
-          preview_command = "eza --all --classify=always --color=always --icons=always --tree --level=2 --sort=created --git {}";
+          preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
         };
       };
     };
