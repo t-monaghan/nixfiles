@@ -86,6 +86,9 @@
     television = {
       enable = true;
       enableFishIntegration = true;
+
+      channels = import ../dots/television/channels.nix;
+
       settings = {
         ui.orientation = "portrait";
         ui.status_bar.hidden = true;

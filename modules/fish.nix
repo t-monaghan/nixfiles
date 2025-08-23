@@ -26,7 +26,7 @@
     gp = "git push";
     gpu = "git pull --autostash --rebase";
     gs = "git status";
-    gl = "git log --compact-summary --oneline";
+    gl = "tv git-log";
     gd = "git difftool";
     gdc = "git difftool --cached";
     ga = "git add";
