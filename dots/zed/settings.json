@@ -1,9 +1,10 @@
 {
-  // "show_edit_predictions": false,
+  "show_edit_predictions": false,
   "features": {
     "edit_prediction_provider": "copilot"
   },
   "edit_predictions": {
+    "mode": "subtle",
     "enabled_in_text_threads": false
   },
   "agent": {
