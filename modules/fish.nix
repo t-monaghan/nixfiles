@@ -13,7 +13,6 @@
   shellAbbrs = {
     s = "tv sesh";
     nv = "nvim";
-    mx = "tmuxinator";
 
     ci = "gh altar ci > /dev/null 2>&1 & disown";
     dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
