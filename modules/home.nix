@@ -71,7 +71,6 @@
       escapeTime = 100;
       keyMode = "vi";
       customPaneNavigationAndResize = true;
-      tmuxinator.enable = true;
       historyLimit = 50000;
       terminal = "screen-256color";
     };
