@@ -45,7 +45,7 @@
     };
     actions.select = {
       description = "connect to session";
-      command = "sesh connect {}";
+      command = "sesh connect {strip_ansi|split: :1}";
       mode = "execute";
     };
     actions.kill = {
