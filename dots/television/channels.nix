@@ -33,7 +33,7 @@
       requirements = ["sesh" "eza" "zoxide"];
     };
     source = {
-      command = ["sesh list"];
+      command = ["sesh list --icons"];
       ansi = true;
     };
     ui = {
