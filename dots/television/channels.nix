@@ -1,4 +1,18 @@
 {
+  nix-search-tv = {
+    metadata.name = "nix-search-tv";
+    source.command = "nix-search-tv print";
+    preview.command = "nix-search-tv preview {}";
+    actions = {
+      open-source.command = "open $(nix-search-tv source {})";
+      open-homepage.command = "open $(nix-search-tv homepage {})";
+    };
+    keybindings = {
+      enter = "actions:open-source";
+      ctrl-h = "actions:open-homepage";
+    };
+  };
+
   env = {
     metadata.name = "env";
     source = {
