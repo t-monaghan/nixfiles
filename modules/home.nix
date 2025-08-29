@@ -90,9 +90,7 @@
     television = {
       enable = true;
       enableFishIntegration = true;
-
       channels = import ../dots/television/channels.nix;
-
       settings = import ../dots/television/config.nix;
     };
 
