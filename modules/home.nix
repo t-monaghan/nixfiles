@@ -133,7 +133,7 @@
       enable = true;
       enableFishIntegration = true;
       enableTransience = true;
-      settings = builtins.fromTOML (builtins.readFile ../dots/starship.toml);
+      settings = import ../dots/starship.nix;
     };
 
     git = {
