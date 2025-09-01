@@ -1,8 +1,9 @@
 {
   nix-search-tv = {
     metadata.name = "nix-search-tv";
-    source.command = "nix-search-tv print";
-    preview.command = "nix-search-tv preview {}";
+    # nix-search-tv only looks for config at XDG_CONFIG_HOME which is unset in my environment
+    source.command = "XDG_CONFIG_HOME=$HOME/.config nix-search-tv print";
+    preview.command = "XDG_CONFIG_HOME=$HOME/.config nix-search-tv preview {}";
     actions = {
       open-source.command = "open $(nix-search-tv source {})";
       open-homepage.command = "open $(nix-search-tv homepage {})";
