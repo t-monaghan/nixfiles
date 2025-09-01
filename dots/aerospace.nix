@@ -64,4 +64,5 @@
       run = ["layout floating"];
     }
   ];
+  exec-on-workspace-change = ["/bin/bash" "-c" "sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE"];
 }

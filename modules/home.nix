@@ -13,6 +13,8 @@
 
     # symlinked configuration files for writeable config that is still tracked by this repository
     file = {
+      "${config.home.homeDirectory}/.config/sketchybar".source =
+        config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/sketchybar";
       "${config.home.homeDirectory}/.config/zed/settings.json".source =
         config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dev/nixfiles/dots/zed/settings.json";
       "${config.home.homeDirectory}/.config/nvim".source =
@@ -51,6 +53,10 @@
     neovim = {
       enable = true;
       defaultEditor = true;
+    };
+
+    sketchybar = {
+      enable = true;
     };
 
     sesh = {
