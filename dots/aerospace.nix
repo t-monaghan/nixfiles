@@ -10,7 +10,14 @@
     inner.vertical = 15;
     outer.left = 15;
     outer.right = 15;
-    outer.top = 15;
+    outer.top = {
+      monitor =
+        {
+          "^built-in retina display$" = 15;
+        }
+        // {default = 52;};
+    };
+
     outer.bottom = 15;
   };
   mode.main.binding = {
