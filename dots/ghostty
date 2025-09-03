@@ -19,7 +19,7 @@ background-opacity = 0.7
 background-blur=20
 
 font-size = 16
-font-family = UDEV Gothic 35NF
+font-family = Jetbrains Mono
 font-thicken = true
 font-thicken-strength = 255
 

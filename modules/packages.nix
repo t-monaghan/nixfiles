@@ -1,6 +1,6 @@
 {pkgs}:
 with pkgs; [
-  udev-gothic-nf # great font
+  jetbrains-mono
   eza
   # cli tools
   tree

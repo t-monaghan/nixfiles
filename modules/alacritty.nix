@@ -17,7 +17,7 @@
       dynamic_padding = true;
     };
     font.normal = {
-      family = "UDEV Gothic 35NF";
+      family = "Jetbrains Mono";
       style = "Regular";
     };
     font.size = 16.0;
