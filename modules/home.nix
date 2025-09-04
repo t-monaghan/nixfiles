@@ -72,7 +72,7 @@
 
     aerospace = {
       enable = true;
-      userSettings = ../dots/aerospace.nix;
+      userSettings = builtins.fromTOML (builtins.readFile ../dots/aerospace.toml);
     };
 
     alacritty = import ./alacritty.nix;
