@@ -6,14 +6,14 @@ default-root-container-layout = "accordion"
 accordion-padding = 30
 
 [gaps.inner]
-horizontal = 15
-vertical = 15
+horizontal = 10
+vertical = 10
 
 [gaps.outer]
-left = 15
-right = 15
-bottom = 15
-top = [{ monitor."DELL U2725QE" = 40 }, 24]
+left = 10
+right = 10
+bottom = 10
+top = [{ monitor."DELL U2725QE" = 42 }, 12]
 
 [mode.main.binding]
 "ctrl-alt-j" = "exec-and-forget open -na Ghostty"
