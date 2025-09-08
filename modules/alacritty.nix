@@ -17,7 +17,7 @@
       dynamic_padding = true;
     };
     font.normal = {
-      family = "Jetbrains Mono";
+      family = "JetBrainsMono Nerd Font Propo";
       style = "Regular";
     };
     font.size = 16.0;

@@ -80,8 +80,8 @@
   "scroll_beyond_last_line": "off",
   "ui_font_size": 15,
   "buffer_font_size": 16,
-  "ui_font_family": "Jetbrains Mono",
-  "buffer_font_family": "Jetbrains Mono",
+  "ui_font_family": "JetBrainsMono Nerd Font Propo",
+  "buffer_font_family": "JetBrainsMono Nerd Font Propo",
   "buffer_font_weight": 500,
   "terminal": {
     "env": {
@@ -91,7 +91,7 @@
     },
     "font_size": 16,
     "copy_on_select": true,
-    "font_family": "Jetbrains Mono",
+    "font_family": "JetBrainsMono Nerd Font Propo",
     "line_height": "standard"
   },
   "git": {
