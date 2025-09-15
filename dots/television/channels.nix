@@ -65,9 +65,8 @@
     };
     actions.kill = {
       description = "kill tmux session";
-      command = "tmux kill-session -t {strip_ansi|split: :1}";
-      # TODO: have this return user to the window - fork doesn't work as expected w/ or w/o && exit
-      # mode = "execute";
+      command = "tmux kill-session -t {strip_ansi|split: :1} && tv sesh";
+      mode = "execute";
     };
     preview.command = "sesh preview {strip_ansi|split: :1}";
   };
