@@ -78,11 +78,21 @@
     "use_system_clipboard": "always"
   },
   "scroll_beyond_last_line": "off",
+  "ui_font_family": "JetBrainsMono Nerd Font Mono",
+  "ui_font_features": {
+    "zero": true,
+    "liga": false,
+    "calt": false
+  },
   "ui_font_size": 15,
+  "buffer_font_family": "JetBrainsMono Nerd Font Mono",
+  "buffer_font_features": {
+    "zero": true,
+    "liga": false,
+    "calt": false
+  },
   "buffer_font_size": 16,
-  "ui_font_family": "JetBrainsMono Nerd Font Propo",
-  "buffer_font_family": "JetBrainsMono Nerd Font Propo",
-  "buffer_font_weight": 500,
+  "buffer_font_weight": 550,
   "terminal": {
     "env": {
       // "DFT_BACKGROUND": "light",
@@ -91,7 +101,7 @@
     },
     "font_size": 16,
     "copy_on_select": true,
-    "font_family": "JetBrainsMono Nerd Font Propo",
+    "font_family": "JetBrainsMonoNL Nerd Font Propo",
     "line_height": "standard"
   },
   "git": {
