@@ -22,7 +22,7 @@ font-size = 16
 font-family = Jetbrains Mono
 font-thicken = true
 font-thicken-strength = 255
-font-feature = +zero
+font-feature = +zero,-liga,-calt
 
 # hides icons from task bar
 # however it causes issues with aerospace and focus
