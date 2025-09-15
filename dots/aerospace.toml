@@ -5,6 +5,17 @@ default-root-container-orientation = "auto"
 default-root-container-layout = "accordion"
 accordion-padding = 30
 
+after-startup-command = [
+	# FIXME: should not have to reference a nix store path
+	'exec-and-forget /nix/store/irn05n4jk3b95621y9yjrxah7w71xp70-home-manager-path/bin/sketchybar -c /Users/tom.monaghan/.config/sketchybar/sketchybarrc',
+]
+
+exec-on-workspace-change = [
+	'/bin/bash',
+	'-c',
+	'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+]
+
 [gaps.inner]
 horizontal = 10
 vertical = 10

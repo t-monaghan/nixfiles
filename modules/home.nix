@@ -57,6 +57,7 @@
 
     sketchybar = {
       enable = true;
+      service.enable = false;
     };
 
     sesh = {
