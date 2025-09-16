@@ -43,6 +43,7 @@
     };
   };
 
+  imports = [../dots/sketchybar ../dots/aerospace.nix];
   programs = {
     home-manager.enable = true;
 
@@ -62,11 +63,6 @@
           preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
         };
       };
-    };
-
-    aerospace = {
-      enable = true;
-      userSettings = ../dots/aerospace.nix;
     };
 
     alacritty = import ./alacritty.nix;

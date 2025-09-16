@@ -1,6 +1,7 @@
 {pkgs}:
 with pkgs; [
   jetbrains-mono
+  nerd-fonts.jetbrains-mono
   eza
   # cli tools
   tree
