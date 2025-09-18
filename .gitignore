@@ -1,0 +1,3 @@
+# the below are due to the an issue where the sketchybar nix config writes config files to the repo
+dots/sketchybar/plugins/
+dots/sketchybar/sketchybarrc
