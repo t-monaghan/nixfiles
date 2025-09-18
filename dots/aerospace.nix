@@ -14,12 +14,12 @@
       default-root-container-layout = "accordion";
       accordion-padding = 30;
       gaps = {
-        inner.horizontal = 15;
-        inner.vertical = 15;
-        outer.left = 15;
-        outer.right = 15;
+        inner.horizontal = 10;
+        inner.vertical = 10;
+        outer.left = 8;
+        outer.right = 8;
         outer.top = [
-          {monitor."DELL U2725QE" = 42;}
+          {monitor."DELL U2725QE" = 43;}
           12
         ];
         outer.bottom = 15;

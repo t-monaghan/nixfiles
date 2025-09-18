@@ -38,7 +38,7 @@
       settings = {
         active_color = "0xffcff1bf";
         hidpi = "on";
-        width = 8;
+        width = 4;
       };
     };
   };

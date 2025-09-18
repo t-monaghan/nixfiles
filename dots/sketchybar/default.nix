@@ -48,6 +48,10 @@ in {
         color=0x40000000
         display=all
         topmost=window
+        corner_radius=10
+        y_offset=5
+        notch_offset=0
+        margin=5
       )
 
       sketchybar --bar "''${bar[@]}"
