@@ -72,6 +72,7 @@ in {
         label.padding_right=4
       )
 
+      # TODO: implement seperate window config: https://github.com/FelixKratz/SketchyBar/issues/661#issuecomment-2545695541
       workspace_flags=()
       for sid in $(${pkgs.aerospace}/bin/aerospace list-workspaces --all); do
         workspace_flags+=(
