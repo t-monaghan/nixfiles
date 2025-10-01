@@ -15,7 +15,7 @@
     mac-app-util,
   }: {
     homeConfigurations.work = let
-      username = "tom.monaghan";
+      username = "thomas";
     in
       home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
@@ -25,7 +25,7 @@
         };
         modules = [
           mac-app-util.homeManagerModules.default
-          ./hosts/culture-amp.nix
+          ./hosts/heidi.nix
         ];
         extraSpecialArgs = {
           inherit username;
