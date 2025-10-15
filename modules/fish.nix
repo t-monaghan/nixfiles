@@ -53,9 +53,9 @@
     disu = "caffeinate -disu";
   };
 
-  shellAliases = {
-    assume = "source /usr/local/bin/assume.fish";
-  };
+  # shellAliases = {
+  #   assume = "source /usr/local/bin/assume.fish";
+  # };
 
   functions = {
     fish_greeting = {

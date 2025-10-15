@@ -1,5 +1,9 @@
 {pkgs}:
 with pkgs; [
+  docker
+  terraform
+  nodejs_22
+  nerd-fonts.jetbrains-mono
   jetbrains-mono
   eza
   # cli tools
@@ -37,4 +41,8 @@ with pkgs; [
   python313Packages.jedi-language-server
   python313Packages.pyls-isort
   python313Packages.black
+  pyright
+  basedpyright
+  tflint
+  terraform-ls
 ]

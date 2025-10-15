@@ -3,13 +3,17 @@
   config,
   ...
 }: {
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    config.allowUnfree = true;
+  };
 
   nix.gc.automatic = true;
 
   home = {
     stateVersion = "23.11";
     packages = import ./packages.nix {pkgs = pkgs;};
+
+    shell.enableFishIntegration = true;
 
     # symlinked configuration files for writeable config that is still tracked by this repository
     file = {
