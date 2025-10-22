@@ -129,15 +129,10 @@
 
     atuin = {
       enable = true;
+      # there is an issue where atuin creates a config file in shell hook: https://github.com/nix-community/home-manager/issues/5734
+      # workaround is to remove the default config file and run hm switch in sh
+      settings.inline_height = 10;
     };
-
-    # mcfly = {
-    #   enable = true;
-    #   enableFishIntegration = true;
-    #   keyScheme = "vim";
-    #   fzf.enable = true;
-    #   interfaceView = "BOTTOM";
-    # };
 
     bat = {
       enable = true;
