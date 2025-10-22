@@ -5,6 +5,10 @@
   home = with pkgs; {
     username = "thomas";
     homeDirectory = "/Users/thomas";
+    packages = [
+      docker-credential-helpers
+      pipx
+    ];
   };
   programs = {
     granted = {
