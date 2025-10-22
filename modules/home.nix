@@ -127,18 +127,23 @@
       options = ["--cmd j"];
     };
 
-    mcfly = {
+    atuin = {
       enable = true;
-      enableFishIntegration = true;
-      keyScheme = "vim";
-      fzf.enable = true;
-      interfaceView = "BOTTOM";
     };
+
+    # mcfly = {
+    #   enable = true;
+    #   enableFishIntegration = true;
+    #   keyScheme = "vim";
+    #   fzf.enable = true;
+    #   interfaceView = "BOTTOM";
+    # };
 
     bat = {
       enable = true;
       config = {
-        theme = "gruvbox-dark";
+        theme-dark = "gruvbox-dark";
+        theme-light = "gruvbox-light";
       };
     };
 
