@@ -6,6 +6,9 @@ with pkgs; [
   nerd-fonts.jetbrains-mono
   jetbrains-mono
   eza
+  pnpm
+  just
+  postgresql
   # cli tools
   tree
   killport

@@ -14,7 +14,7 @@
     },
     "inline_assistant_model": {
       "provider": "copilot_chat",
-      "model": "gpt-4.1"
+      "model": "gt-4.1"
     },
     "inline_alternatives": [
       {
@@ -64,7 +64,7 @@
   },
   "theme": {
     "mode": "system",
-    "dark": "Gruvbox Dark Soft",
+    "dark": "One Dark",
     "light": "One Light"
   },
   "telemetry": {
@@ -113,6 +113,19 @@
   },
   "autosave": "on_focus_change",
   "languages": {
+    "Python": {
+      "language_servers": ["pyright", "ruff"],
+      "format_on_save": "on",
+      "formatter": [
+        { "code_action": "source.fixAll.ruff" },
+        {
+          "language_server": {
+            "name": "ruff"
+          }
+        }
+      ],
+      "show_edit_predictions": false
+    },
     "Dockerfile": {
       "format_on_save": "off"
     },

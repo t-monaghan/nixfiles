@@ -33,6 +33,7 @@
     "alt-4" = "workspace 4";
     "alt-5" = "workspace 5";
     "alt-6" = "workspace 6";
+    "alt-z" = "fullscreen";
 
     "alt-shift-h" = ["join-with left"];
     "alt-shift-j" = ["join-with down"];

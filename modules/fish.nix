@@ -27,8 +27,8 @@
     gpu = "git pull --autostash --rebase";
     gs = "git status";
     gl = "tv git-log";
-    gd = "git difftool";
-    gdc = "git difftool --cached";
+    gd = "git diff";
+    gdc = "git diff --cached";
     ga = "git add";
     gc = "git commit -m";
     ghpr = "gh pr checkout";
@@ -51,6 +51,12 @@
     rt = "trash-put";
     hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
     disu = "caffeinate -disu";
+
+    tf = "terraform";
+    crl = "codex resume --last";
+    clc = "claude --continue";
+
+    jr = "just run";
   };
 
   # shellAliases = {

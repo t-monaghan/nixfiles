@@ -79,7 +79,7 @@
 
     aerospace = {
       enable = true;
-      userSettings = ../dots/aerospace.nix;
+      userSettings = import ../dots/aerospace.nix;
     };
 
     alacritty = import ./alacritty.nix;
@@ -92,6 +92,9 @@
       customPaneNavigationAndResize = true;
       historyLimit = 50000;
       terminal = "screen-256color";
+      extraConfig = ''
+        bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
+        bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down'';
     };
 
     nix-search-tv = {
@@ -131,7 +134,12 @@
       enable = true;
       # there is an issue where atuin creates a config file in shell hook: https://github.com/nix-community/home-manager/issues/5734
       # workaround is to remove the default config file and run hm switch in sh
-      settings.inline_height = 10;
+      settings = {
+        inline_height = 10;
+        enter_accept = true;
+        filter_mode_shell_up_key_binding = "session";
+        workspaces = true;
+      };
     };
 
     bat = {
@@ -149,20 +157,23 @@
       settings = import ../dots/starship.nix;
     };
 
+    difftastic = {
+      enable = true;
+      git = {
+        diffToolMode = true;
+        enable = true;
+      };
+    };
+
     git = {
       enable = true;
-      userName = "t-monaghan";
-      userEmail = "tomaghan+git@gmail.com";
-      extraConfig = {
+      settings = {
+        user.name = "t-monaghan";
+        user.email = "tomaghan+git@gmail.com";
         push.autoSetupRemote = true;
         pull.rebase = true;
         init.defaultBranch = "main";
-        difftool.prompt = false;
         pager.difftool = true;
-      };
-      difftastic = {
-        enable = false;
-        enableAsDifftool = true;
       };
       ignores = [".DS_Store"];
     };
