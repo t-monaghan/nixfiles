@@ -52,6 +52,11 @@
 
     fish = import ./fish.nix {pkgs = pkgs;};
 
+    claude-code = {
+      enable = true;
+      skillsDir = ../dots/claude/skills;
+    };
+
     neovim = {
       enable = true;
       defaultEditor = true;
