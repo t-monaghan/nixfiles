@@ -1,5 +1,5 @@
 ---
-name: running scripts and commands
+name: running-scripts-and-commands
 description: guidance on how to find the right commands to run for each project
 ---
 
