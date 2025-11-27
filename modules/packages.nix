@@ -1,7 +1,8 @@
 {pkgs}:
 with pkgs; [
+  google-cloud-sdk
   docker
-  terraform
+  tfswitch
   nodejs_22
   nerd-fonts.jetbrains-mono
   jetbrains-mono
@@ -14,7 +15,6 @@ with pkgs; [
   killport
   fblog
   hyperfine
-  claude-code
   watchexec
   # linters
   golangci-lint

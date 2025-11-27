@@ -33,7 +33,8 @@
     gc = "git commit -m";
     ghpr = "gh pr checkout";
     gsc = "git stash clear";
-    gsa = "git stash apply";
+    # gsa = "git stash apply";
+    gsp = "git stash pop";
     gcob = "git checkout -b";
     grs = "git restore --staged";
 

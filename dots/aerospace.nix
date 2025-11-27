@@ -17,8 +17,6 @@
     "ctrl-alt-j" = "exec-and-forget open -na Ghostty";
     "ctrl-alt-k" = "exec-and-forget open -na Firefox";
 
-    "ctrl-alt-l" = "exec-and-forget open -a 'Google Meet'";
-
     "alt-slash" = "layout tiles horizontal vertical";
     "alt-comma" = "layout accordion horizontal vertical";
 
