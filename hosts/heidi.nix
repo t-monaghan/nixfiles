@@ -11,6 +11,14 @@
       docker-compose
       pipx
       mongodb-compass
+      kubernetes-helm
+      kubernetes-helmPlugins.helm-git
+      helmfile
+      cursor-cli
+      docker
+      tfswitch
+      nodejs_22
+      postgresql
     ];
   };
   programs = {
