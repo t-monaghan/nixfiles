@@ -5,7 +5,6 @@ with pkgs; [
   eza
   pnpm
   just
-  git
   # cli tools
   tree
   killport
