@@ -1,15 +1,11 @@
 {pkgs}:
 with pkgs; [
-  google-cloud-sdk
-  docker
-  tfswitch
-  nodejs_22
   nerd-fonts.jetbrains-mono
   jetbrains-mono
   eza
   pnpm
   just
-  postgresql
+  git
   # cli tools
   tree
   killport
@@ -36,7 +32,6 @@ with pkgs; [
   nodePackages_latest.typescript-language-server
   nodePackages_latest.vscode-langservers-extracted
   nodePackages_latest.prettier
-  kotlin-language-server
   python313
   python313Packages.python-lsp-server
   python313Packages.python-lsp-ruff
