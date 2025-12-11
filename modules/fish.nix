@@ -60,10 +60,6 @@
     jr = "just run";
   };
 
-  # shellAliases = {
-  #   assume = "source /usr/local/bin/assume.fish";
-  # };
-
   functions = {
     fish_greeting = {
       body = '''';

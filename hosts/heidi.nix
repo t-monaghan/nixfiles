@@ -24,14 +24,6 @@
     fish.shellInit = ''
       fish_add_path /opt/homebrew/sbin
       fish_add_path /opt/homebrew/bin
-
-      if test -d (brew --prefix)"/share/fish/completions"
-          set -gx fish_complete_path (brew --prefix)/share/fish/completions $fish_complete_path
-      end
-
-      if test -d (brew --prefix)"/share/fish/vendor_completions.d"
-          set -gx fish_complete_path (brew --prefix)/share/fish/vendor_completions.d $fish_complete_path
-      end
     '';
   };
 }
