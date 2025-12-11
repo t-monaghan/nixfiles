@@ -58,6 +58,8 @@
     clc = "claude --continue";
 
     jr = "just run";
+    deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
+    deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
   };
 
   functions = {
