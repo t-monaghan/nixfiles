@@ -88,7 +88,8 @@
 
     aerospace = {
       enable = true;
-      userSettings = import ../dots/aerospace.nix;
+      launchd.enable = true;
+      settings = import ../dots/aerospace.nix;
     };
 
     alacritty = import ./alacritty.nix;
