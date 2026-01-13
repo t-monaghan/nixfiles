@@ -57,6 +57,7 @@
     crl = "codex resume --last";
     clc = "claude --continue";
 
+    j = "just";
     jr = "just run";
     deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
     deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
