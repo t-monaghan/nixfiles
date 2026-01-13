@@ -58,7 +58,7 @@
 
     claude-code = {
       enable = true;
-      # skillsDir = ../dots/claude/skills;
+      skillsDir = ../dots/claude/skills;
     };
 
     neovim = {
