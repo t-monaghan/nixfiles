@@ -19,6 +19,14 @@
       tfswitch
       nodejs_22
       postgresql
+      (writeShellApplication
+        {
+          name = "terraform";
+          runtimeInputs = [pkgs.tfswitch];
+          text = ''
+            ~/bin/terraform "$@"
+          '';
+        })
     ];
   };
   programs = {
