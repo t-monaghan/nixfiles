@@ -75,6 +75,7 @@
       };
     };
 
+    # TODO: add `ls ~/dev` (diff zoxide) to sesh selector
     sesh = {
       enable = true;
       enableAlias = false; # saves 's' alias for sesh's television channel
