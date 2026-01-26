@@ -5,6 +5,7 @@ with pkgs; [
   eza
   pnpm
   just
+  terminal-notifier
   # cli tools
   tree
   killport
