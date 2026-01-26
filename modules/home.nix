@@ -80,7 +80,6 @@
       enable = true;
       enableAlias = false; # saves 's' alias for sesh's television channel
       settings = {
-        blacklist = ["/dev"];
         default_session = {
           preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
         };
