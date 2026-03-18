@@ -5,17 +5,17 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    mac-app-util.url = "github:hraban/mac-app-util";
+    # mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
-    mac-app-util,
+    # mac-app-util,
   }: {
     homeConfigurations.work = let
-      username = "thomas";
+      username = "tom.monaghan1";
     in
       home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
@@ -24,8 +24,8 @@
           config.allowUnfree = true;
         };
         modules = [
-          mac-app-util.homeManagerModules.default
-          ./hosts/heidi.nix
+          # mac-app-util.homeManagerModules.default
+          ./hosts/culture-amp.nix
         ];
         extraSpecialArgs = {
           inherit username;
@@ -42,7 +42,7 @@
           config.allowUnfree = true;
         };
         modules = [
-          mac-app-util.homeManagerModules.default
+          # mac-app-util.homeManagerModules.default
           ./hosts/personal.nix
         ];
         extraSpecialArgs = {

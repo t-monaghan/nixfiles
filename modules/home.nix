@@ -56,6 +56,11 @@
 
     gemini-cli.enable = true;
 
+    gh = {
+      enable = true;
+      gitCredentialHelper.enable = true;
+    };
+
     claude-code = {
       enable = true;
       skillsDir = ../dots/claude/skills;
