@@ -5,65 +5,36 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    # mac-app-util.url = "github:hraban/mac-app-util";
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
-    # mac-app-util,
-  }: {
-    homeConfigurations.work = let
-      username = "tom.monaghan1";
-    in
+  }: let
+    mkHost = {
+      name,
+      username,
+      system ? "aarch64-darwin",
+    }:
       home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          username = username;
+          inherit system;
           config.allowUnfree = true;
         };
-        modules = [
-          # mac-app-util.homeManagerModules.default
-          ./hosts/culture-amp.nix
-        ];
-        extraSpecialArgs = {
-          inherit username;
-        };
+        modules = [./hosts/${name}.nix];
+        extraSpecialArgs = {inherit username;};
       };
-
-    homeConfigurations.personal = let
-      username = "tmonaghan";
-    in
-      home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          username = username;
-          config.allowUnfree = true;
-        };
-        modules = [
-          # mac-app-util.homeManagerModules.default
-          ./hosts/personal.nix
-        ];
-        extraSpecialArgs = {
-          inherit username;
-        };
+  in {
+    homeConfigurations = {
+      work = mkHost {
+        name = "culture-amp";
+        username = "tom.monaghan1";
       };
-
-    homeConfigurations.work-vm = let
-      username = "alanturing";
-    in
-      home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "aarch64-darwin";
-          config.allowUnfree = true;
-        };
-        modules = [
-          ./hosts/work-vm.nix
-        ];
-        extraSpecialArgs = {
-          inherit username;
-        };
+      personal = mkHost {
+        name = "personal";
+        username = "tmonaghan";
       };
+    };
   };
 }

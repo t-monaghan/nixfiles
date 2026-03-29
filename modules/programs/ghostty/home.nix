@@ -1,0 +1,49 @@
+{config, lib, ...}:
+lib.mkIf config.nixfiles.programs.ghostty.enable {
+  programs.ghostty = {
+    enable = true;
+    package = null; # installed outside Nix on macOS (linux-only in nixpkgs)
+    enableFishIntegration = true;
+    settings = {
+      auto-update = "download";
+      auto-update-channel = "tip";
+
+      keybind = "global:ctrl+grave_accent=toggle_quick_terminal";
+
+      confirm-close-surface = false;
+      quit-after-last-window-closed = true;
+
+      clipboard-read = "allow";
+      clipboard-write = "allow";
+      copy-on-select = "clipboard";
+
+      theme = "light:Monokai Pro Light,dark:Everforest Dark Hard";
+      cursor-invert-fg-bg = true;
+      cursor-opacity = 0.7;
+      cursor-style-blink = false;
+      mouse-hide-while-typing = true;
+      background-opacity = 0.8;
+      background-opacity-cells = true;
+      background-blur = 20;
+
+      font-size = 16;
+      font-family = "Jetbrains Mono";
+      font-thicken = true;
+      font-thicken-strength = 255;
+      font-feature = "+zero,-liga,-calt";
+
+      macos-option-as-alt = "right";
+      macos-titlebar-style = "hidden";
+      macos-icon = "retro";
+      macos-icon-frame = "plastic";
+
+      shell-integration = "fish";
+      shell-integration-features = "no-cursor";
+
+      quick-terminal-position = "right";
+      quick-terminal-animation-duration = 0;
+
+      resize-overlay = "never";
+    };
+  };
+}
