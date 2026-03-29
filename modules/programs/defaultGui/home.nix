@@ -7,5 +7,8 @@ lib.mkIf config.nixfiles.programs.defaultGui.enable {
     alacritty.enable = true;
     jankyborders.enable = true;
     zed.enable = true;
+    mos.enable = true;
+    betterdisplay.enable = true;
+    notunes.enable = true;
   };
 }
