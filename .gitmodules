@@ -1,3 +1,0 @@
-[submodule "modules/programs/neovim/kickstart.nvim"]
-	path = modules/programs/neovim/kickstart.nvim
-	url = https://github.com/t-monaghan/kickstart.nvim
