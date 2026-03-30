@@ -1,4 +1,9 @@
-{config, lib, pkgs, ...}:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.fish.enable {
   programs.fish = {
     enable = true;
@@ -35,6 +40,9 @@ lib.mkIf config.nixfiles.programs.fish.enable {
       gw = {
         wraps = ''gradle'';
         body = ''./gradlew $argv'';
+      };
+      mkcd = {
+        body = ''mkdir $argv && cd $argv'';
       };
     };
 
@@ -108,6 +116,5 @@ lib.mkIf config.nixfiles.programs.fish.enable {
     ];
   };
 
-  xdg.configFile."fish/completions/nix.fish".source =
-    "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
+  xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 }
