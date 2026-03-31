@@ -1,5 +1,9 @@
 # Meta-module: enables all default GUI programs.
-{config, lib, ...}:
+{
+  config,
+  lib,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.defaultGui.enable {
   nixfiles.programs = {
     aerospace.enable = true;

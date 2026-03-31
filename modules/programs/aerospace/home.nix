@@ -1,4 +1,8 @@
-{config, lib, ...}:
+{
+  config,
+  lib,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.aerospace.enable {
   programs.aerospace = {
     enable = true;

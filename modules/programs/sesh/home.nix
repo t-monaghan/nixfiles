@@ -1,4 +1,8 @@
-{config, lib, ...}:
+{
+  config,
+  lib,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.sesh.enable {
   # TODO: add `ls ~/dev` (diff zoxide) to sesh selector
   programs.sesh = {

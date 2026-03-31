@@ -1,4 +1,9 @@
-{config, lib, pkgs, ...}:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 lib.mkIf config.nixfiles.work.cultureAmp.enable {
   programs.fish = {
     interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";

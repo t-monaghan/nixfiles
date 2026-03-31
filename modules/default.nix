@@ -5,8 +5,7 @@
   config,
   lib,
   ...
-}:
-{
+}: {
   imports =
     lib.pipe ./. [
       lib.filesystem.listFilesRecursive

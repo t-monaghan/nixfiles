@@ -1,5 +1,9 @@
 # Meta-module: enables all default CLI tools.
-{config, lib, ...}:
+{
+  config,
+  lib,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.defaultCli.enable {
   nixfiles.programs = {
     fish.enable = true;

@@ -1,4 +1,9 @@
-{config, lib, pkgs, ...}:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.neovim.enable {
   programs.nixvim = {
     enable = true;
