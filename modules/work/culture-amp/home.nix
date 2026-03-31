@@ -30,4 +30,9 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
 
   programs.awscli.enable = true;
   programs.mise.enable = true;
+
+  programs.granted = {
+    enable = true;
+    enableFishIntegration = true;
+  };
 }
