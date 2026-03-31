@@ -1,10 +1,14 @@
-{config, lib, ...}:
+{
+  config,
+  lib,
+  ...
+}:
 lib.mkIf config.nixfiles.programs.opencode.enable {
   programs.opencode = {
     enable = true;
     settings = {
       model = "github-copilot/claude-opus-4.6";
-      small_model = "github-copilot/claude-haiku-4-5";
+      small_model = "github-copilot/gpt-5-mini";
       enabled_providers = ["github-copilot"];
       autoupdate = false;
       share = "disabled";

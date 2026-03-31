@@ -1,9 +1,15 @@
-{config, lib, pkgs, ...}:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 lib.mkIf config.nixfiles.development.enable {
   programs.go.enable = true;
   programs.gemini-cli.enable = true;
 
   home.packages = with pkgs; [
+    wget
     nerd-fonts.jetbrains-mono
     jetbrains-mono
     eza
