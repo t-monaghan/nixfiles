@@ -24,6 +24,7 @@ lib.mkIf config.nixfiles.development.enable {
     watchexec
     # linters
     golangci-lint
+    golangci-lint-langserver
     shellcheck
     # formatters
     stylua

@@ -42,6 +42,18 @@ lib.mkIf config.nixfiles.programs.zed.enable {
             };
           };
         };
+        golangci-lint-langserver = {
+          initialization_options = {
+            command = [
+              "golangci-lint"
+              "run"
+              "--output.json.path"
+              "stdout"
+              "--show-stats=false"
+              "--issues-exit-code=1"
+            ];
+          };
+        };
       };
       project_panel.indent_size = 10;
       outline_panel.dock = "right";
@@ -83,6 +95,9 @@ lib.mkIf config.nixfiles.programs.zed.enable {
       debugger.button = false;
       autosave = "on_focus_change";
       languages = {
+        Go = {
+          language_servers = ["gopls" "golangci-lint-langserver" "..."];
+        };
         Python = {
           language_servers = ["ty" "!basedpyright"];
           format_on_save = "on";
