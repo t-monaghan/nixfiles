@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROGRAMS_DIR="$ROOT_DIR/modules/programs"
+
+usage() {
+  echo "Usage: $(basename "$0") <program-name>"
+  echo ""
+  echo "Scaffolds a new program module with common.nix and home.nix,"
+  echo "and optionally adds it to the defaultCli or defaultGui meta-module."
+  exit 1
+}
+
+# --- Validation ---
+
+if [[ $# -ne 1 ]]; then
+  usage
+fi
+
+NAME="$1"
+
+if [[ ! "$NAME" =~ ^[a-zA-Z][a-zA-Z0-9_-]*$ ]]; then
+  echo "Error: Invalid program name '$NAME'."
+  echo "Name must start with a letter and contain only letters, digits, hyphens, or underscores."
+  exit 1
+fi
+
+PROGRAM_DIR="$PROGRAMS_DIR/$NAME"
+
+if [[ -d "$PROGRAM_DIR" ]]; then
+  echo "Error: Program '$NAME' already exists at $PROGRAM_DIR"
+  exit 1
+fi
+
+# --- Prompt for meta-module ---
+
+echo ""
+echo "Add to a meta-module?"
+echo "  1) defaultCli"
+echo "  2) defaultGui"
+echo "  3) None (enable manually)"
+echo ""
+
+while true; do
+  read -rp "> " choice
+  case "$choice" in
+    1) META="defaultCli"; break ;;
+    2) META="defaultGui"; break ;;
+    3) META=""; break ;;
+    *) echo "Please enter 1, 2, or 3." ;;
+  esac
+done
+
+# --- Create program directory ---
+
+mkdir -p "$PROGRAM_DIR"
+
+# --- Write common.nix ---
+
+cat > "$PROGRAM_DIR/common.nix" << EOF
+{lib, ...}: {
+  options.nixfiles.programs.${NAME}.enable = lib.mkEnableOption "${NAME}";
+}
+EOF
+
+# --- Write home.nix ---
+
+cat > "$PROGRAM_DIR/home.nix" << EOF
+{
+  config,
+  lib,
+  ...
+}:
+lib.mkIf config.nixfiles.programs.${NAME}.enable {
+  programs.${NAME} = {
+    enable = true;
+  };
+}
+EOF
+
+echo ""
+echo "Created:"
+echo "  modules/programs/$NAME/common.nix"
+echo "  modules/programs/$NAME/home.nix"
+
+# --- Add to meta-module if requested ---
+
+if [[ -n "$META" ]]; then
+  META_HOME="$PROGRAMS_DIR/$META/home.nix"
+
+  if [[ ! -f "$META_HOME" ]]; then
+    echo "Warning: $META_HOME not found. Skipping meta-module update."
+  else
+    # Append the new entry as the last item in the nixfiles.programs block.
+    # Finds the closing `};` of the nixfiles.programs block and inserts before it.
+    NEW_ENTRY="    ${NAME}.enable = true;"
+
+    awk -v new_entry="$NEW_ENTRY" '
+    BEGIN { in_block = 0; inserted = 0 }
+    /nixfiles\.programs = \{/ {
+      in_block = 1
+      print
+      next
+    }
+    in_block && /^[[:space:]]*};/ {
+      if (!inserted) {
+        print new_entry
+        inserted = 1
+      }
+      in_block = 0
+      print
+      next
+    }
+    { print }
+    ' "$META_HOME" > "$META_HOME.tmp"
+
+    mv "$META_HOME.tmp" "$META_HOME"
+
+    echo "  Added $NAME to $META"
+  fi
+fi
+
+echo ""
+echo "The module will be auto-imported by modules/default.nix."
+echo "Run home-manager switch to apply."
