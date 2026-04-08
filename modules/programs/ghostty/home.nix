@@ -10,7 +10,7 @@ lib.mkIf config.nixfiles.programs.ghostty.enable {
     enableFishIntegration = true;
     settings = {
       auto-update = "download";
-      auto-update-channel = "tip";
+      auto-update-channel = "stable";
 
       keybind = "global:ctrl+grave_accent=toggle_quick_terminal";
 
