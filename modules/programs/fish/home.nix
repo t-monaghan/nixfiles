@@ -69,6 +69,7 @@ lib.mkIf config.nixfiles.programs.fish.enable {
       gc = "git commit -m";
       ghpr = "gh pr checkout";
       gsc = "git stash clear";
+      checks = "gh pr checks --required --watch";
       # gsa = "git stash apply";
       gsp = "git stash pop";
       gcob = "git checkout -b";
