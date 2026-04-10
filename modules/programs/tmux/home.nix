@@ -5,9 +5,10 @@
   ...
 }: let
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
-    selected=$(tmux list-windows -F '#{window_index}: #{pane_title}' \
-      | gum filter --limit 1 --no-sort --fuzzy --placeholder 'Pick a window')
-    [ -n "$selected" ] && tmux select-window -t "''${selected%%:*}"
+    session="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
+    selected=$(${lib.getExe pkgs.tmux} list-windows -t "$session" -F '#{window_index}: #{window_name}' \
+      | ${lib.getExe pkgs.gum} filter --limit 1 --no-sort --fuzzy --placeholder 'Pick a window')
+    [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
 in
   lib.mkIf config.nixfiles.programs.tmux.enable {
@@ -24,7 +25,7 @@ in
       extraConfig = ''
         set -g status off
         set -g pane-border-status top
-        set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{session_name},#{pane_title}}#{?#{==:#{pane_index},0},#[align=right]#{S:#{?session_attached,#[fg=green]─ #{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#[dim]─ #{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}──,}'
+        set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:*\* *,#{session_name}},#[fg=brightyellow]#{session_name}#[default],#{session_name}},#{pane_title}}#{?#{==:#{pane_index},0},#[align=right]#{S:#{?session_attached,#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[fg=green]}─ #{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[dim]}─ #{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
         bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
         bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
@@ -44,6 +45,9 @@ in
 
         # Last session via sesh
         bind -N "last-session (via sesh)" a run-shell "sesh last"
+
+        # Kill current session and switch to previous
+        bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -p && tmux kill-session -t "$target"'
       '';
     };
   }
