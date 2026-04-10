@@ -48,7 +48,7 @@ lib.mkIf config.nixfiles.programs.fish.enable {
     };
 
     shellAbbrs = {
-      s = "tv sesh";
+      s = "tv sesh --no-sort";
       nv = "nvim";
 
       ci = "gh altar ci > /dev/null 2>&1 & disown";
