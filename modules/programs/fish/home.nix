@@ -10,6 +10,7 @@ lib.mkIf config.nixfiles.programs.fish.enable {
 
     loginShellInit = ''
       fish_add_path $HOME/.rd/bin
+      fish_add_path $HOME/go/bin
       set -gx fish_color_autosuggestion brblue
       bind \cx\ce edit_command_buffer
 
