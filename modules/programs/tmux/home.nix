@@ -25,7 +25,7 @@ in
       extraConfig = ''
         set -g status off
         set -g pane-border-status top
-        set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:*\* *,#{session_name}},#[fg=brightyellow]#{session_name}#[default],#{session_name}},#{pane_title}}#{?#{==:#{pane_index},0},#[align=right]#{S:#{?session_attached,#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[fg=green]}─ #{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[dim]}─ #{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+        set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:*\* *,#{session_name}},#[fg=brightyellow]#{session_name}#[default],#{session_name}},#{pane_title}}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[fg=green]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[dim]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
         bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
         bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
@@ -41,7 +41,7 @@ in
 
         # Switch windows via gum (only if multiple windows)
         unbind w
-        bind w if -F '#{e|>:#{session_windows},1}' 'display-popup -h 10% -w 50% -E "${tmux-window-picker}"' ""
+        bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 10% -w 50% -E "${tmux-window-picker}"' ""
 
         # Last session via sesh
         bind -N "last-session (via sesh)" a run-shell "sesh last"
