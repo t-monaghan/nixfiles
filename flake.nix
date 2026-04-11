@@ -6,6 +6,8 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
+    wilma.url = "git+https://github.com/cultureamp/wilma?ref=feat/nix-flake-module";
+    wilma.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -13,6 +15,7 @@
     nixpkgs,
     home-manager,
     nixvim,
+    wilma,
   }: let
     mkHost = {
       name,
@@ -26,6 +29,7 @@
         };
         modules = [
           nixvim.homeModules.nixvim
+          wilma.homeModules.wilma
           ./hosts/${name}.nix
         ];
         extraSpecialArgs = {inherit username;};

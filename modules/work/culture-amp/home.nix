@@ -4,16 +4,8 @@
   pkgs,
   ...
 }:
-let
-  bedrockPath = /. + "${builtins.getEnv "HOME"}/.config/nixfiles/bedrock.nix";
-  bedrockConfig =
-    if builtins.pathExists bedrockPath
-    then import bedrockPath
-    else {};
-in
-lib.mkIf config.nixfiles.work.cultureAmp.enable (lib.mkMerge [
-  {
-    programs.fish = {
+lib.mkIf config.nixfiles.work.cultureAmp.enable {
+  programs.fish = {
     interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";
     shellAbbrs = {
       "hsu" = "hotel services up";
@@ -43,6 +35,4 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable (lib.mkMerge [
     enable = true;
     enableFishIntegration = true;
   };
-  }
-  bedrockConfig
-])
+}

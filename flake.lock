@@ -97,7 +97,8 @@
       "inputs": {
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "nixvim": "nixvim"
+        "nixvim": "nixvim",
+        "wilma": "wilma"
       }
     },
     "systems": {
@@ -113,6 +114,27 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "wilma": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775879491,
+        "narHash": "sha256-PR/0Xh9L3WqxzHjBgxRQGpss0PJDehDOGIzOZ78V4to=",
+        "ref": "feat/nix-flake-module",
+        "rev": "3fd90ffc95773da5fe556e7a32257d000821475e",
+        "revCount": 167,
+        "type": "git",
+        "url": "https://github.com/cultureamp/wilma"
+      },
+      "original": {
+        "ref": "feat/nix-flake-module",
+        "type": "git",
+        "url": "https://github.com/cultureamp/wilma"
       }
     }
   },
