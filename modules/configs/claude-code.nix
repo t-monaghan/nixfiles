@@ -49,6 +49,7 @@
         "Bash(git show:*)"
         "Bash(git log:*)"
         "Bash(git diff:*)"
+        "Bash(diff:*)"
         "Bash(git blame:*)"
         "Bash(git status:*)"
         "Bash(git stash list:*)"
