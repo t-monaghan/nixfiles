@@ -16,7 +16,7 @@ in {
   extraConfig = ''
     set -g status off
     set -g pane-border-status top
-    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:*\* *,#{session_name}},#[fg=brightyellow]#{s/ \* / /:session_name}#[default],#{session_name}},#{pane_title}}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[fg=green]}#{s/ \* / /:session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:*\* *,#{session_name}},#[fg=brightyellow],#[dim]}#{s/ \* / /:session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=brightyellow]#{session_name}#[default],#{session_name}},#{pane_title}}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=brightyellow],#[fg=green]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=brightyellow],#[dim]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
     bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
     bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 

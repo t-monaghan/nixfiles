@@ -114,7 +114,7 @@
           hooks = [
             {
               type = "command";
-              command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \*\ *) ;; *) tmux set-environment -t "$session" CLAUDE_ORIGINAL_SESSION "$session" && tmux rename-session -t "$session" "* $session *";; esac; fi'';
+              command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) ;; *) tmux set-environment -t "$session" CLAUDE_ORIGINAL_SESSION "$session" && tmux rename-session -t "$session" "[$session]";; esac; fi'';
             }
           ];
         }
@@ -124,7 +124,7 @@
           hooks = [
             {
               type = "command";
-              command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \*\ *) ;; *) tmux set-environment -t "$session" CLAUDE_ORIGINAL_SESSION "$session" && tmux rename-session -t "$session" "* $session *";; esac; fi'';
+              command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) ;; *) tmux set-environment -t "$session" CLAUDE_ORIGINAL_SESSION "$session" && tmux rename-session -t "$session" "[$session]";; esac; fi'';
             }
           ];
         }
