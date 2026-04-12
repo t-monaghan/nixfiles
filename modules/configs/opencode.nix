@@ -9,12 +9,11 @@
     default_agent = "plan";
     formatter = {
       nixfmt = {
-        command = ["${lib.getExe pkgs.nixfmt}"];
-        patterns = ["*.nix"];
+        command = ["nixfmt" "$FILE"];
+        extensions = [".nix"];
       };
       treefmt = {
-        command = ["${lib.getExe pkgs.treefmt}"];
-        patterns = ["*"];
+        command = ["treefmt" "--stdin" "$FILE"];
       };
     };
     compaction = {
@@ -22,34 +21,31 @@
       prune = true;
     };
     watcher = {
-      ignore = [
-        "**/node_modules/**"
-        "**/dist/**"
-        "**/.git/**"
-        "**/result/**"
-        "**/.direnv/**"
-      ];
+      ignore = ["node_modules/**" "dist/**" ".git/**" "result/**" ".direnv/**"];
     };
     permission = {
       bash = {
-        allow = [
-          "gh pr create:*"
-          "gh pr comment:*"
-          "gh pr view:*"
-          "gh pr list:*"
-          "gh pr diff:*"
-          "gh pr checks:*"
-          "gh pr checkout:*"
-          "gh pr merge:*"
-          "gh issue list:*"
-          "gh issue view:*"
-          "gh issue create:*"
-          "gh issue comment:*"
-          "gh repo view:*"
-          "gh run list:*"
-          "gh run view:*"
-          "gh run watch:*"
-        ];
+        # gh read commands
+        "gh pr view *" = "allow";
+        "gh pr list *" = "allow";
+        "gh pr diff *" = "allow";
+        "gh pr checks *" = "allow";
+        "gh pr status *" = "allow";
+        "gh issue view *" = "allow";
+        "gh issue list *" = "allow";
+        "gh issue status *" = "allow";
+        "gh repo view *" = "allow";
+        "gh repo list *" = "allow";
+        "gh run view *" = "allow";
+        "gh run list *" = "allow";
+        "gh workflow view *" = "allow";
+        "gh workflow list *" = "allow";
+        "gh release view *" = "allow";
+        "gh release list *" = "allow";
+        "gh search *" = "allow";
+        "gh browse *" = "allow";
+        "gh status" = "allow";
+        "gh auth status *" = "allow";
       };
     };
   };
