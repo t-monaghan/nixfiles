@@ -1,0 +1,51 @@
+{...}: {
+  enable = true;
+  package = null;
+  enableFishIntegration = true;
+  settings = {
+    auto-update = "off";
+    keybind = [
+      "super+t=new_tab"
+      "super+w=close_surface"
+      "super+comma=reload_config"
+      "super+equal=increase_font_size:1"
+      "super+minus=decrease_font_size:1"
+      "super+0=reset_font_size"
+      "super+left_bracket=previous_tab"
+      "super+right_bracket=next_tab"
+      "super+one=goto_tab:1"
+      "super+two=goto_tab:2"
+      "super+three=goto_tab:3"
+      "super+four=goto_tab:4"
+      "super+five=goto_tab:5"
+      "super+six=goto_tab:6"
+      "super+seven=goto_tab:7"
+      "super+eight=goto_tab:8"
+      "super+nine=goto_tab:9"
+      "super+n=new_window"
+      "super+shift+n=toggle_quick_terminal"
+    ];
+    clipboard-read = "allow";
+    clipboard-write = "allow";
+    clipboard-trim-trailing-spaces = true;
+    theme = "light:Monokai Pro Light,dark:base16-everforest-dark-hard";
+    cursor-style = "block";
+    cursor-style-blink = false;
+    mouse-hide-while-typing = true;
+    background-opacity = 0.95;
+    background-blur-radius = 20;
+    font-family = "Jetbrains Mono";
+    font-size = 16;
+    font-thicken = true;
+    adjust-cell-height = "10%";
+    macos-titlebar-style = "tabs";
+    macos-option-as-alt = true;
+    shell-integration = "fish";
+    shell-integration-features = "no-cursor";
+    window-padding-x = 10;
+    window-padding-y = 10;
+    quick-terminal-position = "top";
+    quick-terminal-screen = "main";
+    quick-terminal-animation-duration = 0;
+  };
+}

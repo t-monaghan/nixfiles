@@ -13,14 +13,5 @@
     ];
   };
 
-  nixfiles = {
-    enable = true;
-
-    programs = {
-      defaultCli.enable = true;
-      defaultGui.enable = true;
-    };
-
-    development.enable = true;
-  };
+  nixfiles = {};
 }

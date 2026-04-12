@@ -17,7 +17,6 @@
       eslint.enable = true;
       ts_ls.enable = true;
       bashls.enable = true;
-      marksman.enable = true;
       lua_ls = {
         enable = true;
         settings.Lua.completion.callSnippet = "Replace";

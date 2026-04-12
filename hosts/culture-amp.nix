@@ -7,14 +7,6 @@
   };
 
   nixfiles = {
-    enable = true;
-
-    programs = {
-      defaultCli.enable = true;
-      defaultGui.enable = true;
-    };
-
-    development.enable = true;
     work.cultureAmp.enable = true;
   };
 
