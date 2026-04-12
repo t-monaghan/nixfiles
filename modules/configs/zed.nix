@@ -1,4 +1,7 @@
-{pkgs, lib, ...}: {
+{pkgs, lib, ...}:
+let
+  fonts = import ./fonts.nix;
+in {
   enable = true;
   package = null;
   userSettings = {
@@ -53,10 +56,10 @@
       light = "Monokai Pro Light";
       dark = "Everforest Dark";
     };
-    buffer_font_family = "JetBrainsMono Nerd Font Mono";
-    buffer_font_size = 16;
-    ui_font_size = 16;
-    ui_font_family = "JetBrainsMono Nerd Font Mono";
+    buffer_font_family = fonts.monoNerdFont;
+    buffer_font_size = fonts.size;
+    ui_font_size = fonts.size;
+    ui_font_family = fonts.monoNerdFont;
     show_whitespaces = "selection";
     telemetry = {
       diagnostics = false;
@@ -84,8 +87,8 @@
       };
       dock = "bottom";
       default_height = 400;
-      font_family = "JetBrainsMono Nerd Font Mono";
-      font_size = 16;
+      font_family = fonts.monoNerdFont;
+      font_size = fonts.size;
       line_height = "comfortable";
     };
     languages = {

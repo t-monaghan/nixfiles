@@ -32,7 +32,7 @@ in {
 
     # Switch windows via gum (only if multiple windows)
     unbind w
-    bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 10% -w 50% -E "${tmux-window-picker}"' ""
+    bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 30% -w 50% -E "${tmux-window-picker}"' ""
 
     # Last session via sesh
     bind -N "last-session (via sesh)" a run-shell "sesh last"

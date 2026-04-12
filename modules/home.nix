@@ -3,7 +3,10 @@
   config,
   lib,
   ...
-}: {
+}:
+let
+  fonts = import ./configs/fonts.nix;
+in {
   nixpkgs = {
     config.allowUnfree = true;
   };
@@ -231,8 +234,8 @@
           };
         };
         font = {
-          normal.family = "Jetbrains Mono";
-          size = 16;
+          normal.family = fonts.mono;
+          size = fonts.size;
         };
         colors = {
           primary = {
