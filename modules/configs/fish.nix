@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   enable = true;
 
   loginShellInit = ''
@@ -38,6 +38,38 @@
     mkcd = {
       body = ''mkdir $argv && cd $argv'';
     };
+    ghclone = {
+      description = "Clone a GitHub repo to ~/dev and open a session";
+      body = ''
+        if test (count $argv) -eq 0
+          echo "Usage: ghclone org/repo [directory-name]"
+          return 1
+        end
+
+        set slug $argv[1]
+
+        if test (count $argv) -ge 2
+          set repo_name $argv[2]
+        else
+          set repo_name (basename $slug)
+        end
+
+        set dev_path ~/dev/$repo_name
+
+        if not test -d $dev_path
+          echo "Cloning $slug to $dev_path..."
+          git clone https://github.com/$slug $dev_path
+          if test $status -ne 0
+            echo "Failed to clone repository"
+            return 1
+          end
+        else
+          echo "Repository already exists at $dev_path"
+        end
+
+        sesh connect $dev_path
+      '';
+    };
   };
 
   shellAbbrs = {
@@ -67,6 +99,8 @@
     gsp = "git stash pop";
     gcob = "git checkout -b";
     grs = "git restore --staged";
+    grm = "git rebase -i main";
+    gap = "git add -p";
 
     ll = "ls -ltra";
 
@@ -97,7 +131,7 @@
   };
 
   plugins = [
-    {inherit (pkgs.fishPlugins.foreign-env) name src;}
+    { inherit (pkgs.fishPlugins.foreign-env) name src; }
     {
       name = "pnpm-shell-completion";
       src = pkgs.fetchFromGitHub {
