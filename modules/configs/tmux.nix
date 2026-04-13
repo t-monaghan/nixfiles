@@ -1,11 +1,18 @@
-{pkgs, lib, ...}: let
+{ pkgs
+, lib
+, ...
+}:
+let
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
     session="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
-    selected=$(${lib.getExe pkgs.tmux} list-windows -t "$session" -F '#{window_index}: #{window_name}' \
-      | ${lib.getExe pkgs.gum} filter --limit 1 --no-sort --fuzzy --placeholder 'Pick a window')
+    selected=$(${lib.getExe pkgs.tmux} list-windows -t "$session" -F '#{window_index}: #{pane_title}' \
+      | ${lib.getExe pkgs.fzf} --no-sort --reverse --delimiter=':' \
+        --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t $session:{1}" \
+        --preview-window "right:80%")
     [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
-in {
+in
+{
   enable = true;
   mouse = true;
   escapeTime = 100;
@@ -28,16 +35,23 @@ in {
 
     # Open sesh picker instead of default session tree
     unbind s
-    bind s display-popup -h 30% -w 50% -E "sesh picker -i"
+    bind s display-popup -E -w 50 -h 18 "sesh list -i | ${lib.getExe pkgs.fzf} --height=100% --no-sort --reverse --ansi | xargs -r sesh connect"
 
     # Switch windows via gum (only if multiple windows)
     unbind w
-    bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 30% -w 50% -E "${tmux-window-picker}"' ""
+    bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
 
-    # Last session via sesh
-    bind -N "last-session (via sesh)" a run-shell "sesh last"
+    # Last session via sesh (only if multiple sessions)
+    bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
 
     # Kill current session and switch to previous
     bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -p && tmux kill-session -t "$target"'
+
+    # Clone GitHub repo and open session
+    bind g command-prompt -p "Clone GitHub repo (org/repo [dir]):" "run-shell 'fish -c \"ghclone %1\"'"
+
+    # Clear Claude notifications when switching to a session
+    set-hook -g after-select-window 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
+    set-hook -g client-session-changed 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
   '';
 }
