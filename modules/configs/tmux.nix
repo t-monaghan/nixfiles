@@ -1,8 +1,8 @@
-{ pkgs
-, lib
-, ...
-}:
-let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
     session="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
     selected=$(${lib.getExe pkgs.tmux} list-windows -t "$session" -F '#{window_index}: #{pane_title}' \
@@ -11,8 +11,7 @@ let
         --preview-window "right:80%")
     [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
-in
-{
+in {
   enable = true;
   mouse = true;
   escapeTime = 100;
@@ -48,7 +47,7 @@ in
     bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -p && tmux kill-session -t "$target"'
 
     # Clone GitHub repo and open session
-    bind g command-prompt -p "Clone GitHub repo (org/repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
+    bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
 
     # Clear Claude notifications when switching to a session
     set-hook -g after-select-window 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
