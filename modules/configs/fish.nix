@@ -48,6 +48,11 @@
 
         set slug $argv[1]
 
+        # If slug doesn't contain "/", prepend cultureamp org
+        if not string match -q "*/*" $slug
+          set slug "cultureamp/$slug"
+        end
+
         if test (count $argv) -ge 2
           set repo_name $argv[2]
         else
@@ -57,14 +62,11 @@
         set dev_path ~/dev/$repo_name
 
         if not test -d $dev_path
-          echo "Cloning $slug to $dev_path..."
-          git clone https://github.com/$slug $dev_path
+          git clone https://github.com/$slug $dev_path >/dev/null 2>&1
           if test $status -ne 0
             echo "Failed to clone repository"
             return 1
           end
-        else
-          echo "Repository already exists at $dev_path"
         end
 
         sesh connect $dev_path

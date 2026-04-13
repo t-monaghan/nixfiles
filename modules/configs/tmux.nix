@@ -48,7 +48,7 @@ in
     bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -p && tmux kill-session -t "$target"'
 
     # Clone GitHub repo and open session
-    bind g command-prompt -p "Clone GitHub repo (org/repo [dir]):" "run-shell 'fish -c \"ghclone %1\"'"
+    bind g command-prompt -p "Clone GitHub repo (org/repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
 
     # Clear Claude notifications when switching to a session
     set-hook -g after-select-window 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
