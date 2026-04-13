@@ -39,6 +39,26 @@
     vimcmd_visual_symbol = "[ ](yellow)";
   };
   custom = {
+    aws_assumed_role = {
+      command = ''
+        if [[ -n $AWS_PROFILE ]]; then
+          profile="$AWS_PROFILE"
+        else
+          profile="default"
+        fi
+        if [[ -n $AWS_REGION ]]; then
+          region=" ($AWS_REGION)"
+        else
+          region=""
+        fi
+        echo "$profile$region"
+      '';
+      description = "Shows AWS profile and region when a role has been assumed";
+      format = "[󰅟 $output ]($style)";
+      shell = "/bin/bash";
+      style = "bold blue";
+      when = "[[ -n $AWS_SESSION_TOKEN ]]";
+    };
     devbox = {
       command = "command_output=$(devbox version 2>&1)\nversion=$(echo \"$command_output\" | grep -E '^[0-9]+(\\.[0-9]+){2}$')\nif echo \"$command_output\" | grep -q \"Info: New devbox available:\"; then \n  update_version=$(echo \"$command_output\" | grep -o '[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+' | sed -n '2p')\n  echo \"$version update available ($update_version)\" \nelse\n  echo \"$version\"\nfi\n";
       description = "Shows the devbox version if inside a devbox project";
