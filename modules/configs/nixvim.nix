@@ -94,6 +94,18 @@
       action = "<C-w><C-k>";
       options.desc = "Move focus to the upper window";
     }
+    {
+      mode = "n";
+      key = "<leader>yp";
+      action.__raw = ''
+        function()
+          local path = vim.fn.expand("%:p")
+          vim.fn.setreg("+", path)
+          vim.notify("Copied: " .. path, vim.log.levels.INFO)
+        end
+      '';
+      options.desc = "[Y]ank file [P]ath (absolute)";
+    }
   ];
 
   autoGroups = {
