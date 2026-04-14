@@ -44,6 +44,8 @@
     cursorline = true;
     scrolloff = 10;
     hlsearch = true;
+    wrap = false;
+    linebreak = false;
   };
 
   keymaps = [
@@ -110,6 +112,7 @@
 
   autoGroups = {
     kickstart-highlight-yank = {clear = true;};
+    markdown-wrap = {clear = true;};
   };
 
   autoCmd = [
@@ -129,6 +132,18 @@
       callback.__raw = ''
         function()
           vim.cmd.colorscheme("base16-everforest-dark-hard")
+        end
+      '';
+    }
+    {
+      event = ["FileType"];
+      pattern = ["markdown"];
+      desc = "Enable soft wrapping for markdown files";
+      group = "markdown-wrap";
+      callback.__raw = ''
+        function()
+          vim.opt_local.wrap = true
+          vim.opt_local.linebreak = true
         end
       '';
     }

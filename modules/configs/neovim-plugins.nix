@@ -189,7 +189,11 @@
     blink-cmp = {
       enable = true;
       settings = {
-        keymap.preset = "default";
+        keymap = {
+          preset = "default";
+          "<CR>" = ["accept" "fallback"];
+          "<C-y>" = [];
+        };
         appearance.nerd_font_variant = "mono";
         completion.documentation = {
           auto_show = false;
@@ -282,6 +286,16 @@
         end
       '';
       options.desc = "[F]ormat buffer";
+    }
+    {
+      mode = "i";
+      key = "<C-f>";
+      action.__raw = ''
+        function()
+          require("telescope.builtin").find_files()
+        end
+      '';
+      options.desc = "Find files (insert mode)";
     }
   ];
 
