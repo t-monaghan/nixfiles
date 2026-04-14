@@ -140,6 +140,16 @@
           ];
         }
       ];
+      PostToolUse = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) original=$(tmux show-environment -t "$session" CLAUDE_ORIGINAL_SESSION 2>/dev/null | sed 's/^[^=]*=//'); if [ -n "$original" ]; then tmux set-environment -t "$session" -u CLAUDE_ORIGINAL_SESSION; tmux rename-session -t "$session" "$original"; fi;; esac; fi'';
+            }
+          ];
+        }
+      ];
       SessionEnd = [
         {
           hooks = [
