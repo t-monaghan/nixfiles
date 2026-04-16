@@ -26,6 +26,10 @@ in {
     bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
     bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
+    # Vim-style visual selection in copy mode
+    bind -Tcopy-mode-vi v send -X begin-selection
+    bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
+
     set -g window-style 'bg=colour236'
     set -g window-active-style 'bg=terminal'
 

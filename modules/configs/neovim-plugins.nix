@@ -243,6 +243,18 @@
     web-devicons.enable = true;
   };
 
+  extraPlugins = with pkgs.vimPlugins; [
+    (pkgs.vimUtils.buildVimPlugin {
+      name = "gh-permalink.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "vieitesss";
+        repo = "gh-permalink.nvim";
+        rev = "9e337278ab5218d17b86f611c77be5fb5e6a263d";
+        hash = "sha256-gDoB1Ynia+Fychsc8L9sjD6eR9t76kCb0JsiZFh9dRA=";
+      };
+    })
+  ];
+
   # Extra telescope keymaps that need raw Lua (custom picker functions)
   keymaps = [
     {
@@ -296,6 +308,16 @@
         end
       '';
       options.desc = "Find files (insert mode)";
+    }
+    {
+      mode = ["n" "v"];
+      key = "<leader>gy";
+      action.__raw = ''
+        function()
+          require("gh-permalink").yank()
+        end
+      '';
+      options.desc = "Copy GitHub permalink";
     }
   ];
 
