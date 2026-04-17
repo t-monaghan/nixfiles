@@ -101,7 +101,7 @@
     gsp = "git stash pop";
     gcob = "git checkout -b";
     grs = "git restore --staged";
-    grm = "git rebase -i main";
+    grim = "git rebase -i main";
     gap = "git add -p";
 
     ll = "ls -ltra";
