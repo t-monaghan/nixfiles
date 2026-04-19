@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   enable = true;
 
   loginShellInit = ''
@@ -72,6 +72,38 @@
         sesh connect $dev_path
       '';
     };
+    assume = {
+      description = "Select and assume AWS roles using fzf";
+      body = ''
+        # Find the granted assume.fish script
+        set assume_script (readlink -f (which assume) | sed 's|/bin/assume|/share/assume.fish|')
+
+        # Get frecency entries
+        set frecency_profiles (cat ~/.granted/aws_profiles_frecency | jq -r '.Entries[] | .Entry' | sort)
+
+        # Get all profiles from config
+        set all_profiles (grep '^\[profile' ~/.aws/config | sed 's/\[profile \(.*\)\]/\1/' | sort)
+
+        # Combine frecency profiles first, then add any missing profiles
+        set profile (
+          begin
+            cat ~/.granted/aws_profiles_frecency | jq -r '.Entries[] | .Entry'
+            comm -13 (printf '%s\n' $frecency_profiles | psub) (printf '%s\n' $all_profiles | psub)
+          end \
+          | fzf --prompt="AWS Profile > " \
+                --preview="grep -A 10 '^\[profile {}\]' ~/.aws/config | grep granted_sso_account_id | head -1 | awk '{print \$NF}'" \
+                --preview-label="Account ID" \
+                --preview-window=down:1:wrap \
+                --bind="ctrl-c:abort" \
+                --header="Enter: assume | Ctrl-O: assume + open console" \
+                --height=40%
+        )
+
+        if test -n "$profile"
+          source $assume_script $profile
+        end
+      '';
+    };
   };
 
   shellAbbrs = {
@@ -133,7 +165,7 @@
   };
 
   plugins = [
-    { inherit (pkgs.fishPlugins.foreign-env) name src; }
+    {inherit (pkgs.fishPlugins.foreign-env) name src;}
     {
       name = "pnpm-shell-completion";
       src = pkgs.fetchFromGitHub {

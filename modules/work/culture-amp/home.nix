@@ -33,6 +33,6 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
 
   programs.granted = {
     enable = true;
-    enableFishIntegration = true;
+    enableFishIntegration = false;
   };
 }
