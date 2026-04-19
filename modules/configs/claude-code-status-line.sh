@@ -64,6 +64,17 @@ else
 fi
 
 # Context window usage
-[ -n "$used" ] && out="$out $(printf '\033[2m│ %.0f%%\033[0m' "$used")"
+if [ -n "$used" ]; then
+    # Convert to integer for comparison
+    used_int=$(printf '%.0f' "$used")
+    if [ "$used_int" -ge 80 ]; then
+        color='\033[31m'  # Red for 80%+
+    elif [ "$used_int" -ge 60 ]; then
+        color='\033[33m'  # Yellow for 60%+
+    else
+        color='\033[2m'   # Dim for <60%
+    fi
+    out="$out $(printf "${color}│ %.0f%%\033[0m" "$used")"
+fi
 
 echo "$out"
