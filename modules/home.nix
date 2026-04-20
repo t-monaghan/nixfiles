@@ -39,6 +39,7 @@ in {
       fblog
       hyperfine
       watchexec
+      pi-coding-agent
 
       # Linters
       golangci-lint
