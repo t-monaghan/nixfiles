@@ -5,6 +5,7 @@
     fish_add_path $HOME/.rd/bin
     fish_add_path $HOME/go/bin
     set -gx fish_color_autosuggestion brblue
+    set -gx AWTRIX_HOST 192.168.1.97
     bind \cx\ce edit_command_buffer
 
     if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
@@ -37,6 +38,30 @@
     };
     mkcd = {
       body = ''mkdir $argv && cd $argv'';
+    };
+    notify = {
+      description = "Run a command and send AWTRIX notification on completion";
+      body = ''
+        set start (date +%s)
+        $argv
+        set cmd_status $status
+        set elapsed (math (date +%s) - $start)
+
+        if test $cmd_status -eq 0
+          set color "#00FF00"
+          set text "DONE"
+        else
+          set color "#FF0000"
+          set text "FAILED"
+        end
+
+        curl -s -X POST "http://$AWTRIX_HOST/api/notify" \
+          -H "Content-Type: application/json" \
+          -d "{\"text\":\"$text: $argv[1] ("$elapsed"s)\",\"color\":\"$color\",\"duration\":10}" \
+          > /dev/null 2>&1 &
+
+        return $cmd_status
+      '';
     };
     ghclone = {
       description = "Clone a GitHub repo to ~/dev and open a session";
@@ -112,6 +137,7 @@
 
     ci = "gh altar ci > /dev/null 2>&1 & disown";
     dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
+    n = "notify";
     stats = "curl 'http://192.168.1.97/api/stats' | jq";
 
     ns = "tv nix-search-tv";

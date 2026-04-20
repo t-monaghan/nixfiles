@@ -3,8 +3,7 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   fonts = import ./configs/fonts.nix;
 in {
   nixpkgs = {
