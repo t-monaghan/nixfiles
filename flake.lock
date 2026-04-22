@@ -123,11 +123,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775879491,
-        "narHash": "sha256-PR/0Xh9L3WqxzHjBgxRQGpss0PJDehDOGIzOZ78V4to=",
+        "lastModified": 1776835133,
+        "narHash": "sha256-HqKBgLP4JHMIDHroG03oJC61hzePuvZXvsd0H/0cKbk=",
         "ref": "feat/nix-flake-module",
-        "rev": "3fd90ffc95773da5fe556e7a32257d000821475e",
-        "revCount": 167,
+        "rev": "773e7473d13d4b62af83dd89a3bfc35a3b6024ba",
+        "revCount": 176,
         "type": "git",
         "url": "https://github.com/cultureamp/wilma"
       },

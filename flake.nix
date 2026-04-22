@@ -29,7 +29,7 @@
         };
         modules = [
           nixvim.homeModules.nixvim
-          wilma.homeModules.wilma
+          wilma.homeManagerModules.wilma
           ./hosts/${name}.nix
         ];
         extraSpecialArgs = {inherit username;};
