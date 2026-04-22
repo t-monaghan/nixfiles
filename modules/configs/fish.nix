@@ -110,7 +110,7 @@
         set all_profiles (grep '^\[profile' ~/.aws/config | sed 's/\[profile \(.*\)\]/\1/' | sort)
 
         # Combine frecency profiles first, then add any missing profiles
-        set profile (
+        set result (
           begin
             cat ~/.granted/aws_profiles_frecency | jq -r '.Entries[] | .Entry'
             comm -13 (printf '%s\n' $frecency_profiles | psub) (printf '%s\n' $all_profiles | psub)
@@ -120,12 +120,20 @@
                 --preview-label="Account ID" \
                 --preview-window=down:1:wrap \
                 --bind="ctrl-c:abort" \
+                --expect="ctrl-o" \
                 --header="Enter: assume | Ctrl-O: assume + open console" \
                 --height=40%
         )
 
+        set key $result[1]
+        set profile $result[2]
+
         if test -n "$profile"
-          source $assume_script $profile
+          if test "$key" = "ctrl-o"
+            source $assume_script $profile -c
+          else
+            source $assume_script $profile
+          end
         end
       '';
     };
