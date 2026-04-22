@@ -164,6 +164,15 @@
     sandbox = {
       autoAllowBashIfSandboxed = true;
       allowUnsandboxedCommands = false;
+      filesystem = {
+        read = {
+          allowOnly = [
+            "~/.config/gh/"
+            "/etc/ssl/"
+            "/private/etc/ssl/"
+          ];
+        };
+      };
       network = {
         allowedDomains = [
           "registry.npmjs.org"
