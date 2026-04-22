@@ -154,6 +154,7 @@
 
     gco = "git checkout";
     gp = "git push";
+    gpf = "git push --force-with-lease";
     gpu = "git pull --autostash --rebase";
     gs = "git status";
     gl = "tv git-log";
