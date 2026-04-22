@@ -121,7 +121,7 @@
                 --preview-window=down:1:wrap \
                 --bind="ctrl-c:abort" \
                 --expect="ctrl-o" \
-                --header="Enter: assume | Ctrl-O: assume + open console" \
+                --header="Enter: assume | Ctrl-o: assume + open console" \
                 --height=40%
         )
 
