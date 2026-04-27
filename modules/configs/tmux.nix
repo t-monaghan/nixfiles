@@ -46,7 +46,7 @@ in {
     bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
 
     # Kill current session and switch to previous
-    bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -p && tmux kill-session -t "$target"'
+    bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -l && tmux kill-session -t "$target"'
 
     # Clone GitHub repo and open session
     bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
