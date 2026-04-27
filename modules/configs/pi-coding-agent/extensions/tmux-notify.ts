@@ -45,4 +45,5 @@ function unbracketSession(): void {
 export default function (pi: ExtensionAPI) {
 	pi.on("turn_end", async () => bracketSession());
 	pi.on("turn_start", async () => unbracketSession());
+	pi.on("session_shutdown", async () => unbracketSession());
 }
