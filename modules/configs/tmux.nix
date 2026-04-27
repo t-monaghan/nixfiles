@@ -30,9 +30,6 @@ in {
     bind -Tcopy-mode-vi v send -X begin-selection
     bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
 
-    set -g window-style 'bg=colour236'
-    set -g window-active-style 'bg=terminal'
-
     # Highlight active pane background when prefix is pressed
     bind -Troot C-b select-pane -P 'bg=colour235' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
 
