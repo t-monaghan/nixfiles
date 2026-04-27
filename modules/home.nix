@@ -5,6 +5,7 @@
   ...
 }: let
   fonts = import ./configs/fonts.nix;
+  colors = import ./configs/colors.nix;
 in {
   nixpkgs = {
     config.allowUnfree = true;
@@ -82,7 +83,7 @@ in {
     jankyborders = {
       enable = true;
       settings = {
-        active_color = "0xffcff1bf";
+        active_color = "0xff${builtins.substring 1 6 colors.accent}";
         hidpi = "on";
         width = 8;
       };
@@ -107,7 +108,7 @@ in {
     ripgrep.enable = true;
     fd.enable = true;
 
-    fish = import ./configs/fish.nix {inherit pkgs;};
+    fish = import ./configs/fish.nix {inherit pkgs colors;};
 
     gh = {
       enable = true;
@@ -139,8 +140,8 @@ in {
     bat = {
       enable = true;
       config = {
-        theme-dark = "gruvbox-dark";
-        theme-light = "gruvbox-light";
+        theme-dark = colors.bat_dark;
+        theme-light = colors.bat_light;
       };
     };
 
@@ -148,7 +149,7 @@ in {
       enable = true;
       enableFishIntegration = true;
       enableTransience = true;
-      settings = import ./configs/starship.nix;
+      settings = import ./configs/starship.nix {inherit colors;};
     };
 
     fzf = {
@@ -179,9 +180,9 @@ in {
       };
     };
 
-    tmux = import ./configs/tmux.nix {inherit pkgs lib;};
+    tmux = import ./configs/tmux.nix {inherit pkgs lib colors;};
 
-    nixvim = import ./configs/nixvim.nix {inherit pkgs;};
+    nixvim = import ./configs/nixvim.nix {inherit pkgs colors;};
 
     sesh = {
       enable = true;
@@ -223,7 +224,7 @@ in {
       settings = import ./configs/aerospace.nix;
     };
 
-    ghostty = import ./configs/ghostty.nix {};
+    ghostty = import ./configs/ghostty.nix {inherit colors;};
 
     alacritty = {
       enable = true;
@@ -244,28 +245,28 @@ in {
         };
         colors = {
           primary = {
-            background = "#2d2d2d";
-            foreground = "#cccccc";
+            background = colors.base00;
+            foreground = colors.base05;
           };
           normal = {
-            black = "#000000";
-            red = "#f2777a";
-            green = "#99cc99";
-            yellow = "#ffcc66";
-            blue = "#6699cc";
-            magenta = "#cc99cc";
-            cyan = "#66cccc";
-            white = "#ffffff";
+            black = colors.base00;
+            red = colors.base08;
+            green = colors.base0B;
+            yellow = colors.base0A;
+            blue = colors.base0D;
+            magenta = colors.base0E;
+            cyan = colors.base0C;
+            white = colors.base06;
           };
           bright = {
-            black = "#000000";
-            red = "#f2777a";
-            green = "#99cc99";
-            yellow = "#ffcc66";
-            blue = "#6699cc";
-            magenta = "#cc99cc";
-            cyan = "#66cccc";
-            white = "#ffffff";
+            black = colors.base03;
+            red = colors.base08;
+            green = colors.base0B;
+            yellow = colors.base0A;
+            blue = colors.base0D;
+            magenta = colors.base0E;
+            cyan = colors.base0C;
+            white = colors.base07;
           };
         };
         mouse.hide_when_typing = true;
@@ -273,6 +274,6 @@ in {
       };
     };
 
-    zed-editor = import ./configs/zed.nix {inherit pkgs lib;};
+    zed-editor = import ./configs/zed.nix {inherit pkgs lib colors;};
   };
 }
