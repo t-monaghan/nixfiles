@@ -6,6 +6,7 @@
  * dir, git branch/status, AWS profile, sandbox status.
  *
  * The default footer already shows: tokens, cost, context %, model.
+ * Overrides the verbose sandbox extension status with a compact claude-code style indicator.
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
@@ -62,13 +63,21 @@ function buildStatus(ctx: any, theme: any): string {
 		parts.push(theme.fg("accent", `│ 󰅟 ${profile}${region}`));
 	}
 
-	// Sandbox status
+	// Sandbox status — compact indicator (overrides verbose sandbox extension output)
 	let sandboxed = false;
 	try {
-		const sandboxPath = join(cwd, ".pi", "sandbox.json");
-		if (existsSync(sandboxPath)) {
-			const cfg = JSON.parse(readFileSync(sandboxPath, "utf8"));
-			sandboxed = cfg?.sandbox?.enabled === true;
+		const paths = [
+			join(process.env.HOME || "~", ".pi", "agent", "sandbox.json"),
+			join(cwd, ".pi", "sandbox.json"),
+		];
+		for (const p of paths) {
+			if (existsSync(p)) {
+				const cfg = JSON.parse(readFileSync(p, "utf8"));
+				if (cfg?.enabled === true) {
+					sandboxed = true;
+					break;
+				}
+			}
 		}
 	} catch {}
 	parts.push(
@@ -83,7 +92,7 @@ export default function (pi: ExtensionAPI) {
 		try {
 			const theme = ctx.ui.theme;
 			ctx.ui.setStatus("status-line", buildStatus(ctx, theme));
-			// Hide status from pi-mcp-adapter and pi-sandbox packages
+			// Hide verbose status from pi-mcp-adapter and pi-sandbox
 			ctx.ui.setStatus("mcp", undefined);
 			ctx.ui.setStatus("sandbox", undefined);
 		} catch {}
