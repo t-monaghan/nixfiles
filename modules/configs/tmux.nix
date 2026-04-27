@@ -53,5 +53,8 @@ in {
     # Clear Claude notifications when switching to a session
     set-hook -g after-select-window 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
     set-hook -g client-session-changed 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
+
+    set -g extended-keys on
+    set -g extended-keys-format csi-u
   '';
 }

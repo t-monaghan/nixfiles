@@ -89,6 +89,11 @@ in {
     };
   };
 
+  home.file.".pi/agent" = {
+    source = ./configs/pi-coding-agent;
+    recursive = true;
+  };
+
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
   programs = {

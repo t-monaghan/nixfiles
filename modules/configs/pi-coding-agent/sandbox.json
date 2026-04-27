@@ -1,0 +1,86 @@
+{
+  "enabled": true,
+  "allowBrowserProcess": true,
+  "network": {
+    "allowLocalBinding": true,
+    "allowAllUnixSockets": true,
+    "allowedDomains": [
+      "localhost",
+      "github.com",
+      "*.github.com",
+      "raw.githubusercontent.com",
+      "release-assets.githubusercontent.com",
+      "results-receiver.actions.githubusercontent.com",
+      "*.blob.core.windows.net",
+      "*.npmjs.org",
+      "*.pypi.org",
+      "html.duckduckgo.com",
+      "mcp.context7.com",
+      "proxy.golang.org",
+      "nixos.org",
+      "search.devbox.sh",
+      "storage.googleapis.com",
+      "sum.golang.org",
+      "*.nixos.org",
+      "mcp.atlassian.com",
+      "cultureamp.atlassian.net",
+      "*.amazonaws.com",
+      "*.awsapps.com"
+    ],
+    "deniedDomains": []
+  },
+  "filesystem": {
+    "denyRead": [
+      "~"
+    ],
+    "allowRead": [
+      ".",
+      "/nix",
+      "/tmp",
+      "/var",
+      "~/.aws/config",
+      "~/.cache",
+      "~/.claude",
+      "~/.claude.json",
+      "~/.config",
+      "~/.gem_cache",
+      "~/.local",
+      "~/.mcporter",
+      "~/.nix-profile",
+      "~/.npm-global",
+      "~/.npmrc",
+      "~/.pi",
+      "~/.yarnrc",
+      "~/.yarnrc.yml",
+      "~/Downloads/",
+      "~/Library",
+      "~/dev",
+      "~/go",
+      "~/hotel"
+    ],
+    "allowWrite": [
+      ".",
+      "/tmp",
+      "/var",
+      "~/.cache/gh",
+      "~/.cache/nix",
+      "~/.cache/prek",
+      "~/.cache/uv",
+      "~/.local/share/devbox",
+      "~/.local/share/hotel",
+      "~/.mcporter",
+      "~/.pi",
+      "~/Library/Caches",
+      "~/Library/pnpm",
+      "~/go"
+    ],
+    "denyWrite": [
+      "*.key",
+      "*.pem",
+      ".env",
+      ".env.*",
+      "./.pi/sandbox.json",
+      "~/.pi/agent/sandbox.json"
+    ]
+  }
+}
