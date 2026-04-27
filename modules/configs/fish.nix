@@ -189,6 +189,7 @@
     tf = "terraform";
     crl = "codex resume --last";
     clc = "claude --continue";
+    pic = "pi --continue";
 
     oc = "opencode";
     occ = "opencode --continue";
