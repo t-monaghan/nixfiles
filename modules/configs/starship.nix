@@ -1,30 +1,30 @@
-{
+{colors, ...}: {
   "$schema" = "https://starship.rs/config-schema.json";
   battery = {
     charging_symbol = "󰚥";
     display = [
       {
         discharging_symbol = "󱊣";
-        style = "green";
+        style = colors.ok;
         threshold = 100;
       }
       {
-        style = "green";
+        style = colors.ok;
         threshold = 75;
       }
       {
         discharging_symbol = "󱊢";
-        style = "yellow";
+        style = colors.warn;
         threshold = 50;
       }
       {
         discharging_symbol = "󱊡";
-        style = "yellow";
+        style = colors.warn;
         threshold = 20;
       }
       {
         discharging_symbol = "󰂃";
-        style = "red";
+        style = colors.error;
         threshold = 0;
       }
     ];
@@ -33,10 +33,10 @@
     unknown_symbol = "󱈑";
   };
   character = {
-    error_symbol = "[❯](red)";
-    success_symbol = "[❯](bold cyan)";
-    vimcmd_symbol = "[ ](green)";
-    vimcmd_visual_symbol = "[ ](yellow)";
+    error_symbol = "[❯](${colors.error})";
+    success_symbol = "[❯](bold ${colors.accent_alt})";
+    vimcmd_symbol = "[ ](${colors.ok})";
+    vimcmd_visual_symbol = "[ ](${colors.warn})";
   };
   custom = {
     aws_assumed_role = {
@@ -56,7 +56,7 @@
       description = "Shows AWS profile and region when a role has been assumed";
       format = "[󰅟 $output ]($style)";
       shell = "/bin/bash";
-      style = "bold blue";
+      style = "bold ${colors.info}";
       when = "[[ -n $AWS_SESSION_TOKEN ]]";
     };
     devbox = {
@@ -64,39 +64,39 @@
       description = "Shows the devbox version if inside a devbox project";
       format = "[$symbol v($output )]($style)";
       shell = "/bin/bash";
-      style = "bold blue";
-      symbol = " ";
+      style = "bold ${colors.info}";
+      symbol = " ";
       when = "[[ -n $DEVBOX_INIT_PATH ]]\n";
     };
     direnv = {
-      command = "if [[ -f ./devbox.json ]]; then\n  direnv_output=$(direnv status)\n  ## Confusingly, direnv has a status of 0 for allowed\n  if echo $direnv_output | grep -q \"Found RC allowed 0\"; then\n    echo \"\"\n  else\n    echo \" direnv is not allowed\"\n  fi\nfi\n";
+      command = "if [[ -f ./devbox.json ]]; then\n  direnv_output=$(direnv status)\n  ## Confusingly, direnv has a status of 0 for allowed\n  if echo $direnv_output | grep -q \"Found RC allowed 0\"; then\n    echo \"\"\n  else\n    echo \" direnv is not allowed\"\n  fi\nfi\n";
       description = "Shows if direnv has not been allowed if inside a project with a .envrc and devbox.json";
       shell = "sh";
       when = "[[ -n $DIRENV_FILE ]]\n";
     };
   };
-  directory = {style = "bold cyan";};
+  directory = {style = "bold ${colors.accent_alt}";};
   format = "$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom\n$status$character";
   git_branch = {
-    style = "yellow";
-    symbol = " ";
+    style = colors.warn;
+    symbol = " ";
   };
   git_status = {
-    deleted = " ";
+    deleted = " ";
     format = "([$all_status$ahead_behind]($style))";
     modified = "󰏫 ($count) ";
     staged = "󰶍 ";
     stashed = "󰴮 ";
-    style = "yellow";
+    style = colors.warn;
     untracked = "󰊇 ($count) ";
   };
   golang = {
-    style = "bold green";
+    style = "bold ${colors.ok}";
     symbol = "󰟓 ";
   };
   java = {
     format = "[$symbol($version )]($style)";
-    symbol = " ";
+    symbol = " ";
   };
   nix_shell = {
     disabled = false;
@@ -106,7 +106,7 @@
   right_format = "$memory_usage$battery";
   ruby = {
     format = "[$symbol($version )]($style)";
-    symbol = " ";
+    symbol = " ";
   };
   status = {
     disabled = false;

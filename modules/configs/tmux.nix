@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  colors,
   ...
 }: let
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
@@ -22,7 +23,7 @@ in {
   extraConfig = ''
     set -g status off
     set -g pane-border-status top
-    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=brightyellow]#{session_name}#[default],#{session_name}},#{pane_title}}#{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=brightyellow],#[fg=green]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=colour136],#[dim]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=${colors.warn}]#{session_name}#[default],#{session_name}},#{pane_title}}#{?window_zoomed_flag, #[fg=${colors.accent_alt} bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=${colors.warn}],#[fg=${colors.ok}]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=${colors.orange}],#[dim]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
     bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
     bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
@@ -31,7 +32,7 @@ in {
     bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
 
     # Highlight active pane background when prefix is pressed
-    bind -Troot C-b select-pane -P 'bg=colour235' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
+    bind -Troot C-b select-pane -P 'bg=${colors.bg1}' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
 
     # Open sesh picker instead of default session tree
     unbind s

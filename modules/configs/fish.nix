@@ -1,11 +1,11 @@
-{pkgs, ...}: {
+{pkgs, colors, ...}: {
   enable = true;
 
   loginShellInit = ''
     fish_add_path $HOME/.rd/bin
     fish_add_path $HOME/.npm-global/bin
     fish_add_path $HOME/go/bin
-    set -gx fish_color_autosuggestion brblue
+    set -gx fish_color_autosuggestion ${colors.info}
     set -gx AWTRIX_HOST 192.168.1.97
     bind \cx\ce edit_command_buffer
 
