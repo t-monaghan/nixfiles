@@ -5,6 +5,7 @@ input=$(cat)
 cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 session_name=$(echo "$input" | jq -r '.session_name // empty')
 used=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+model=$(echo "$input" | jq -r '.model.display_name // empty')
 worktree=$(echo "$input" | jq -r '.worktree.name // empty')
 projdir=$(echo "$input" | jq -r '.workspace.project_dir // empty')
 
@@ -74,7 +75,11 @@ if [ -n "$used" ]; then
     else
         color='\033[2m'   # Dim for <60%
     fi
-    out="$out $(printf "${color}│ %.0f%%\033[0m" "$used")"
+    ctx="$(printf "${color}%.0f%%\033[0m" "$used")"
+    if [ -n "$model" ]; then
+        ctx="$ctx $(printf '\033[2m(%s)\033[0m' "$model")"
+    fi
+    out="$out $(printf '│ ')$ctx"
 fi
 
 echo "$out"

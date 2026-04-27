@@ -15,6 +15,9 @@
     profiles = {
       primary = "global.anthropic.claude-opus-4-6-v1";
       small = "global.anthropic.claude-haiku-4-5-20251001-v1:0";
+      opus = "global.anthropic.claude-opus-4-6-v1";
+      sonnet = "global.anthropic.claude-sonnet-4-6-v1";
+      haiku = "global.anthropic.claude-haiku-4-5-20251001-v1:0";
     };
   };
 }
