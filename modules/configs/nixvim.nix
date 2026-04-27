@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, colors, ...}: {
   enable = true;
   defaultEditor = true;
   imports = [
@@ -131,7 +131,7 @@
       desc = "Ensure colorscheme is applied";
       callback.__raw = ''
         function()
-          vim.cmd.colorscheme("base16-everforest-dark-hard")
+          vim.cmd.colorscheme("${colors.nixvim}")
         end
       '';
     }
@@ -172,7 +172,7 @@
     };
   };
 
-  colorscheme = "base16-everforest-dark-hard";
+  colorscheme = colors.nixvim;
   extraPlugins = with pkgs.vimPlugins; [
     base16-nvim
     monokai-pro-nvim

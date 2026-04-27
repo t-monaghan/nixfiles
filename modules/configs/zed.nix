@@ -1,4 +1,4 @@
-{pkgs, lib, ...}:
+{pkgs, lib, colors, ...}:
 let
   fonts = import ./fonts.nix;
 in {
@@ -61,8 +61,8 @@ in {
     };
     theme = {
       mode = "system";
-      dark = "One Dark";
-      light = "One Light";
+      dark = colors.zed_dark;
+      light = colors.zed_light;
     };
     telemetry = {
       diagnostics = false;

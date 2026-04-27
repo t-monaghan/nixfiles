@@ -1,4 +1,4 @@
-{...}:
+{colors, ...}:
 let
   fonts = import ./fonts.nix;
 in {
@@ -19,7 +19,7 @@ in {
     clipboard-trim-trailing-spaces = true;
     copy-on-select = "clipboard";
 
-    theme = "light:Monokai Pro Light,dark:Everforest Dark Hard";
+    theme = "light:${colors.ghostty_light},dark:${colors.ghostty_dark}";
     cursor-style = "block";
     cursor-invert-fg-bg = true;
     cursor-opacity = 0.7;
