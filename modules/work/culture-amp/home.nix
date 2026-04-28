@@ -5,6 +5,9 @@
   ...
 }:
 lib.mkIf config.nixfiles.work.cultureAmp.enable {
+  home.packages = with pkgs; [
+    jira-cli-go
+  ];
   programs.fish = {
     interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";
     shellAbbrs = {
