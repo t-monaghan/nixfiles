@@ -31,6 +31,8 @@
     "alt-4" = "workspace 4";
     "alt-5" = "workspace 5";
     "alt-6" = "workspace 6";
+    "alt-7" = "workspace 7";
+    "alt-8" = "workspace 8";
     "alt-z" = "fullscreen";
 
     "alt-shift-h" = ["join-with left"];
@@ -49,6 +51,8 @@
     "alt-r" = ["move-node-to-workspace 4" "workspace 4"];
     "alt-t" = ["move-node-to-workspace 5" "workspace 5"];
     "alt-y" = ["move-node-to-workspace 6" "workspace 6"];
+    "alt-u" = ["move-node-to-workspace 7" "workspace 7"];
+    "alt-i" = ["move-node-to-workspace 8" "workspace 8"];
 
     "alt-shift-minus" = "resize smart -200";
     "alt-shift-equal" = "resize smart +200";
