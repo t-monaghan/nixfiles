@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  awtrix-cli,
   ...
 }: let
   fonts = import ./configs/fonts.nix;
@@ -280,6 +281,11 @@ in {
         mouse.hide_when_typing = true;
         scrolling.multiplier = 2;
       };
+    };
+
+    awtrix-cli = {
+      enable = true;
+      host = "192.18.1.97";
     };
 
     zed-editor = import ./configs/zed.nix {inherit pkgs lib colors;};

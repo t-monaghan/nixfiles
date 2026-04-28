@@ -8,6 +8,8 @@
     nixvim.url = "github:nix-community/nixvim";
     wilma.url = "git+https://github.com/cultureamp/wilma?ref=feat/nix-flake-module";
     wilma.inputs.nixpkgs.follows = "nixpkgs";
+    awtrix-cli.url = "git+https://github.com/t-monaghan/awtrix-cli";
+    awtrix-cli.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -16,6 +18,7 @@
     home-manager,
     nixvim,
     wilma,
+    awtrix-cli,
   }: let
     mkHost = {
       name,
@@ -30,6 +33,7 @@
         modules = [
           nixvim.homeModules.nixvim
           wilma.homeManagerModules.wilma
+          awtrix-cli.homeManagerModules.default
           ./hosts/${name}.nix
         ];
         extraSpecialArgs = {inherit username;};
