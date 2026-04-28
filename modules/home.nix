@@ -95,6 +95,14 @@ in {
     recursive = true;
   };
 
+  home.file.".pi/agent/AGENTS.md" = {
+    text = ''
+      ${builtins.readFile ./configs/agent-context/shared.md}
+
+      ${builtins.readFile ./configs/agent-context/pi.md}
+    '';
+  };
+
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
   programs = {
