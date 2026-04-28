@@ -1,4 +1,8 @@
-{pkgs, colors, ...}: {
+{
+  pkgs,
+  colors,
+  ...
+}: {
   enable = true;
 
   loginShellInit = ''
@@ -171,6 +175,7 @@
     grs = "git restore --staged";
     grim = "git rebase -i main";
     gap = "git add -p";
+    gsl = "git stash list";
 
     ll = "ls -ltra";
 
