@@ -12,6 +12,13 @@
         --preview-window "right:80%")
     [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
+  tmux-kill-session = pkgs.writeShellScript "tmux-kill-session" ''
+    count=$(${lib.getExe pkgs.tmux} list-sessions | wc -l)
+    [ "$count" -le 1 ] && exit 0
+    target=$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')
+    sesh last 2>/dev/null || ${lib.getExe pkgs.tmux} switch-client -n
+    ${lib.getExe pkgs.tmux} kill-session -t "$target"
+  '';
 in {
   enable = true;
   mouse = true;
@@ -46,7 +53,7 @@ in {
     bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
 
     # Kill current session and switch to previous
-    bind X run-shell 'target="$(tmux display-message -p "#{session_name}")" && tmux switch-client -l && tmux kill-session -t "$target"'
+    bind X run-shell '${tmux-kill-session}'
 
     # Clone GitHub repo and open session
     bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
