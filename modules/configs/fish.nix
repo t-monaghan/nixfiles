@@ -102,6 +102,39 @@
         sesh connect $dev_path
       '';
     };
+    bkw = {
+      description = "Watch Buildkite builds for the current repo and branch";
+      body = ''
+        set repo (basename (git remote get-url origin) .git)
+        set branch (git branch --show-current)
+
+        bk build watch --pipeline $repo --branch $branch $argv
+      '';
+    };
+    bkr = {
+      description = "Trigger a new Buildkite build for the current repo and branch";
+      body = ''
+        set repo (basename (git remote get-url origin) .git)
+        set branch (git branch --show-current)
+
+        bk build create --yes --pipeline $repo --branch $branch $argv
+      '';
+    };
+    bko = {
+      description = "Open the most recent Buildkite build for the current repo and branch in the browser";
+      body = ''
+        set repo (basename (git remote get-url origin) .git)
+        set branch (git branch --show-current)
+
+        bk build view --pipeline $repo --branch $branch --web $argv
+      '';
+    };
+    bkl = {
+      description = "Login to Buildkite CLI with culture-amp org";
+      body = ''
+        bk auth login --org culture-amp --token $BUILDKITE_API_KEY
+      '';
+    };
     assume = {
       description = "Select and assume AWS roles using fzf";
       body = ''

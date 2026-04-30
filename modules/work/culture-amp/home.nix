@@ -7,6 +7,7 @@
 lib.mkIf config.nixfiles.work.cultureAmp.enable {
   home.packages = with pkgs; [
     jira-cli-go
+    buildkite-cli
   ];
   programs.fish = {
     interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";
