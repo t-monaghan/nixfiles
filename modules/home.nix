@@ -142,6 +142,7 @@ in {
         pull.rebase = true;
         init.defaultBranch = "main";
         pager.difftool = true;
+        rerere.enabled = true;
       };
       ignores = [".DS_Store"];
     };
