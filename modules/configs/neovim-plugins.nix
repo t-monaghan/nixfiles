@@ -311,7 +311,7 @@
     }
     {
       mode = ["n" "v"];
-      key = "<leader>gy";
+      key = "<leader>yg";
       action.__raw = ''
         function()
           require("gh-permalink").yank()
