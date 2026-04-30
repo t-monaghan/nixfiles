@@ -62,10 +62,10 @@
     devbox = {
       command = "command_output=$(devbox version 2>&1)\nversion=$(echo \"$command_output\" | grep -E '^[0-9]+(\\.[0-9]+){2}$')\nif echo \"$command_output\" | grep -q \"Info: New devbox available:\"; then \n  update_version=$(echo \"$command_output\" | grep -o '[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+' | sed -n '2p')\n  echo \"$version update available ($update_version)\" \nelse\n  echo \"$version\"\nfi\n";
       description = "Shows the devbox version if inside a devbox project";
-      format = "[$symbol v($output )]($style)";
+      format = "[$symbol($output )]($style)";
       shell = "/bin/bash";
       style = "bold ${colors.info}";
-      symbol = " ";
+      symbol = " ";
       when = "[[ -n $DEVBOX_INIT_PATH ]]\n";
     };
     direnv = {
@@ -79,7 +79,7 @@
   format = "$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom\n$status$character";
   git_branch = {
     style = colors.warn;
-    symbol = " ";
+    symbol = " ";
   };
   git_status = {
     deleted = " ";
@@ -96,7 +96,7 @@
   };
   java = {
     format = "[$symbol($version )]($style)";
-    symbol = " ";
+    symbol = " ";
   };
   nix_shell = {
     disabled = false;
@@ -106,7 +106,7 @@
   right_format = "$memory_usage$battery";
   ruby = {
     format = "[$symbol($version )]($style)";
-    symbol = " ";
+    symbol = " ";
   };
   status = {
     disabled = false;
