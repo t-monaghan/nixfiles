@@ -34,6 +34,7 @@ in {
       just
       terminal-notifier
       devbox
+      nodejs
 
       # CLI tools
       tree
