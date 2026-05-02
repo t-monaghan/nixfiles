@@ -9,8 +9,11 @@
     fish_add_path $HOME/.rd/bin
     fish_add_path $HOME/.npm-global/bin
     fish_add_path $HOME/go/bin
+
     set -gx fish_color_autosuggestion ${colors.info}
     set -gx AWTRIX_HOST 192.168.1.97
+    set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
+
     bind \cx\ce edit_command_buffer
 
     if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
