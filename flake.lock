@@ -60,6 +60,24 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_2"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -77,6 +95,46 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "imds-broker-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1776437426,
+        "narHash": "sha256-EPEw4XXY02m+8zIXLZhqGjFV5Hc79YGKXUdrnOgnBLo=",
+        "owner": "jamestelfer",
+        "repo": "imds-broker",
+        "rev": "79eb22458d696837ceb3984b6c7ddb0be9614dcf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jamestelfer",
+        "ref": "v0.3.0",
+        "repo": "imds-broker",
+        "type": "github"
+      }
+    },
+    "my-flakes": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "imds-broker-src": "imds-broker-src",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "sandy-src": "sandy-src"
+      },
+      "locked": {
+        "lastModified": 1777858647,
+        "narHash": "sha256-+MNau+AyzXPKrEKLJ0ygMYNVIQJNdma5VZ9xNXBlPXg=",
+        "owner": "t-monaghan",
+        "repo": "flakes",
+        "rev": "7c7d7a2c866594292b60dcfafdf6e063fdc80db7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "t-monaghan",
+        "repo": "flakes",
         "type": "github"
       }
     },
@@ -116,7 +174,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs_2",
-        "systems": "systems_2"
+        "systems": "systems_3"
       },
       "locked": {
         "lastModified": 1774612943,
@@ -136,9 +194,27 @@
       "inputs": {
         "awtrix-cli": "awtrix-cli",
         "home-manager": "home-manager",
+        "my-flakes": "my-flakes",
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim",
         "wilma": "wilma"
+      }
+    },
+    "sandy-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777517653,
+        "narHash": "sha256-IfoNmqo2NI7PqigugWiRmiWBYwVlNSIJZT2Px7vhf7U=",
+        "owner": "jamestelfer",
+        "repo": "sandy",
+        "rev": "fb2e4d70871662e2403ccc6c094abea4194b09d2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jamestelfer",
+        "ref": "v0.5.0",
+        "repo": "sandy",
+        "type": "github"
       }
     },
     "systems": {
@@ -157,6 +233,21 @@
       }
     },
     "systems_2": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

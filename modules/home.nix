@@ -3,6 +3,7 @@
   config,
   lib,
   awtrix-cli,
+  my-flakes,
   ...
 }: let
   fonts = import ./configs/fonts.nix;
@@ -24,6 +25,8 @@ in {
       mos
       betterdisplay
       (callPackage ./configs/notunes-package.nix {})
+      my-flakes.packages.${pkgs.system}.sandy
+      my-flakes.packages.${pkgs.system}.imds-broker
 
       # Development tools
       wget

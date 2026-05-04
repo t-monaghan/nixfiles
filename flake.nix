@@ -10,6 +10,8 @@
     wilma.inputs.nixpkgs.follows = "nixpkgs";
     awtrix-cli.url = "git+https://github.com/t-monaghan/awtrix-cli";
     awtrix-cli.inputs.nixpkgs.follows = "nixpkgs";
+    my-flakes.url = "github:t-monaghan/flakes";
+    my-flakes.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -19,6 +21,7 @@
     nixvim,
     wilma,
     awtrix-cli,
+    my-flakes,
   }: let
     mkHost = {
       name,
@@ -38,7 +41,7 @@
             ./hosts/${name}.nix
           ]
           ++ extraModules;
-        extraSpecialArgs = {inherit username;};
+        extraSpecialArgs = {inherit username my-flakes;};
       };
   in {
     homeConfigurations = {
