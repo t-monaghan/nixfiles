@@ -23,22 +23,20 @@
       "sum.golang.org",
       "*.nixos.org",
       "mcp.atlassian.com",
-      "cultureamp.atlassian.net",
-      "*.amazonaws.com",
-      "*.awsapps.com"
+      "cultureamp.atlassian.net"
     ],
     "deniedDomains": []
   },
   "filesystem": {
     "denyRead": [
-      "~"
+      "~",
+      "~/.aws"
     ],
     "allowRead": [
       ".",
       "/nix",
       "/tmp",
       "/var",
-      "~/.aws/config",
       "~/.cache",
       "~/.claude",
       "~/.claude.json",
