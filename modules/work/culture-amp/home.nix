@@ -5,32 +5,29 @@
   ...
 }:
 lib.mkIf config.nixfiles.work.cultureAmp.enable {
-  home.file.".pi/agent/mcp.json".text = builtins.toJSON {
-    mcpServers = {
-      hotel-mcp = {
-        command = "hotel";
-        args = ["mcp-server"];
-        lifecycle = "lazy";
-      };
-      atlassian = {
-        url = "https://mcp.atlassian.com/v1/sse";
-        auth = "oauth";
-      };
-      buildkite-readonly = {
-        url = "https://mcp.buildkite.com/mcp/readonly";
-        auth = "oauth";
-      };
-      glean = {
-        url = "https://culture-amp-be.glean.com/mcp/default";
-        auth = "oauth";
-      };
-    };
-  };
+
   home.packages = with pkgs; [
     jira-cli-go
     buildkite-cli
   ];
   programs.mcp.servers = {
+    hotel-mcp = {
+      command = "hotel";
+      args = ["mcp-server"];
+      lifecycle = "lazy";
+    };
+    atlassian = {
+      url = "https://mcp.atlassian.com/v1/sse";
+      auth = "oauth";
+    };
+    buildkite-readonly = {
+      url = "https://mcp.buildkite.com/mcp/readonly";
+      auth = "oauth";
+    };
+    glean = {
+      url = "https://culture-amp-be.glean.com/mcp/default";
+      auth = "oauth";
+    };
     imds-broker = {
       command = "imds-broker";
       args = [
