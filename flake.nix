@@ -10,8 +10,10 @@
     wilma.inputs.nixpkgs.follows = "nixpkgs";
     awtrix-cli.url = "git+https://github.com/t-monaghan/awtrix-cli";
     awtrix-cli.inputs.nixpkgs.follows = "nixpkgs";
-    my-flakes.url = "github:t-monaghan/flakes";
-    my-flakes.inputs.nixpkgs.follows = "nixpkgs";
+    imds-broker.url = "github:t-monaghan/imds-broker/feat/nix-flake";
+    imds-broker.inputs.nixpkgs.follows = "nixpkgs";
+    sandy.url = "github:t-monaghan/sandy/feat/nix-flake";
+    sandy.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -21,7 +23,8 @@
     nixvim,
     wilma,
     awtrix-cli,
-    my-flakes,
+    imds-broker,
+    sandy,
   }: let
     mkHost = {
       name,
@@ -41,7 +44,7 @@
             ./hosts/${name}.nix
           ]
           ++ extraModules;
-        extraSpecialArgs = {inherit username my-flakes;};
+        extraSpecialArgs = {inherit username imds-broker sandy;};
       };
   in {
     homeConfigurations = {
