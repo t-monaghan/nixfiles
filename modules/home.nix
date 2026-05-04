@@ -2,9 +2,6 @@
   pkgs,
   config,
   lib,
-  awtrix-cli,
-  imds-broker,
-  sandy,
   ...
 }: let
   fonts = import ./configs/fonts.nix;
@@ -26,8 +23,8 @@ in {
       mos
       betterdisplay
       (callPackage ./configs/notunes-package.nix {})
-      sandy.packages.${pkgs.system}.sandy
-      imds-broker.packages.${pkgs.system}.imds-broker
+      sandy
+      imds-broker
 
       # Development tools
       wget

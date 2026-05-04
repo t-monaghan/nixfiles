@@ -36,6 +36,12 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
+          overlays = [
+            (final: _prev: {
+              sandy = sandy.packages.${final.system}.default;
+              imds-broker = imds-broker.packages.${final.system}.default;
+            })
+          ];
         };
         modules =
           [
@@ -44,7 +50,7 @@
             ./hosts/${name}.nix
           ]
           ++ extraModules;
-        extraSpecialArgs = {inherit username imds-broker sandy;};
+        extraSpecialArgs = {inherit username;};
       };
   in {
     homeConfigurations = {
