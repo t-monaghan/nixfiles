@@ -108,6 +108,10 @@ in {
 
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
+  xdg.configFile."sandy/config.json".text = builtins.toJSON {
+    backend = "docker";
+  };
+
   programs = {
     home-manager.enable = true;
 
