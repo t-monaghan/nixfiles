@@ -30,6 +30,16 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
     jira-cli-go
     buildkite-cli
   ];
+  programs.mcp.servers = {
+    imds-broker = {
+      command = "imds-broker";
+      args = [
+        "mcp"
+        "--profile-filter"
+        "^cultureamp(?:-.+)?/.*(ReadOnly|ViewOnly|Cost)"
+      ];
+    };
+  };
   programs.fish = {
     interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";
     shellAbbrs = {

@@ -294,5 +294,14 @@ in {
     };
 
     zed-editor = import ./configs/zed.nix {inherit pkgs lib colors;};
+
+    mcp = {
+      enable = true;
+      servers = {
+        context7 = {
+          url = "https://mcp.context7.com/mcp";
+        };
+      };
+    };
   };
 }
