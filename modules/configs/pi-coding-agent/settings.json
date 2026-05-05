@@ -3,7 +3,12 @@
   "defaultModel": "claude-opus-4.6",
   "defaultThinkingLevel": "medium",
   "theme": "everforest",
-  "skills": ["~/.claude/skills"],
-  "packages": ["npm:pi-mcp-adapter", "npm:pi-sandbox"],
+  "skills": [
+    "~/.claude/skills"
+  ],
+  "packages": [
+    "npm:pi-mcp-adapter",
+    "npm:pi-sandbox"
+  ],
   "quietStartup": true
 }

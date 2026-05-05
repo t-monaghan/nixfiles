@@ -1,8 +1,10 @@
 { ... }: {
   enable = true;
-  skillsDir = ./claude-code-skills;
+  skills = {
+    running-scripts-and-commands = ./claude-code-skills/just.md;
+  };
 
-  memory.text = ''
+  context = ''
     ${builtins.readFile ./agent-context/shared.md}
 
     ${builtins.readFile ./agent-context/claude-code.md}
