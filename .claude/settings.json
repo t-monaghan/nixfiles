@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ./claude-watchdog/hooks/session-analysis.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "session-analyzer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ./claude-watchdog/hooks/persist-analysis.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "agents": ["./claude-watchdog/agents/"]
+}
