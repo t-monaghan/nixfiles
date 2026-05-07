@@ -3,6 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # Pin nixpkgs for television 0.15.4 - 0.15.6 broke execute mode with tmux
+    # https://github.com/alexpasmantier/television/pull/998
+    nixpkgs-tv-pin.url = "github:NixOS/nixpkgs/68d8aa3d661f0e6bd5862291b5bb263b2a6595c9";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
@@ -19,6 +22,7 @@
   outputs = {
     self,
     nixpkgs,
+    nixpkgs-tv-pin,
     home-manager,
     nixvim,
     wilma,
@@ -37,9 +41,10 @@
           inherit system;
           config.allowUnfree = true;
           overlays = [
-            (final: _prev: {
+            (final: prev: {
               sandy = sandy.packages.${final.system}.default;
               imds-broker = imds-broker.packages.${final.system}.default;
+              television = (import nixpkgs-tv-pin { inherit system; }).television;
             })
           ];
         };
