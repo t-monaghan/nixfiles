@@ -107,10 +107,25 @@
       key = "<leader>ot";
       action.__raw = ''
         function()
+          local entry_display = require('telescope.pickers.entry_display')
           require('telescope.builtin').grep_string({
-            search = '- \\[ \\]',
+            search = '- [ ]',
             cwd = vim.fn.expand('~/notes'),
             prompt_title = 'Open Todos',
+            only_sort_text = true,
+            disable_coordinates = true,
+            entry_maker = function(entry)
+              local _, _, filename, lnum, col, text = string.find(entry, '(.+):(%d+):(%d+):(.*)')
+              if not filename then return nil end
+              return {
+                value = entry,
+                display = vim.trim(text),
+                ordinal = vim.trim(text),
+                filename = require('plenary.path'):new(vim.fn.expand('~/notes'), filename):absolute(),
+                lnum = tonumber(lnum),
+                col = tonumber(col),
+              }
+            end,
           })
         end
       '';
