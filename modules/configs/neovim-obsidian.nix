@@ -63,7 +63,7 @@
     {
       mode = "n";
       key = "<leader>oo";
-      action = "<cmd>Obsidian quick-switch<CR>";
+      action = "<cmd>Obsidian quick_switch<CR>";
       options.desc = "[O]bsidian [O]pen note";
     }
     {
@@ -92,6 +92,12 @@
     }
     {
       mode = "n";
+      key = "<leader>ox";
+      action = "<cmd>Obsidian toggle_checkbox<CR>";
+      options.desc = "[O]bsidian toggle checkbo[x]";
+    }
+    {
+      mode = "n";
       key = "<leader>ot";
       action = "<cmd>Obsidian tags<CR>";
       options.desc = "[O]bsidian [T]ags";
@@ -105,7 +111,7 @@
     {
       mode = "v";
       key = "<leader>on";
-      action = "<cmd>Obsidian link-new<CR>";
+      action = "<cmd>Obsidian link_new<CR>";
       options.desc = "[O]bsidian [N]ew linked note from selection";
     }
   ];
