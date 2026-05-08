@@ -98,9 +98,23 @@
     }
     {
       mode = "n";
-      key = "<leader>ot";
+      key = "<leader>oT";
       action = "<cmd>Obsidian tags<CR>";
       options.desc = "[O]bsidian [T]ags";
+    }
+    {
+      mode = "n";
+      key = "<leader>ot";
+      action.__raw = ''
+        function()
+          require('telescope.builtin').grep_string({
+            search = '- \\[ \\]',
+            cwd = vim.fn.expand('~/notes'),
+            prompt_title = 'Open Todos',
+          })
+        end
+      '';
+      options.desc = "[O]bsidian open [T]odos";
     }
     {
       mode = "v";
