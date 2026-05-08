@@ -1,3 +1,4 @@
+{aerospace}:
 {
   start-at-login = true;
   enable-normalization-opposite-orientation-for-nested-containers = false;
@@ -58,7 +59,7 @@
     "alt-shift-equal" = "resize smart +200";
 
     "cmd-tab" = "move-node-to-monitor --wrap-around next";
-    "alt-tab" = "focus-back-and-forth";
+    "alt-tab" = let aero = "${aerospace}/bin/aerospace"; in "exec-and-forget bid=$(${aero} list-windows --focused --format %{window-id}); ${aero} focus-back-and-forth || ${aero} workspace-back-and-forth; aid=$(${aero} list-windows --focused --format %{window-id}); [ $bid = $aid ] && ${aero} focus dfs-next";
     "alt-shift-tab" = "move-workspace-to-monitor --wrap-around next";
   };
   on-window-detected = [

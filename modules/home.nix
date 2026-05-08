@@ -5,7 +5,7 @@
   ...
 }: let
   fonts = import ./configs/fonts.nix;
-  colors = import ./configs/colors.nix;
+  colors = import ./configs/colours.nix;
 in {
   nixpkgs = {
     config.allowUnfree = true;
@@ -156,8 +156,8 @@ in {
     bat = {
       enable = true;
       config = {
-        theme-dark = colors.bat_dark;
-        theme-light = colors.bat_light;
+        theme-dark = colors.bat.dark;
+        theme-light = colors.bat.light;
       };
     };
 
@@ -237,7 +237,7 @@ in {
     aerospace = {
       enable = true;
       launchd.enable = true;
-      settings = import ./configs/aerospace.nix;
+      settings = import ./configs/aerospace.nix {aerospace = config.programs.aerospace.package;};
     };
 
     ghostty = import ./configs/ghostty.nix {inherit colors;};

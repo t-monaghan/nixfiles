@@ -61,8 +61,8 @@ in {
     };
     theme = {
       mode = "system";
-      dark = colors.zed_dark;
-      light = colors.zed_light;
+      dark = colors.zed.dark;
+      light = colors.zed.light;
     };
     telemetry = {
       diagnostics = false;

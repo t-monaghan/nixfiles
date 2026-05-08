@@ -19,7 +19,7 @@ in {
     clipboard-trim-trailing-spaces = true;
     copy-on-select = "clipboard";
 
-    theme = "light:${colors.ghostty_light},dark:${colors.ghostty_dark}";
+    theme = "light:${colors.ghostty.light},dark:${colors.ghostty.dark}";
     cursor-style = "block";
     cursor-invert-fg-bg = true;
     cursor-opacity = 0.7;

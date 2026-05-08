@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
-  "name": "everforest",
+  "name": "everforest-dark",
   "vars": {
     "bg0": "#2d353b",
     "bg1": "#343f44",

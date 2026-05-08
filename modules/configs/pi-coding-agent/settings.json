@@ -2,7 +2,6 @@
   "defaultProvider": "github-copilot",
   "defaultModel": "claude-opus-4.6",
   "defaultThinkingLevel": "medium",
-  "theme": "everforest",
   "skills": [
     "~/.claude/skills"
   ],

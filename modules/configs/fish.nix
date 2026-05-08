@@ -13,6 +13,7 @@
     set -gx fish_color_autosuggestion ${colors.info}
     set -gx AWTRIX_HOST 192.168.1.97
     set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
+    set -gx DEVBOX_DEBUG 1
 
     bind \cx\ce edit_command_buffer
 
@@ -235,6 +236,7 @@
     crl = "codex resume --last";
     clc = "claude --continue";
     pic = "pi --continue";
+    pulls = "gh search prs --author=@me --state=open";
 
     oc = "opencode";
     occ = "opencode --continue";

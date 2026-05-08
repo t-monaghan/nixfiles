@@ -253,6 +253,15 @@
         hash = "sha256-gDoB1Ynia+Fychsc8L9sjD6eR9t76kCb0JsiZFh9dRA=";
       };
     })
+    (pkgs.vimUtils.buildVimPlugin {
+      name = "auto-dark-mode.nvim";
+      src = pkgs.fetchFromGitHub {
+        owner = "f-person";
+        repo = "auto-dark-mode.nvim";
+        rev = "54058b4fe414bd64bd2904a6f8a63f1f14e3d8df";
+        hash = "sha256-xTgRyct3L6Gcz/vdYSc+h2IUgi/+Lh1Q4mxJwHISeis=";
+      };
+    })
   ];
 
   # Extra telescope keymaps that need raw Lua (custom picker functions)

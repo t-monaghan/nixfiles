@@ -48,13 +48,10 @@ let
       orange = "#e69875";
 
       # --- per-program theme names ---
-      nixvim = "base16-everforest-dark-hard";
-      ghostty_dark = "Everforest Dark Hard";
-      ghostty_light = "Monokai Pro Light";
-      zed_dark = "Everforest Dark";
-      zed_light = "One Light";
-      bat_dark = "gruvbox-dark";
-      bat_light = "gruvbox-light";
+      nixvim = { dark = "base16-everforest-dark-hard"; light = "monokai-pro"; };
+      ghostty = { dark = "Everforest Dark Hard"; light = "Monokai Pro Light"; };
+      zed = { dark = "Everforest Dark"; light = "Monokai Pro Light"; };
+      bat = { dark = "gruvbox-dark"; light = "Monokai Pro Light"; };
     };
 
     catppuccin-mocha = {
@@ -92,13 +89,10 @@ let
       purple = "#cba6f7";
       orange = "#fab387";
 
-      nixvim = "catppuccin-mocha";
-      ghostty_dark = "catppuccin-mocha";
-      ghostty_light = "catppuccin-latte";
-      zed_dark = "Catppuccin Mocha";
-      zed_light = "Catppuccin Latte";
-      bat_dark = "Catppuccin Mocha";
-      bat_light = "Catppuccin Latte";
+      nixvim = { dark = "catppuccin-mocha"; light = "monokai-pro"; };
+      ghostty = { dark = "catppuccin-mocha"; light = "Monokai Pro Light"; };
+      zed = { dark = "Catppuccin Mocha"; light = "Monokai Pro Light"; };
+      bat = { dark = "Catppuccin Mocha"; light = "Monokai Pro Light"; };
     };
 
     rose-pine = {
@@ -136,13 +130,10 @@ let
       purple = "#c4a7e7";
       orange = "#ebbcba";
 
-      nixvim = "rose-pine";
-      ghostty_dark = "rose-pine";
-      ghostty_light = "rose-pine-dawn";
-      zed_dark = "Rosé Pine";
-      zed_light = "Rosé Pine Dawn";
-      bat_dark = "gruvbox-dark";
-      bat_light = "gruvbox-light";
+      nixvim = { dark = "rose-pine"; light = "monokai-pro"; };
+      ghostty = { dark = "rose-pine"; light = "Monokai Pro Light"; };
+      zed = { dark = "Rosé Pine"; light = "Monokai Pro Light"; };
+      bat = { dark = "gruvbox-dark"; light = "Monokai Pro Light"; };
     };
   };
 

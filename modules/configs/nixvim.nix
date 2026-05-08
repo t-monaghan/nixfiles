@@ -131,7 +131,14 @@
       desc = "Ensure colorscheme is applied";
       callback.__raw = ''
         function()
-          vim.cmd.colorscheme("${colors.nixvim}")
+          local mode = vim.fn.system("defaults read -g AppleInterfaceStyle 2>/dev/null"):gsub("%s+", "")
+          if mode == "Dark" then
+            vim.o.background = "dark"
+            vim.cmd.colorscheme("${colors.nixvim.dark}")
+          else
+            vim.o.background = "light"
+            vim.cmd.colorscheme("${colors.nixvim.light}")
+          end
         end
       '';
     }
@@ -172,7 +179,7 @@
     };
   };
 
-  colorscheme = colors.nixvim;
+  colorscheme = colors.nixvim.dark;
   extraPlugins = with pkgs.vimPlugins; [
     base16-nvim
     monokai-pro-nvim
@@ -182,5 +189,16 @@
     vim.schedule(function()
       vim.opt.clipboard = "unnamedplus"
     end)
+
+    require("auto-dark-mode").setup({
+      set_dark_mode = function()
+        vim.o.background = "dark"
+        vim.cmd.colorscheme("${colors.nixvim.dark}")
+      end,
+      set_light_mode = function()
+        vim.o.background = "light"
+        vim.cmd.colorscheme("${colors.nixvim.light}")
+      end,
+    })
   '';
 }
