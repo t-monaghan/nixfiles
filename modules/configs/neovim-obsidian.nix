@@ -34,7 +34,10 @@
         };
         ui = {
           enable = true;
-          checkboxes = {
+        };
+        checkbox = {
+          order = [" " "x"];
+          toggles = {
             " " = {
               char = "󰄱";
               hl_group = "ObsidianTodo";
@@ -45,6 +48,7 @@
             };
           };
         };
+        legacy_commands = false;
       };
     };
   };
@@ -53,55 +57,55 @@
     {
       mode = "n";
       key = "<leader>on";
-      action = "<cmd>ObsidianNew<CR>";
+      action = "<cmd>Obsidian new<CR>";
       options.desc = "[O]bsidian [N]ew note";
     }
     {
       mode = "n";
       key = "<leader>oo";
-      action = "<cmd>ObsidianQuickSwitch<CR>";
+      action = "<cmd>Obsidian quick-switch<CR>";
       options.desc = "[O]bsidian [O]pen note";
     }
     {
       mode = "n";
       key = "<leader>os";
-      action = "<cmd>ObsidianSearch<CR>";
+      action = "<cmd>Obsidian search<CR>";
       options.desc = "[O]bsidian [S]earch";
     }
     {
       mode = "n";
       key = "<leader>od";
-      action = "<cmd>ObsidianToday<CR>";
+      action = "<cmd>Obsidian today<CR>";
       options.desc = "[O]bsidian [D]aily note";
     }
     {
       mode = "n";
       key = "<leader>ob";
-      action = "<cmd>ObsidianBacklinks<CR>";
+      action = "<cmd>Obsidian backlinks<CR>";
       options.desc = "[O]bsidian [B]acklinks";
     }
     {
       mode = "n";
       key = "<leader>ol";
-      action = "<cmd>ObsidianLinks<CR>";
+      action = "<cmd>Obsidian links<CR>";
       options.desc = "[O]bsidian [L]inks";
     }
     {
       mode = "n";
       key = "<leader>ot";
-      action = "<cmd>ObsidianTags<CR>";
+      action = "<cmd>Obsidian tags<CR>";
       options.desc = "[O]bsidian [T]ags";
     }
     {
       mode = "v";
       key = "<leader>ol";
-      action = "<cmd>ObsidianLink<CR>";
+      action = "<cmd>Obsidian link<CR>";
       options.desc = "[O]bsidian [L]ink selection";
     }
     {
       mode = "v";
       key = "<leader>on";
-      action = "<cmd>ObsidianLinkNew<CR>";
+      action = "<cmd>Obsidian link-new<CR>";
       options.desc = "[O]bsidian [N]ew linked note from selection";
     }
   ];
