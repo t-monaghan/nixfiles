@@ -91,6 +91,8 @@ in {
         width = 8;
       };
     };
+
+    syncthing = import ./configs/syncthing.nix {};
   };
 
   home.file.".pi/agent" = {

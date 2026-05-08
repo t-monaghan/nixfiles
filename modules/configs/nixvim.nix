@@ -4,6 +4,7 @@
   imports = [
     ./neovim-plugins.nix
     ./neovim-lsp.nix
+    ./neovim-obsidian.nix
   ];
 
   globals = {

@@ -85,6 +85,10 @@
             group = "Git [H]unk";
             mode = [ "n" "v" ];
           }
+          {
+            __unkeyed-1 = "<leader>o";
+            group = "[O]bsidian";
+          }
         ];
       };
     };
