@@ -12,7 +12,7 @@
         path = "~/notes";
         devices = [
           "work-mbp"
-          # "personal-mbp"
+          "personal-mbp"
         ];
         versioning = {
           type = "staggered";
