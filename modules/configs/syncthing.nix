@@ -4,8 +4,8 @@
   overrideFolders = true;
   settings = {
     devices = {
-      "work-mbp" = { id = "RHL2UVR-RLAXLTD-KCGRL7Y-JLNKFNP-QUCJ4N6-HEHUQSY-BJQSGLO-DQVXMQO"; };
-      # "personal-mbp" = { id = "REPLACE-WHEN-YOU-RUN-SYNCTHING-ON-PERSONAL"; };
+      "work-mbp" = {id = "RHL2UVR-RLAXLTD-KCGRL7Y-JLNKFNP-QUCJ4N6-HEHUQSY-BJQSGLO-DQVXMQO";};
+      "personal-mbp" = {id = "IVT2GVZ-XNHWGFK-ZEXD6JP-SYTJZNW-5TBZVM2-G7IDYHL-W5RWMYR-SHX2CQ2";};
     };
     folders = {
       "Notes" = {
