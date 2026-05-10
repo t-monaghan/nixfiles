@@ -141,6 +141,10 @@
           action = "buffers";
           options.desc = "[ ] Find existing buffers";
         };
+        "<leader>gs" = {
+          action = "git_status";
+          options.desc = "[G]it [S]tatus files";
+        };
       };
     };
 

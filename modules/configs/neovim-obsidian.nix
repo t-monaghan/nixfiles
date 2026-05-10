@@ -27,7 +27,7 @@
         daily_notes = {
           folder = "daily";
           date_format = "%Y-%m-%d";
-          template = null;
+          template = "daily.md";
         };
         templates = {
           folder = "templates";
@@ -104,13 +104,19 @@
     }
     {
       mode = "n";
+      key = "<leader>op";
+      action = "<cmd>Obsidian yesterday<CR>";
+      options.desc = "[O]bsidian [P]revious";
+    }
+    {
+      mode = "n";
       key = "<leader>ot";
       action.__raw = ''
         function()
           local entry_display = require('telescope.pickers.entry_display')
           require('telescope.builtin').grep_string({
             search = '- [ ]',
-            cwd = vim.fn.expand('~/notes'),
+            cwd = vim.fn.expand('~/notes/daily'),
             prompt_title = 'Open Todos',
             only_sort_text = true,
             disable_coordinates = true,
