@@ -27,7 +27,7 @@
         daily_notes = {
           folder = "daily";
           date_format = "%Y-%m-%d";
-          template = null;
+          template = "daily.md";
         };
         templates = {
           folder = "templates";
