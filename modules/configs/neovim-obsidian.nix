@@ -26,7 +26,8 @@
         '';
         daily_notes = {
           folder = "daily";
-          date_format = "%Y-%m-%d";
+          date_format = "%y-%m-%d";
+          alias_format = "%-d-%b-%y";
           template = "daily.md";
         };
         templates = {
@@ -135,7 +136,7 @@
           })
         end
       '';
-      options.desc = "[O]bsidian open [T]odos";
+      options.desc = "[O]bsidian open [t]odos";
     }
     {
       mode = "v";
