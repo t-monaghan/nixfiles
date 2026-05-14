@@ -100,8 +100,79 @@
     {
       mode = "n";
       key = "<leader>oT";
-      action = "<cmd>Obsidian tags<CR>";
-      options.desc = "[O]bsidian [T]ags";
+      action.__raw = ''
+        function()
+          local search = require('obsidian.search')
+          local util = require('obsidian.util')
+          local api = require('obsidian.api')
+          local log = require('obsidian.log')
+
+          local dir = api.resolve_workspace_dir()
+          local tag = api.cursor_tag()
+          local tags = tag and { tag } or {}
+
+          local function gather_sorted(tag_locations, filter_tags)
+            local entries = {}
+            for _, tag_loc in ipairs(tag_locations) do
+              for _, t in ipairs(filter_tags) do
+                if tag_loc.tag:lower() == t:lower() or vim.startswith(tag_loc.tag:lower(), t:lower() .. "/") then
+                  local display = string.format("%s [%s] %s", tag_loc.note:display_name(), tag_loc.line, tag_loc.text)
+                  local mtime = vim.fn.getftime(tostring(tag_loc.path))
+                  entries[#entries + 1] = {
+                    value = { path = tag_loc.path, line = tag_loc.line, col = tag_loc.tag_start },
+                    display = display,
+                    ordinal = display,
+                    filename = tostring(tag_loc.path),
+                    lnum = tag_loc.line,
+                    col = tag_loc.tag_start,
+                    mtime = mtime,
+                  }
+                  break
+                end
+              end
+            end
+            if vim.tbl_isempty(entries) then
+              log.warn("Tag(s) not found")
+              return
+            end
+            table.sort(entries, function(a, b)
+              if a.mtime ~= b.mtime then return a.mtime > b.mtime end
+              return a.filename > b.filename
+            end)
+            vim.schedule(function()
+              Obsidian.picker.pick(entries, { prompt_title = "#" .. table.concat(filter_tags, ", #") })
+            end)
+          end
+
+          if not vim.tbl_isempty(tags) then
+            search.find_tags_async(tags, function(tag_locations)
+              gather_sorted(tag_locations, util.tbl_unique(tags))
+            end, { dir = dir })
+          else
+            search.find_tags_async("", function(tag_locations)
+              local all_tags = {}
+              local seen = {}
+              for _, tl in ipairs(tag_locations) do
+                if not seen[tl.tag] then
+                  seen[tl.tag] = true
+                  all_tags[#all_tags + 1] = tl.tag
+                end
+              end
+              vim.schedule(function()
+                Obsidian.picker.pick(all_tags, {
+                  callback = function(...)
+                    local selected = vim.tbl_map(function(v) return v.user_data end, { ... })
+                    gather_sorted(tag_locations, selected)
+                  end,
+                  selection_mappings = Obsidian.picker._tag_selection_mappings(),
+                  allow_multiple = true,
+                })
+              end)
+            end, { dir = dir })
+          end
+        end
+      '';
+      options.desc = "[O]bsidian [T]ags (newest first)";
     }
     {
       mode = "n";
