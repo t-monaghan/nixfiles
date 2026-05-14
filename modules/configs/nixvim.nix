@@ -192,6 +192,33 @@
       vim.opt.clipboard = "unnamedplus"
     end)
 
+    -- Make backgrounds transparent so the terminal shows through
+    local function make_transparent()
+      local groups = {
+        "Normal", "NormalNC",
+        "SignColumn", "EndOfBuffer",
+        "MsgArea", "MiniStatuslineFilename",
+        "TreesitterContext",
+        -- Gutter: line numbers & git signs
+        "LineNr", "CursorLineNr", "CursorLine", "FoldColumn",
+        "GitSignsAdd", "GitSignsChange", "GitSignsDelete",
+        "GitSignsTopdelete", "GitSignsChangedelete", "GitSignsUntracked",
+        "DiagnosticSignError", "DiagnosticSignWarn", "DiagnosticSignInfo", "DiagnosticSignHint",
+      }
+      for _, group in ipairs(groups) do
+        vim.api.nvim_set_hl(0, group, { bg = "NONE" })
+      end
+    end
+
+    -- Apply transparency after every colorscheme change
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      group = vim.api.nvim_create_augroup("transparent-bg", { clear = true }),
+      callback = function()
+        make_transparent()
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
+      end,
+    })
+
     require("auto-dark-mode").setup({
       set_dark_mode = function()
         vim.o.background = "dark"
@@ -202,5 +229,9 @@
         vim.cmd.colorscheme("${colors.nixvim.light}")
       end,
     })
+
+    -- Also apply now for the initial colorscheme
+    make_transparent()
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
   '';
 }

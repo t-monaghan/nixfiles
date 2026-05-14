@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   plugins = {
     sleuth.enable = true;
 
@@ -74,7 +74,7 @@
         delay = 0;
         icons = {
           mappings = true;
-          keys = { };
+          keys = {};
         };
         spec = [
           {
@@ -88,7 +88,7 @@
           {
             __unkeyed-1 = "<leader>h";
             group = "Git [H]unk";
-            mode = [ "n" "v" ];
+            mode = ["n" "v"];
           }
           {
             __unkeyed-1 = "<leader>o";
@@ -100,7 +100,7 @@
 
     telescope = {
       enable = true;
-      settings.pickers.find_files.find_command = [ "rg" "--files" "--hidden" "-g" "!.git" ];
+      settings.pickers.find_files.find_command = ["rg" "--files" "--hidden" "-g" "!.git"];
       extensions = {
         fzf-native.enable = true;
         ui-select.enable = true;
@@ -158,12 +158,18 @@
       settings.library = [
         {
           path = "\${3rd}/luv/library";
-          words = [ "vim%.uv" ];
+          words = ["vim%.uv"];
         }
       ];
     };
 
-    fidget.enable = true;
+    fidget = {
+      enable = true;
+      settings.notification.window = {
+        normal_hl = "NormalFloat";
+        winblend = 0;
+      };
+    };
 
     conform-nvim = {
       enable = true;
@@ -180,7 +186,7 @@
           end
         '';
         formatters_by_ft = {
-          lua = [ "stylua" ];
+          lua = ["stylua"];
           nix = {
             __raw = ''
               function(bufnr)
@@ -193,8 +199,8 @@
               end
             '';
           };
-          python = [ "ruff" ];
-          typescript = [ "prettierd" ];
+          python = ["ruff"];
+          typescript = ["prettierd"];
         };
       };
     };
@@ -213,7 +219,7 @@
           auto_show_delay_ms = 500;
         };
         sources = {
-          default = [ "lsp" "path" "snippets" "lazydev" ];
+          default = ["lsp" "path" "snippets" "lazydev"];
           providers.lazydev = {
             module = "lazydev.integrations.blink";
             score_offset = 100;
@@ -235,9 +241,9 @@
     mini = {
       enable = true;
       modules = {
-        ai = { n_lines = 500; };
-        surround = { };
-        statusline = { };
+        ai = {n_lines = 500;};
+        surround = {};
+        statusline = {};
       };
     };
 

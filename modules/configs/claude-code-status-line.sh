@@ -69,13 +69,13 @@ if [ -n "$used" ]; then
     # Convert to integer for comparison
     used_int=$(printf '%.0f' "$used")
     if [ "$used_int" -ge 80 ]; then
-        color='\033[31m'  # Red for 80%+
+        colour='\033[31m'  # Red for 80%+
     elif [ "$used_int" -ge 60 ]; then
-        color='\033[33m'  # Yellow for 60%+
+        colour='\033[33m'  # Yellow for 60%+
     else
-        color='\033[2m'   # Dim for <60%
+        colour='\033[2m'   # Dim for <60%
     fi
-    ctx="$(printf "${color}%.0f%%\033[0m" "$used")"
+    ctx="$(printf "${colour}%.0f%%\033[0m" "$used")"
     if [ -n "$model" ]; then
         ctx="$ctx $(printf '\033[2m(%s)\033[0m' "$model")"
     fi

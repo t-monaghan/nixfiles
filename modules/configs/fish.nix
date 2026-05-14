@@ -57,16 +57,16 @@
         set elapsed (math (date +%s) - $start)
 
         if test $cmd_status -eq 0
-          set color "#00FF00"
+          set colour "#00FF00"
           set text "DONE"
         else
-          set color "#FF0000"
+          set colour "#FF0000"
           set text "FAILED"
         end
 
         curl -s -X POST "http://$AWTRIX_HOST/api/notify" \
           -H "Content-Type: application/json" \
-          -d "{\"text\":\"$text: $argv[1] ("$elapsed"s)\",\"color\":\"$color\",\"duration\":10}" \
+          -d "{\"text\":\"$text: $argv[1] ("$elapsed"s)\",\"color\":\"$colour\",\"duration\":10}" \
           > /dev/null 2>&1 &
 
         return $cmd_status
