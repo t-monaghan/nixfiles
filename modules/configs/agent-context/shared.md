@@ -6,6 +6,10 @@ PR descriptions should include the following sections:
 - **Why this change** — Why is this the right approach?
 - **Other changes** (optional) — Include this section when there are unusual or supplementary changes bundled in the PR (e.g. adding the multi-gitter flake, tooling updates, config changes unrelated to the main purpose).
 
+## PR Comments
+
+Never comment on GitHub on behalf of the user without being asked to.
+
 ## OpenSpec
 
 This user uses [fission-ai/openspec](https://github.com/fission-ai/openspec) for spec-driven development. Run it with:
