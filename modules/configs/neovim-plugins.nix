@@ -242,7 +242,17 @@
       enable = true;
       modules = {
         ai = {n_lines = 500;};
-        surround = {};
+        surround = {
+          mappings = {
+            add = "Sa";
+            delete = "Sd";
+            find = "";
+            find_left = "";
+            highlight = "";
+            replace = "Sr";
+            update_n_lines = "";
+          };
+        };
         statusline = {};
       };
     };
@@ -285,15 +295,15 @@
 
   # Extra telescope keymaps that need raw Lua (custom picker functions)
   keymaps = [
+    # {
+    #   mode = ["n" "x" "o"];
+    #   key = "S";
+    #   action.__raw = ''function() require("flash").jump() end'';
+    #   options.desc = "Flash";
+    # }
     {
-      mode = ["n" "x" "o"];
+      mode = ["x" "o"];
       key = "s";
-      action.__raw = ''function() require("flash").jump() end'';
-      options.desc = "Flash";
-    }
-    {
-      mode = ["n" "x" "o"];
-      key = "S";
       action.__raw = ''function() require("flash").treesitter() end'';
       options.desc = "Flash Treesitter";
     }
