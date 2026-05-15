@@ -15,7 +15,9 @@
 
     flash = {
       enable = true;
-      settings = {};
+      settings = {
+        modes.search.enabled = true;
+      };
     };
 
     gitsigns = {
