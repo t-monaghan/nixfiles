@@ -95,6 +95,10 @@ in {
     syncthing = import ./configs/syncthing.nix {};
   };
 
+  home.sessionVariables = {
+    PI_SKIP_VERSION_CHECK = "1";
+  };
+
   home.file.".pi/agent" = {
     source = ./configs/pi-coding-agent;
     recursive = true;
