@@ -1,4 +1,8 @@
-{pkgs, colors, ...}: {
+{
+  pkgs,
+  colors,
+  ...
+}: {
   enable = true;
   defaultEditor = true;
   imports = [
@@ -69,9 +73,15 @@
     }
     {
       mode = "t";
-      key = "<Esc><Esc>";
+      key = "<Esc>";
       action = "<C-\\><C-n>";
       options.desc = "Exit terminal mode";
+    }
+    {
+      mode = "t";
+      key = "<A-Esc>";
+      action = "<Esc>";
+      options.desc = "Send ESC to terminal";
     }
     {
       mode = "n";
@@ -114,9 +124,51 @@
   autoGroups = {
     kickstart-highlight-yank = {clear = true;};
     markdown-wrap = {clear = true;};
+    terminal-config = {clear = true;};
   };
 
   autoCmd = [
+    {
+      event = ["TermEnter"];
+      group = "terminal-config";
+      command = "setlocal winhighlight=Normal:ActiveTerm";
+    }
+    {
+      event = ["TermLeave"];
+      group = "terminal-config";
+      command = "setlocal winhighlight=Normal:NC";
+    }
+    {
+      event = ["TermOpen"];
+      group = "terminal-config";
+      callback.__raw = ''
+        function()
+          vim.cmd([[ setlocal nonumber norelativenumber signcolumn=no ]])
+          vim.opt.scrolloff = 0
+          vim.opt.sidescrolloff = 0
+          vim.opt.guicursor:append("t:block-blinkon0")
+          vim.keymap.set("n", "<C-c>", [[ i<C-c><C-\><C-n> ]], { buffer = 0 })
+          vim.keymap.set("n", "<C-n>", [[ i<C-n><C-\><C-n> ]], { buffer = 0 })
+          vim.keymap.set("n", "<C-p>", [[ i<C-p><C-\><C-n> ]], { buffer = 0 })
+          vim.keymap.set("n", "<CR>", [[ i<CR><C-\><C-n> ]], { buffer = 0 })
+          vim.keymap.set("t", "jk", [[<C-\><C-n>]], { desc = "Exit terminal mode"  })
+          vim.cmd("startinsert")
+        end
+      '';
+    }
+    {
+      event = ["TermRequest"];
+      group = "terminal-config";
+      desc = "Pass through OSC 777 notifications to parent terminal";
+      callback.__raw = ''
+        function(ev)
+          local seq = ev.data and ev.data.sequence
+          if seq and seq:match("^\027]777;") then
+            io.stdout:write(seq)
+          end
+        end
+      '';
+    }
     {
       event = ["TextYankPost"];
       desc = "Highlight when yanking (copying) text";
