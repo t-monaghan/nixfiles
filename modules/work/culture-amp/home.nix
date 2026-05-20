@@ -5,7 +5,6 @@
   ...
 }:
 lib.mkIf config.nixfiles.work.cultureAmp.enable {
-
   home.packages = with pkgs; [
     jira-cli-go
     buildkite-cli
@@ -35,6 +34,9 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
         "--profile-filter"
         "^cultureamp(?:-.+)?/.*(ReadOnly|ViewOnly|Cost)"
       ];
+    };
+    aws-research = {
+      url = "https://knowledge-mcp.global.api.aws";
     };
   };
   programs.fish = {
