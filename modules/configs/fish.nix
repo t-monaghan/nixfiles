@@ -13,7 +13,6 @@
     set -gx fish_color_autosuggestion ${colors.info}
     set -gx AWTRIX_HOST 192.168.1.97
     set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
-    set -gx DEVBOX_DEBUG 1
 
     bind \cx\ce edit_command_buffer
 
@@ -145,21 +144,11 @@
         # Find the granted assume.fish script
         set assume_script (readlink -f (which assume) | sed 's|/bin/assume|/share/assume.fish|')
 
-        # Get frecency entries sorted by score (highest first)
-        set frecency_profiles (cat ~/.granted/aws_profiles_frecency | jq -r '.Entries | sort_by(.FrecencySortingScore) | reverse | .[].Entry')
-
-        # Get frecency profiles sorted alphabetically for comm
-        set frecency_profiles_sorted (printf '%s\n' $frecency_profiles | sort)
-
         # Get all profiles from config
         set all_profiles (grep '^\[profile' ~/.aws/config | sed 's/\[profile \(.*\)\]/\1/' | sort)
 
-        # Combine frecency profiles first (sorted by score), then add any missing profiles
         set result (
-          begin
-            printf '%s\n' $frecency_profiles
-            comm -13 (printf '%s\n' $frecency_profiles_sorted | psub) (printf '%s\n' $all_profiles | psub)
-          end \
+          printf '%s\n' $all_profiles \
           | fzf --prompt="AWS Profile > " \
                 --preview="grep -A 10 '^\[profile {}\]' ~/.aws/config | grep granted_sso_account_id | head -1 | awk '{print \$NF}'" \
                 --preview-label="Account ID" \
