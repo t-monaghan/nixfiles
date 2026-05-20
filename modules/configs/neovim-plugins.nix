@@ -391,11 +391,22 @@
     }
   ];
 
-  # mini.statusline section_location override
+  # mini.statusline overrides
   extraConfigLua = ''
     local statusline = require("mini.statusline")
     statusline.section_location = function()
       return "%2l:%-2v"
+    end
+
+    -- Show terminal title (running command) instead of shell name
+    statusline.section_filename = function(args)
+      if vim.bo.buftype == "terminal" then
+        return vim.b.term_title or "%t"
+      elseif statusline.is_truncated(args.trunc_width) then
+        return "%f%m%r"
+      else
+        return "%F%m%r"
+      end
     end
   '';
 }
