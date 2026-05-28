@@ -205,6 +205,7 @@
     grim = "git rebase -i main";
     gap = "git add -p";
     gsl = "git stash list";
+    gfm = "git fetch origin main:main";
 
     ll = "ls -ltra";
 

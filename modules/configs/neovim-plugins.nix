@@ -408,5 +408,23 @@
         return "%F%m%r"
       end
     end
+
+    -- Hide fileinfo (encoding, filesize, filetype) from statusline
+    statusline.section_fileinfo = function()
+      return ""
+    end
+
+    -- Hide LSP attached indicator
+    statusline.section_lsp = function()
+      return ""
+    end
+
+    -- Use custom icon for diagnostics
+    local orig_diagnostics = statusline.section_diagnostics
+    statusline.section_diagnostics = function(args)
+      args = args or {}
+      args.icon = "\xEF\x80\x82"
+      return orig_diagnostics(args)
+    end
   '';
 }
