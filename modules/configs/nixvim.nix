@@ -21,6 +21,9 @@
     number = true;
     mouse = "a";
     showmode = false;
+    showcmd = false;
+    ruler = false;
+    cmdheight = 0;
     clipboard = {
       providers = {
         wl-copy.enable = true;
