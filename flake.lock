@@ -214,8 +214,7 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-tv-pin": "nixpkgs-tv-pin",
         "nixvim": "nixvim",
-        "sandy": "sandy",
-        "wilma": "wilma"
+        "sandy": "sandy"
       }
     },
     "sandy": {
@@ -298,27 +297,6 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
-      }
-    },
-    "wilma": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1777252200,
-        "narHash": "sha256-iGqWXz08qKbvLCDhjcuTKaNYNhoxlO942CKYs4fxd7I=",
-        "ref": "feat/nix-flake-module",
-        "rev": "33d18a55724601b7557839c189f8fcfd65e86fe9",
-        "revCount": 178,
-        "type": "git",
-        "url": "https://github.com/cultureamp/wilma"
-      },
-      "original": {
-        "ref": "feat/nix-flake-module",
-        "type": "git",
-        "url": "https://github.com/cultureamp/wilma"
       }
     }
   },

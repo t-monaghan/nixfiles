@@ -15,7 +15,7 @@
   };
 
   settings = {
-    model = "global.anthropic.claude-opus-4-6-v1";
+    model = "claude-opus-4-8-20250715";
     env = {
       DISABLE_ERROR_REPORTING = "1";
       DISABLE_TELEMETRY = "1";
