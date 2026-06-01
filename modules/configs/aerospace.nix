@@ -72,7 +72,11 @@
         app-id = "com.tinyspeck.slackmacgap";
         window-title-regex-substring = "Huddle";
       };
-      run = ["layout tiling"];
+      run = ["layout floating"];
     }
+  ];
+  exec-on-workspace-change = [
+    "/bin/bash" "-c"
+    "${aerospace}/bin/aerospace list-windows --all --format '%{window-id} %{window-title}' | grep Huddle | awk '{print $1}' | xargs -I{} ${aerospace}/bin/aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id {}"
   ];
 }
