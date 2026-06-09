@@ -39,7 +39,7 @@
     smartcase = true;
     signcolumn = "yes";
     updatetime = 250;
-    timeoutlen = 300;
+    timeoutlen = 500;
     splitright = true;
     splitbelow = true;
     list = true;
@@ -54,6 +54,7 @@
     hlsearch = true;
     wrap = false;
     linebreak = false;
+    path = ".,**";
   };
 
   keymaps = [
