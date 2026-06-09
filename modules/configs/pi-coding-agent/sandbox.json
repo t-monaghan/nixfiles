@@ -58,6 +58,9 @@
     ],
     "allowWrite": [
       ".",
+      "../.git",
+      "../../.git",
+      "../../../.git",
       "/tmp",
       "/var",
       "~/.cache/gh",
