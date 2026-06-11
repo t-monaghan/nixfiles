@@ -15,6 +15,10 @@
   };
 
   settings = {
+    spinnerVerbs = {
+      mode = "replace";
+      verbs = builtins.fromJSON (builtins.readFile ./pi-coding-agent/spinner-verbs.json);
+    };
     model = "claude-opus-4-8-20250715";
     env = {
       DISABLE_ERROR_REPORTING = "1";
