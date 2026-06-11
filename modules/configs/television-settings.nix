@@ -1,4 +1,8 @@
 {
+  shell_integration.channel_triggers = {
+    files = ["nvim"];
+  };
+
   ui.orientation = "portrait";
   ui.status_bar.hidden = true;
   ui.theme_overrides = {
