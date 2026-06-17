@@ -1,4 +1,4 @@
-{ ... }: {
+{...}: {
   enable = true;
   skills = {
     running-scripts-and-commands = ./claude-code-skills/just.md;
@@ -19,7 +19,7 @@
       mode = "replace";
       verbs = builtins.fromJSON (builtins.readFile ./pi-coding-agent/spinner-verbs.json);
     };
-    model = "claude-opus-4-8-20250715";
+    model = "claude-opus-4-7";
     env = {
       DISABLE_ERROR_REPORTING = "1";
       DISABLE_TELEMETRY = "1";
