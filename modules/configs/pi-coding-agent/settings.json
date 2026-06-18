@@ -1,7 +1,7 @@
 {
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4.7",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "xhigh",
   "skills": [
     "~/.claude/skills"
   ],
