@@ -4,11 +4,13 @@
   colors,
   ...
 }: let
+  # Preview is piped through `tail` so the bottom of the pane (where the action is)
+  # stays visible when the preview window is shorter than the source pane.
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
     session="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
     selected=$(${lib.getExe pkgs.tmux} list-windows -t "$session" -F '#{window_index}: #{pane_title}' \
       | ${lib.getExe pkgs.fzf} --no-sort --reverse --delimiter=':' \
-        --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t $session:{1}" \
+        --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t '$session':{1} | tail -n \$FZF_PREVIEW_LINES" \
         --preview-window "right:80%")
     [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
@@ -45,9 +47,13 @@ in {
     unbind s
     bind s display-popup -E -w 50 -h 18 "sesh list -i | ${lib.getExe pkgs.fzf} --height=100% --no-sort --reverse --ansi | xargs -r sesh connect"
 
-    # Switch windows via gum (only if multiple windows)
+    # Switch windows via fzf picker (only if multiple windows)
     unbind w
     bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
+
+    # Jump to last (MRU) window, or fall back to last session when there's only one window.
+    # `l` is taken by pane navigation, so use Tab.
+    bind -N "last-window-or-session" Tab if -F '#{?#{e|>:#{session_windows},1},1,}' 'last-window' 'switch-client -l'
 
     # Last session via sesh (only if multiple sessions)
     bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
