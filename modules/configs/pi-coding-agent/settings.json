@@ -1,5 +1,5 @@
 {
-  "defaultProvider": "github-copilot",
+  "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4.7",
   "defaultThinkingLevel": "medium",
   "skills": [
@@ -9,5 +9,8 @@
     "npm:pi-mcp-adapter",
     "npm:pi-sandbox"
   ],
-  "quietStartup": true
+  "quietStartup": true,
+  "warnings": {
+    "anthropicExtraUsage": false
+  }
 }

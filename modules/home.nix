@@ -44,6 +44,10 @@ in {
       hyperfine
       watchexec
       pi-coding-agent
+      uv
+      (pkgs.writeShellScriptBin "headroom" ''
+        exec ${pkgs.uv}/bin/uvx --from 'headroom-ai[all]' headroom "$@"
+      '')
 
       # Linters
       golangci-lint
@@ -61,6 +65,12 @@ in {
       python313Packages.pyls-isort
       python313Packages.black
     ];
+
+    # Prewarm the uvx cache for headroom so the extension's 1.5s availability
+    # probe (`headroom --help`) doesn't time out on first launch.
+    activation.prewarmHeadroom = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      ${pkgs.uv}/bin/uvx --from 'headroom-ai[all]' headroom --help >/dev/null 2>&1 || true
+    '';
 
     activation.mosDefaults = lib.hm.dag.entryAfter ["writeBoundary"] ''
       /usr/bin/defaults write com.caldis.Mos showPreference 0
