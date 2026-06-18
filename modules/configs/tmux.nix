@@ -64,9 +64,14 @@ in {
     # Clone GitHub repo and open session
     bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
 
-    # Clear Claude notifications when switching to a session
-    set-hook -g after-select-window 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
-    set-hook -g client-session-changed 'run-shell "session=$$(tmux display-message -p \"#{session_name}\"); case $$session in \\[*) tmux rename-session \"$$(echo $$session | cut -c2-)\" ;; esac"'
+    # Notification bracket cleanup (`[work]` -> `work`) is intentionally NOT
+    # tied to window/session switches — the bracket should persist as a
+    # "needs attention" marker until you actually engage with pi.
+    # `tmux-notify.ts` already unbrackets on `turn_start` (you sent input) and
+    # `session_shutdown` (pi exited), which is the right trigger.
+    # If a session ends up stuck bracketed (e.g. pi crashed), the next
+    # `turn_start` from any pi in that session will clean it up; otherwise rename
+    # by hand with `tmux rename-session work`.
 
     set -g extended-keys on
     set -g extended-keys-format csi-u
