@@ -69,6 +69,7 @@
       "~/.cache/uv",
       "~/.local/share/devbox",
       "~/.local/share/hotel",
+      "~/hotel",
       "~/.mcporter",
       "~/.pi",
       "~/Library/Caches",
