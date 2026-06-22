@@ -166,6 +166,7 @@ in {
         init.defaultBranch = "main";
         pager.difftool = true;
         rerere.enabled = true;
+        branch.sort = "-committerdate";
       };
       ignores = [".DS_Store"];
     };
