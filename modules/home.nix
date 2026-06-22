@@ -23,8 +23,7 @@ in {
       mos
       betterdisplay
       (callPackage ./configs/notunes-package.nix {})
-      sandy
-      imds-broker
+      obsidian
 
       # Development tools
       wget
@@ -36,6 +35,8 @@ in {
       terminal-notifier
       devbox
       nodejs
+      sandy
+      imds-broker
 
       # CLI tools
       tree
