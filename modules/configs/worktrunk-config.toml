@@ -6,9 +6,19 @@
 # Where new worktrees are created.
 # Variables: repo_path, repo, branch, owner.
 # Filters: sanitize (/ -> -), codename(2), hash_port, dirname, basename.
-# Default below = sibling dir, e.g. ~/dev/myproject.feature-auth.
-# Alternative (inside the repo): "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
-worktree-path = "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
+#
+# Worktrees live INSIDE the repo (under .worktrees/) rather than as siblings
+# (e.g. ~/dev/myproject.feature-auth). This is deliberate: pi runs in a sandbox
+# whose only writable tree is the repo it was launched in (".") plus the .git
+# dirs at "../.git", "../../.git", "../../../.git" (relative to the cwd). A
+# sibling worktree would sit in ~/dev, which the sandbox can only read — so pi
+# could create it but never `wt remove` it. Keeping worktrees under the repo
+# means both the working dir and the .git metadata are writable, so pi (and the
+# spawn-worktree extension) can create AND clean them up.
+# .worktrees/ is globally gitignored (programs.git.ignores in modules/home.nix)
+# so it never shows up as untracked / makes the tree "dirty".
+# Sibling alternative (not sandbox-friendly): "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
+worktree-path = "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
 
 # --- Hooks ------------------------------------------------------------------
 # User hooks apply to every repo and need no approval. pre-* hooks block;
@@ -19,3 +29,21 @@ worktree-path = "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
 # untracked/ignored ones. Runs in the background so it doesn't block.
 [post-start]
 copy = "wt step copy-ignored"
+
+# Tune the copy-ignored step: skip large/regenerable dirs that aren't worth
+# copying into every new worktree. .devbox is devbox's per-project virtenv; it
+# MUST NOT be copied because it contains relative symlinks computed for the
+# source worktree's depth — in a deeper .worktrees/<branch>/ path they point to
+# the wrong place, and devbox's `corepack enable` then dies with
+# "EEXIST: file already exists, symlink ...corepack-bin/pnpm". direnv re-runs
+# devbox in the new worktree, which regenerates .devbox correctly anyway.
+#
+# Two patterns are required: worktrunk's exclude matcher tests each enumerated
+# entry with gitignore `matched()` semantics, and copy-ignored enumerates BOTH
+# the `.devbox` directory entry AND its children separately. `.devbox/` matches
+# only the directory entry (children still copied); `.devbox/**` matches only
+# the descendants (the directory entry still copied). You need both to fully
+# exclude the tree. Verified via `wt step copy-ignored --to <wt> --dry-run
+# --force` (devbox entries: [] -> 7, [".devbox/"] -> 6, both -> 0).
+[step.copy-ignored]
+exclude = [".devbox/", ".devbox/**"]

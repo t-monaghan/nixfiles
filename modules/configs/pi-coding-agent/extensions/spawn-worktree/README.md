@@ -12,7 +12,12 @@ Given a branch name and a task, the extension:
 2. Looks up the worktree via `wt list --format json`. If the branch already
    has a worktree it's reused; otherwise it's created via
    `wt switch -c <branch> -x true` (which creates the worktree and immediately
-   exits — `-x true` replaces the `wt` process with `/bin/true`).
+   exits — `-x true` replaces the `wt` process with `/bin/true`). Worktrunk's
+   `worktree-path` puts it **inside** the repo at
+   `<repo>/.worktrees/<sanitized-branch>` (see
+   `modules/configs/worktrunk-config.toml`), which is what lets a sandboxed pi
+   later `wt remove` it — a sibling worktree in `~/dev` would be read-only to
+   the sandbox.
 3. Starts a **detached** tmux session named `pi-<sanitized-branch>` rooted at
    the new worktree path, running `pi <task>` in interactive mode.
 4. Returns the session name and worktree path so you can attach later.
@@ -41,6 +46,16 @@ tmux attach -t pi-feature-foo
 
 Detach with the usual tmux prefix + `d`. Kill with
 `tmux kill-session -t pi-feature-foo`.
+
+## Cleaning up a spawned worktree
+
+```fish
+wt remove feature-foo                 # -f if dirty, -D if unmerged; removes .worktrees/feature-foo
+tmux kill-session -t pi-feature-foo   # wt remove won't kill the session; do it if it still exists
+```
+
+Always remove via `wt` (not raw `git worktree remove`) so worktrunk's state
+stays consistent.
 
 ## Why interactive + tmux (not `pi -p` + `spawn detached`)
 

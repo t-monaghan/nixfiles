@@ -63,11 +63,13 @@ Manage with `wt config create` (user) and `wt config create --project` (project)
 `worktree-path` controls where new worktrees go. Useful variables: `{{ repo_path }}`, `{{ repo }}`, `{{ branch }}`; filters: `sanitize` (`/`→`-`), `codename(2)` (friendly name), `hash_port` (10000–19999), `dirname`/`basename`.
 
 ```toml
-# Default: sibling dir, e.g. ~/dev/myproject.feature-auth
-worktree-path = "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
-# Inside the repo: ~/dev/myproject/.worktrees/feature-auth
+# Default here: inside the repo, e.g. ~/dev/myproject/.worktrees/feature-auth
 worktree-path = "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
+# Sibling alternative: ~/dev/myproject.feature-auth
+worktree-path = "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
 ```
+
+Worktrees are kept **inside** the repo (under `.worktrees/`, globally gitignored) rather than as siblings. This is because pi runs in a sandbox whose only writable tree is the repo it launched in (`.`) plus the `.git` dirs at `../.git`, `../../.git`, and `../../../.git` — a sibling worktree lands in `~/dev` (read-only), so pi could create it but never `wt remove` it. In-repo worktrees keep both the working dir and `.git` metadata writable, so pi can create **and** clean them up.
 
 ### Hooks
 

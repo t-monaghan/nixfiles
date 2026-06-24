@@ -172,7 +172,9 @@ in {
         rerere.enabled = true;
         branch.sort = "-committerdate";
       };
-      ignores = [".DS_Store"];
+      # .worktrees/ is where worktrunk (`wt`) creates in-repo worktrees; ignore
+      # it everywhere so they never show as untracked / dirty the tree.
+      ignores = [".DS_Store" ".worktrees/"];
     };
 
     bat = {
