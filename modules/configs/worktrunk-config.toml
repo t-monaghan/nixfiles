@@ -1,0 +1,21 @@
+# Worktrunk user config — personal preferences, not shared with teammates.
+# Managed by nix (modules/configs/worktrunk.nix); edit this file rather than
+# the symlink at ~/.config/worktrunk/config.toml.
+# Docs: https://worktrunk.dev   Reference: `wt config create` / `wt config show`
+
+# Where new worktrees are created.
+# Variables: repo_path, repo, branch, owner.
+# Filters: sanitize (/ -> -), codename(2), hash_port, dirname, basename.
+# Default below = sibling dir, e.g. ~/dev/myproject.feature-auth.
+# Alternative (inside the repo): "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
+worktree-path = "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
+
+# --- Hooks ------------------------------------------------------------------
+# User hooks apply to every repo and need no approval. pre-* hooks block;
+# post-* hooks run in the background.
+
+# Copy ALL gitignored files (build caches, deps, secrets like .envrc.private)
+# into each new worktree, since worktrees share tracked files but NOT
+# untracked/ignored ones. Runs in the background so it doesn't block.
+[post-start]
+copy = "wt step copy-ignored"

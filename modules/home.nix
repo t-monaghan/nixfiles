@@ -7,6 +7,10 @@
   fonts = import ./configs/fonts.nix;
   colors = import ./configs/colours.nix;
 in {
+  imports = [
+    ./configs/worktrunk.nix
+  ];
+
   nixpkgs = {
     config.allowUnfree = true;
   };
