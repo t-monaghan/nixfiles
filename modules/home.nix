@@ -138,7 +138,7 @@ in {
 
     # Development
     go.enable = true;
-    gemini-cli.enable = true;
+    antigravity-cli.enable = true;
 
     # CLI Tools
     ripgrep.enable = true;
@@ -154,7 +154,7 @@ in {
     difftastic = {
       enable = true;
       git = {
-        diffToolMode = true;
+        mode = "difftool";
         enable = true;
       };
     };
