@@ -244,6 +244,9 @@
       enable = true;
       modules = {
         ai = {n_lines = 500;};
+        operators = {
+          replace = {prefix = "R";};
+        };
         surround = {
           mappings = {
             add = "Sa";
