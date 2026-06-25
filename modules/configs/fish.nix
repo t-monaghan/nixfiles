@@ -204,6 +204,7 @@
     gcob = "git checkout -b";
     grs = "git restore --staged";
     grim = "git rebase -i main";
+    grm = "git rebase main";
     gap = "git add -p";
     gsl = "git stash list";
     gfm = "git fetch origin main:main";
