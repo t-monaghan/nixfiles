@@ -176,6 +176,7 @@
   shellAbbrs = {
     s = "tv sesh --no-sort";
     nv = "nvim";
+    nd = "nvim +'Obsidian today'";
 
     ci = "gh altar ci > /dev/null 2>&1 & disown";
     dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
