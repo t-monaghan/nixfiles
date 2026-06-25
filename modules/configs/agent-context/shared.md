@@ -2,8 +2,9 @@
 
 PR descriptions should include the following sections:
 
-- **Problem** — What issue or need does this address?
-- **Why this change** — Why is this the right approach?
+- **Purpose** — What issue or need does this address?
+- **Context** — What was happening prior, how will this address the issue?
+- **Verification** — Steps taken to verify this change (or some unticked boxes for suggested steps that can verify this change)
 - **Other changes** (optional) — Include this section when there are unusual or supplementary changes bundled in the PR (e.g. adding the multi-gitter flake, tooling updates, config changes unrelated to the main purpose).
 
 ## PR Comments
