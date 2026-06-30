@@ -19,7 +19,7 @@ config with **no** system/root layer. This is a deliberate choice.
   (system-wide daemons, `/etc`, Homebrew orchestration) isn't available. In
   practice almost everything is user-scoped, and the few macOS *app preferences*
   we need are handled with `defaults write` in a home-manager **activation
-  script** (§7) — no nix-darwin required.
+  script** (section 7) — no nix-darwin required.
 - **Switch command** is therefore `home-manager switch --flake .#<profile>`,
   never `darwin-rebuild`.
 
@@ -37,14 +37,14 @@ hosts/
   work.nix
 modules/
   default.nix          # imports home.nix + work module(s)
-  home.nix             # THIN: auto-imports every top-level configs/*.nix (see §3)
+  home.nix             # THIN: explicit imports list of configs/*.nix (see section 3)
   configs/
     <app>.nix          # one file per app, each a HM module (git.nix, zsh.nix, ...)
-    mcp.nix            # the shared MCP server set (§4)
-    nix-search.nix     # package/option search (§11)
-    lib/               # NON-modules: colour/font palettes, data (NOT auto-imported)
+    mcp.nix            # the shared MCP server set (section 4)
+    nix-search.nix     # package/option search (section 11)
+    lib/               # helpers: colour/font palettes, data (imported with args)
       colours.nix
-    pkgs/              # NON-modules: callPackage derivations (NOT auto-imported)
+    pkgs/              # callPackage derivations (consumed via callPackage)
       notunes.nix
   work/<company>/
     options.nix        # declares nixfiles.work.<company>.enable
@@ -52,11 +52,11 @@ modules/
 scripts/
   switch               # wrapper around `home-manager switch`
   news                 # home-manager news
-README.md              # include the §9 writable-config doc + §11 module-first rule
+README.md              # include the section 9 writable-config doc + section 11 module-first rule
 ```
 
-Two deliberate upgrades baked in from the start: a **thin `home.nix`** (§3) and a
-**dedicated `mcp.nix`** (§4).
+Two deliberate upgrades baked in from the start: a **thin `home.nix`** (section 3) and a
+**dedicated `mcp.nix`** (section 4).
 
 ---
 
@@ -82,7 +82,7 @@ home-manager.lib.homeManagerConfiguration {
     ];
   };
   modules = [
-    mac-app-util.homeManagerModules.default   # §5
+    mac-app-util.homeManagerModules.default   # section 5
     ../hosts/${name}.nix
   ] ++ extraModules;
   extraSpecialArgs = { inherit username; };
@@ -100,11 +100,11 @@ home-manager.lib.homeManagerConfiguration {
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    mac-app-util.url = "github:hraban/mac-app-util";          # §5
+    mac-app-util.url = "github:hraban/mac-app-util";          # section 5
 
-    imds-broker.url = "github:<you>/imds-broker";             # §6
+    imds-broker.url = "github:<you>/imds-broker";             # section 6
     imds-broker.inputs.nixpkgs.follows = "nixpkgs";
-    sandy.url = "github:<you>/sandy";                         # §6
+    sandy.url = "github:<you>/sandy";                         # section 6
     sandy.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -135,7 +135,7 @@ tooling never leaks onto the personal machine:
 lib.mkIf config.nixfiles.work.acme.enable {
   home.packages = with pkgs; [ jira-cli-go buildkite-cli ];
   programs.awscli.enable = true;
-  # work-only MCP servers (§4), shell aliases/functions (§12), etc.
+  # work-only MCP servers (section 4), shell aliases/functions (section 12), etc.
 }
 ```
 
@@ -161,48 +161,58 @@ lib.mkIf config.nixfiles.work.acme.enable {
 always answered by `modules/configs/zed.nix`. Avoid the one-giant-`home.nix`
 trap.
 
-**`home.nix` auto-imports every top-level `configs/*.nix`** — so adding a new app
-is just "drop a file in `configs/`", no import line to maintain:
+**`home.nix` imports each app file explicitly** — a flat, greppable list. Adding
+an app is a one-line, reviewable diff:
 
 ```nix
 # modules/home.nix
-{ lib, ... }:
-let
-  configDir = ./configs;
-  # Only TOP-LEVEL *.nix files (non-recursive) — each must be a HM module.
-  entries = builtins.readDir configDir;
-  modules = lib.mapAttrsToList (name: _: configDir + "/${name}") (
-    lib.filterAttrs (name: type:
-      type == "regular" && lib.hasSuffix ".nix" name
-    ) entries
-  );
-in {
-  imports = modules;
+{ ... }: {
+  imports = [
+    ./configs/git.nix
+    ./configs/zsh.nix
+    ./configs/starship.nix
+    ./configs/zed.nix
+    ./configs/mcp.nix
+    ./configs/nix-search.nix
+    # ...one line per app
+  ];
 }
 ```
 
-Each `modules/configs/<app>.nix` must be a normal home-manager module
-(`{ pkgs, lib, config, ... }: { programs.foo = { ... }; }`) so a tool's package +
-settings live together and the file is safely auto-importable.
+Each `modules/configs/<app>.nix` is a normal home-manager module
+(`{ pkgs, lib, config, ... }: { programs.foo = { ... }; }`). Because only listed
+files load, **non-module files can sit happily alongside them** — there's no type
+landmine:
 
-**Why non-recursive + top-level only?** Some `.nix` files are *not* modules and
-would crash the import if picked up:
+- colour/font palettes (`configs/lib/colours.nix`) — `import`-ed with args by the
+  app files that need them; never in the `imports` list.
+- `callPackage` derivations (`configs/pkgs/notunes.nix`, section 7) — consumed
+  via `pkgs.callPackage ./pkgs/notunes.nix {}`; never in the `imports` list.
 
-- **`callPackage` derivations** (e.g. `notunes.nix`, §7) take
-  `{ lib, stdenvNoCC, ... }`, not module args.
-- **Plain attrsets** meant to be `import`-ed with args (colour/font palettes).
+Keeping helpers in `lib/` and `pkgs/` subdirs is just tidiness here, not a safety
+requirement — the explicit list is what controls what loads.
 
-Keep those out of the auto-import path by putting them in **subdirectories**,
-which `readDir` (non-recursive) skips:
+**Why explicit, not auto-collecting `configs/*.nix`?** The one-line-per-file cost
+buys back real safety:
 
-- `configs/lib/colours.nix`, `configs/lib/fonts.nix` — palettes; an app file
-  pulls one in with `import ./lib/colours.nix`.
-- `configs/pkgs/notunes.nix` — derivations; consumed via
-  `pkgs.callPackage ./pkgs/notunes.nix {}` from within an app module.
+- the `imports` list is the single greppable answer to "what loads?";
+- adding a module is a reviewable diff — no silent inclusion of a stray/scratch
+  file on the next switch;
+- a module is trivially disabled by commenting out its line;
+- a non-module dropped in `configs/` can't crash evaluation with a cryptic
+  `called with unexpected argument` / infinite-recursion error.
 
-> The convention to write down: **a top-level `configs/*.nix` is always a
-> home-manager module; anything else lives in a subdirectory.** That keeps the
-> auto-import total and predictable — if it's at the top level, it's loaded.
+**Scaling tip:** if `configs/` ever sprawls, group by domain with per-area
+"barrel" files — `configs/editors/default.nix` imports its siblings,
+`configs/agents/default.nix` imports the agent modules, and `home.nix` imports
+the handful of `default.nix` barrels. Same safety, shorter top-level list.
+
+> Prefer zero-maintenance auto-import? It's viable but fragile (silent inclusion,
+> no ordering control, and non-module files crashing eval). If you go that way,
+> use a purpose-built loader like
+> [`haumea`](https://github.com/nix-community/haumea) rather than a raw `readDir`
+> filter — it has real conventions for what counts as a module and how to ignore
+> files.
 
 ---
 
@@ -256,7 +266,7 @@ they do.
 
 - **Input:** `mac-app-util.url = "github:hraban/mac-app-util";`
 - **Wire-up:** add `mac-app-util.homeManagerModules.default` to the `modules`
-  list in `mkHost` (shown in §2). Standalone home-manager → use the
+  list in `mkHost` (shown in section 2). Standalone home-manager → use the
   **home-manager** module, not the darwin one.
 - It then automatically handles any GUI app installed via `home.packages`
   (editors, Obsidian, BetterDisplay, custom `.app`s, …).
@@ -266,7 +276,7 @@ they do.
 ## 6. `imds-broker` + `sandy`
 
 Both are flakes pulled from GitHub and surfaced as `pkgs.*` via an overlay (see
-`mkHost`, §2).
+`mkHost`, section 2).
 
 ```nix
 # flake.nix inputs
@@ -283,7 +293,7 @@ Usage:
   `xdg.configFile."sandy/config.json".text = builtins.toJSON { backend = "docker"; };`
 - **imds as an MCP server** (work profile): a
   `programs.mcp.servers.imds-broker = { command = "imds-broker"; args = [ "mcp" "--profile-filter" "..." ]; };`
-  so it flows to all agents via §4.
+  so it flows to all agents via section 4.
 - If using pi, the sandbox uses the `pi-sandbox` package; keep that in pi's
   `settings.json` `packages`.
 
@@ -333,7 +343,8 @@ stdenvNoCC.mkDerivation rec {
 
 Add it from within an app module with
 `(pkgs.callPackage ./pkgs/notunes.nix {})` in `home.packages`. It lives under
-`configs/pkgs/` precisely so the §3 auto-import skips it. Combined with §5,
+`configs/pkgs/` and isn't in `home.nix`'s import list, so it never loads as a
+module. Combined with section 5,
 packaged apps show up in Spotlight and get their prefs set — all user-level, no
 root.
 
@@ -417,7 +428,7 @@ want it tracked" files. Don't mix both for the same file.
 `nix-search-tv` indexed over **both `nixpkgs` and `home-manager`**. The
 home-manager index is the important half: it's how you discover *which
 `programs.*` modules and options exist* — which feeds the module-first rule
-(§11). Let the module configure television for you — don't hand-roll a channel.
+(section 11). Let the module configure television for you — don't hand-roll a channel.
 
 ```nix
 # modules/configs/nix-search.nix
@@ -483,10 +494,10 @@ home.packages = [ pkgs.git ];
 
 - **Config travels with the install** — settings live in the same declarative
   file, version-controlled, reproducible. No hidden hand-edited dotfiles.
-- **Integrations for free** — modules wire up shell integration (§12),
-  `enable*Integration` hooks (e.g. `enableMcpIntegration` in §4 only exists
+- **Integrations for free** — modules wire up shell integration (section 12),
+  `enable*Integration` hooks (e.g. `enableMcpIntegration` in section 4 only exists
   *because* these are modules), completions, themes, services on demand.
-- **Discoverable & type-checked** — options are searchable (§10) and validated at
+- **Discoverable & type-checked** — options are searchable (section 10) and validated at
   build time; a typo'd option fails the switch instead of silently doing nothing.
 - **One source of truth** — package and config never drift apart.
 
@@ -494,17 +505,17 @@ home.packages = [ pkgs.git ];
 
 1. **No module exists** — most CLIs (`tree`, `eza`, `jq`, `hyperfine`,
    `shellcheck`, formatters/linters) have none; a package entry is correct.
-2. **GUI apps** — Obsidian, BetterDisplay, custom `.app` derivations (§7):
-   package-only, with `mac-app-util` (§5) making them visible.
+2. **GUI apps** — Obsidian, BetterDisplay, custom `.app` derivations (section 7):
+   package-only, with `mac-app-util` (section 5) making them visible.
 3. **You don't want the module's config surface** — sometimes you just need the
    binary and prefer to manage config another way (e.g. the writable-symlink
-   pattern in §9). A deliberate choice, not the default.
+   pattern in section 9). A deliberate choice, not the default.
 4. **Module exists but is behind/buggy** — pin the package and configure
    manually until the module catches up.
 
 **Decision checklist (put in the README):**
 
-> 1. Search `home-manager` options (§10) for `programs.<tool>` / `services.<tool>`.
+> 1. Search `home-manager` options (section 10) for `programs.<tool>` / `services.<tool>`.
 > 2. If it exists → `programs.<tool>.enable = true;` and configure via its options.
 > 3. If not, or you explicitly don't want its config → add `pkgs.<tool>` to `home.packages`.
 > 4. Never add the package **and** also hand-maintain its dotfile when a module
@@ -603,9 +614,9 @@ files needed in most cases.
 2. `git clone` the new repo, `cd` in.
 3. Edit `hosts/personal.nix` → set `username` / `homeDirectory`.
 4. `./scripts/switch personal` (works without home-manager pre-installed thanks
-   to §8).
+   to section 8).
 5. Open a new shell; confirm zsh + starship + tools are live.
-6. Add `mac-app-util` + a GUI app, switch, confirm it appears in Spotlight (§5).
+6. Add `mac-app-util` + a GUI app, switch, confirm it appears in Spotlight (section 5).
 
 ---
 
@@ -613,19 +624,19 @@ files needed in most cases.
 
 1. [ ] `flake.nix` + `lib/mkHost.nix` + one `hosts/personal.nix` with only
        `programs.zsh.enable = true;`. Get a green `switch`.
-2. [ ] Add `scripts/switch` + `scripts/news` (§8).
-3. [ ] Establish the **per-app file** convention (§3) with git, **zsh**,
+2. [ ] Add `scripts/switch` + `scripts/news` (section 8).
+3. [ ] Establish the **per-app file** convention (section 3) with git, **zsh**,
        starship — using their `programs.*` modules, not packages, to set the
-       module-first pattern (§11) from the first commit.
-4. [ ] Add `configs/nix-search.nix` (§10) — you'll use it to discover modules
+       module-first pattern (section 11) from the first commit.
+4. [ ] Add `configs/nix-search.nix` (section 10) — you'll use it to discover modules
        while building everything else.
-5. [ ] Add `mac-app-util` + first GUI app; verify Spotlight (§5).
+5. [ ] Add `mac-app-util` + first GUI app; verify Spotlight (section 5).
 6. [ ] Add `configs/mcp.nix` with `programs.mcp` + one agent with
-       `enableMcpIntegration` (§4).
+       `enableMcpIntegration` (section 4).
 7. [ ] Add the **personal/work split**: work option module + `hosts/work.nix`;
-       move a work package behind it (§2).
-8. [ ] Add `imds-broker` + `sandy` inputs and the overlay (§6).
-9. [ ] Add the macOS `defaults write` activation + a packaged `.app` (§7).
+       move a work package behind it (section 2).
+8. [ ] Add `imds-broker` + `sandy` inputs and the overlay (section 6).
+9. [ ] Add the macOS `defaults write` activation + a packaged `.app` (section 7).
 10. [ ] Document + adopt the `mkOutOfStoreSymlink` writable-config pattern for one
-        app (§9), and put the §11 decision checklist in the README.
+        app (section 9), and put the section 11 decision checklist in the README.
 ```
