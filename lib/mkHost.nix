@@ -1,7 +1,6 @@
 {
   home-manager,
   nixpkgs,
-  nixpkgs-tv-pin,
   nixvim,
   awtrix-cli,
   sandy,
@@ -21,7 +20,6 @@ home-manager.lib.homeManagerConfiguration {
       (final: prev: {
         sandy = sandy.packages.${final.system}.default;
         imds-broker = imds-broker.packages.${final.system}.default;
-        television = (import nixpkgs-tv-pin {inherit system;}).television;
       })
     ];
   };
