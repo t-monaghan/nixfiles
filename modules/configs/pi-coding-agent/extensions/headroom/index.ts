@@ -3,12 +3,14 @@ import { applyCompressionResult, buildCompressionPayload } from "./bridge.ts";
 import { HeadroomHttpClient } from "./client.ts";
 import { isRemoteBlocked, loadHeadroomConfig } from "./config.ts";
 import { startPersistentHeadroomProxy } from "./proxy-manager.ts";
-import type { AgentMessage, CompressResult, HeadroomConfig, HeadroomStats } from "./types.ts";
+import type { AgentMessage, CompressResult, HeadroomConfig, HeadroomStats, ProxyStatsSummary } from "./types.ts";
 
 // Status keys are rendered alphabetically by pi's footer; prefix with "zz-"
 // so the Headroom indicator appears at the end of the status line.
 const STATUS_KEY = "zz-headroom";
 const SUBCOMMANDS = ["status", "on", "off", "health", "stats"] as const;
+// Throttle interval for refreshing the /stats-backed footer while routing.
+const STATS_REFRESH_MS = 10_000;
 
 type Subcommand = (typeof SUBCOMMANDS)[number];
 
@@ -19,10 +21,18 @@ interface HeadroomRuntimeState {
 	proxyStartAttempted: boolean;
 	remoteWarningShown: boolean;
 	offlineWarningShown: boolean;
+	/** Whether the provider baseUrl override is currently registered. */
+	routed: boolean;
+	/** Cumulative savings pulled from the proxy /stats endpoint (proxy-routing mode). */
+	proxyStats?: ProxyStatsSummary;
+	/** Timestamp of the last /stats fetch, for throttling. */
+	lastStatsFetch: number;
+	/** Legacy /v1/compress sidecar stats (used only when routeProvider is false). */
 	stats: HeadroomStats;
 }
 
 interface HeadroomRuntime {
+	pi: ExtensionAPI;
 	config: HeadroomConfig;
 	client: HeadroomHttpClient;
 	state: HeadroomRuntimeState;
@@ -31,8 +41,8 @@ interface HeadroomRuntime {
 	ensureProxy(ctx: ExtensionContext): Promise<boolean>;
 }
 
-export default function headroomExtension(pi: ExtensionAPI) {
-	const runtime = createRuntime();
+export default async function headroomExtension(pi: ExtensionAPI) {
+	const runtime = createRuntime(pi);
 
 	pi.on("session_start", (_event, ctx) => {
 		if (isRemoteBlocked(runtime.config)) {
@@ -45,7 +55,7 @@ export default function headroomExtension(pi: ExtensionAPI) {
 		}
 		runtime.refreshStatus(ctx);
 		if (!runtime.state.enabled) return;
-		void ensureProxyInBackground(runtime, ctx);
+		void ensureProxyAndRouteInBackground(runtime, ctx);
 	});
 
 	pi.on("context", (event, ctx) => handleContextCompression(runtime, event, ctx));
@@ -68,9 +78,26 @@ export default function headroomExtension(pi: ExtensionAPI) {
 			await handleCommand(runtime, "health", ctx);
 		},
 	});
+
+	// Route the provider through the proxy during the async factory so the override
+	// is applied before pi resolves the session model and issues its first request.
+	if (runtime.config.routeProvider && runtime.state.enabled && !isRemoteBlocked(runtime.config)) {
+		try {
+			const online = await runtime.client.health(AbortSignal.timeout(2000));
+			runtime.state.proxyOnline = online;
+			if (online) {
+				applyRouting(runtime);
+			} else {
+				// Proxy not up yet: start it in the background and route once healthy.
+				void ensureProxyAndRouteInBackground(runtime);
+			}
+		} catch {
+			void ensureProxyAndRouteInBackground(runtime);
+		}
+	}
 }
 
-function createRuntime(): HeadroomRuntime {
+function createRuntime(pi: ExtensionAPI): HeadroomRuntime {
 	const config = loadHeadroomConfig();
 	const client = new HeadroomHttpClient({ baseUrl: config.baseUrl, timeoutMs: config.timeoutMs });
 	const state: HeadroomRuntimeState = {
@@ -80,10 +107,14 @@ function createRuntime(): HeadroomRuntime {
 		proxyStartAttempted: false,
 		remoteWarningShown: false,
 		offlineWarningShown: false,
+		routed: false,
+		proxyStats: undefined,
+		lastStatsFetch: 0,
 		stats: { attempts: 0, applied: 0, guardSkips: 0, tokensSaved: 0, tokensBeforeTotal: 0 },
 	};
 
 	const runtime: HeadroomRuntime = {
+		pi,
 		config,
 		client,
 		state,
@@ -100,6 +131,30 @@ function createRuntime(): HeadroomRuntime {
 		},
 	};
 	return runtime;
+}
+
+// --- Provider routing -------------------------------------------------------
+
+function applyRouting(runtime: HeadroomRuntime, ctx?: ExtensionContext): void {
+	if (!runtime.config.routeProvider || runtime.state.routed) return;
+	try {
+		runtime.pi.registerProvider(runtime.config.provider, { baseUrl: runtime.config.baseUrl });
+		runtime.state.routed = true;
+	} catch (error) {
+		runtime.state.stats.lastError = getErrorMessage(error);
+	}
+	if (ctx) runtime.refreshStatus(ctx);
+}
+
+function clearRouting(runtime: HeadroomRuntime, ctx?: ExtensionContext): void {
+	if (!runtime.state.routed) return;
+	try {
+		runtime.pi.unregisterProvider(runtime.config.provider);
+	} catch (error) {
+		runtime.state.stats.lastError = getErrorMessage(error);
+	}
+	runtime.state.routed = false;
+	if (ctx) runtime.refreshStatus(ctx);
 }
 
 async function updateHealthState(runtime: HeadroomRuntime, signal?: AbortSignal): Promise<boolean> {
@@ -131,34 +186,37 @@ async function ensureProxy(runtime: HeadroomRuntime, ctx: ExtensionContext): Pro
 	return online;
 }
 
-async function ensureProxyInBackground(runtime: HeadroomRuntime, ctx?: ExtensionContext): Promise<void> {
+/**
+ * Bring the proxy online in the background and, in proxy-routing mode, register
+ * the provider override once it is healthy. Safe to call with or without a ctx.
+ */
+async function ensureProxyAndRouteInBackground(runtime: HeadroomRuntime, ctx?: ExtensionContext): Promise<void> {
 	try {
-		if (await updateHealthState(runtime)) {
+		let online = await updateHealthState(runtime);
+		if (!online && runtime.config.autoStart && !runtime.state.proxyStartAttempted) {
+			runtime.state.proxyStartAttempted = true;
+			runtime.state.proxyStarting = true;
 			safeRefreshStatus(runtime, ctx);
-			return;
-		}
-		if (!runtime.config.autoStart || runtime.state.proxyStartAttempted) {
-			safeRefreshStatus(runtime, ctx);
-			return;
-		}
-		runtime.state.proxyStartAttempted = true;
-		runtime.state.proxyStarting = true;
-		safeRefreshStatus(runtime, ctx);
-		const started = await startPersistentHeadroomProxy(runtime.config);
-		if (!started.ok) {
-			runtime.state.stats.lastError = started.reason;
+			const started = await startPersistentHeadroomProxy(runtime.config);
+			if (!started.ok) {
+				runtime.state.stats.lastError = started.reason;
+				runtime.state.proxyStarting = false;
+				runtime.state.proxyOnline = false;
+				safeRefreshStatus(runtime, ctx);
+				return;
+			}
+			online = await waitForProxyHealth(runtime);
 			runtime.state.proxyStarting = false;
-			runtime.state.proxyOnline = false;
-			safeRefreshStatus(runtime, ctx);
-			return;
+			runtime.state.proxyOnline = online;
 		}
-		runtime.state.proxyOnline = await waitForProxyHealth(runtime);
-		runtime.state.proxyStarting = false;
+		if (online && runtime.config.routeProvider && runtime.state.enabled) {
+			applyRouting(runtime, ctx);
+		}
 		safeRefreshStatus(runtime, ctx);
 	} catch (error) {
 		runtime.state.proxyStarting = false;
 		runtime.state.proxyOnline = false;
-		runtime.state.stats.lastError = error instanceof Error ? error.message : String(error);
+		runtime.state.stats.lastError = getErrorMessage(error);
 		safeRefreshStatus(runtime, ctx);
 	}
 }
@@ -184,16 +242,70 @@ function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// --- /stats-backed footer (proxy-routing mode) ------------------------------
+
+function extractNumber(value: unknown): number | undefined {
+	return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+function summarizeProxyStats(raw: unknown): ProxyStatsSummary | undefined {
+	if (!raw || typeof raw !== "object") return undefined;
+	const r = raw as Record<string, any>;
+	const tokensSaved =
+		extractNumber(r.savings?.total_tokens) ??
+		extractNumber(r.tokens?.saved) ??
+		extractNumber(r.agent_usage?.totals?.tokens_saved) ??
+		extractNumber(r.summary?.compression?.total_tokens_removed) ??
+		0;
+	const before =
+		extractNumber(r.tokens?.total_before_compression) ??
+		extractNumber(r.tokens?.proxy_total_before_compression) ??
+		extractNumber(r.agent_usage?.totals?.before_tokens);
+	let percent =
+		extractNumber(r.tokens?.savings_percent) ??
+		extractNumber(r.agent_usage?.totals?.savings_percent) ??
+		extractNumber(r.summary?.compression?.avg_compression_pct);
+	if (percent === undefined && before && before > 0) percent = (tokensSaved / before) * 100;
+	return { tokensSaved, percent: percent ?? 0 };
+}
+
+async function refreshProxyStats(runtime: HeadroomRuntime, ctx: ExtensionContext): Promise<void> {
+	const now = Date.now();
+	if (now - runtime.state.lastStatsFetch < STATS_REFRESH_MS) return;
+	runtime.state.lastStatsFetch = now;
+	try {
+		const raw = await runtime.client.stats(ctx.signal);
+		const summary = summarizeProxyStats(raw);
+		if (summary) {
+			runtime.state.proxyStats = summary;
+			runtime.state.proxyOnline = true;
+			safeRefreshStatus(runtime, ctx);
+		}
+	} catch {
+		// Best-effort; leave the last known summary in place.
+	}
+}
+
+// --- context event ----------------------------------------------------------
+
 async function handleContextCompression(
 	runtime: HeadroomRuntime,
 	event: ContextEvent,
 	ctx: ExtensionContext,
 ): Promise<{ messages?: AgentMessage[] } | undefined> {
+	// Proxy-routing mode: the proxy compresses on the wire, so the extension does
+	// not touch messages here. Just keep the footer in sync with the proxy ledger.
+	if (runtime.config.routeProvider) {
+		if (runtime.state.enabled && runtime.state.routed) void refreshProxyStats(runtime, ctx);
+		return undefined;
+	}
+
+	// Legacy /v1/compress sidecar path.
 	if (shouldSkipBeforePayload(runtime, ctx)) return undefined;
 	const payload = buildCompressionPayload(event.messages, runtime.config.minMessageChars);
 	if (payload.candidateCount === 0) return undefined;
 	if (runtime.state.proxyOnline !== true) {
-		void ensureProxyInBackground(runtime, ctx);
+		void ensureProxyAndRouteInBackground(runtime, ctx);
 		return undefined;
 	}
 
@@ -287,15 +399,20 @@ function isAbortOrTimeoutError(error: unknown): boolean {
 	return candidate.cause !== undefined && candidate.cause !== error && isAbortOrTimeoutError(candidate.cause);
 }
 
+// --- commands ---------------------------------------------------------------
+
 async function handleCommand(runtime: HeadroomRuntime, command: Subcommand, ctx: ExtensionContext): Promise<void> {
 	if (command === "on") {
 		runtime.state.enabled = true;
 		runtime.state.offlineWarningShown = false;
 		runtime.state.proxyStartAttempted = false;
 		const healthy = await runtime.ensureProxy(ctx);
+		if (healthy && runtime.config.routeProvider) applyRouting(runtime, ctx);
 		ctx.ui.notify(
 			healthy
-				? "Headroom compression enabled. Proxy will keep running after Pi exits."
+				? runtime.config.routeProvider
+					? `Headroom enabled. Routing ${runtime.config.provider} through ${runtime.config.baseUrl}; proxy stays up after Pi exits.`
+					: "Headroom compression enabled. Proxy will keep running after Pi exits."
 				: proxyStartHint(runtime.config),
 			healthy ? "info" : "warning",
 		);
@@ -303,13 +420,20 @@ async function handleCommand(runtime: HeadroomRuntime, command: Subcommand, ctx:
 	}
 	if (command === "off") {
 		runtime.state.enabled = false;
+		clearRouting(runtime, ctx);
 		runtime.refreshStatus(ctx);
-		ctx.ui.notify("Headroom compression disabled for this Pi session. The proxy process is left running.", "info");
+		ctx.ui.notify(
+			runtime.config.routeProvider
+				? `Headroom disabled. ${runtime.config.provider} restored to its default endpoint; proxy process left running.`
+				: "Headroom compression disabled for this Pi session. The proxy process is left running.",
+			"info",
+		);
 		return;
 	}
 	if (command === "health") {
 		runtime.state.proxyStartAttempted = false;
 		const healthy = await runtime.ensureProxy(ctx);
+		if (healthy && runtime.config.routeProvider && runtime.state.enabled) applyRouting(runtime, ctx);
 		ctx.ui.notify(
 			healthy ? `Headroom proxy online: ${runtime.config.baseUrl}` : proxyStartHint(runtime.config),
 			healthy ? "info" : "warning",
@@ -322,6 +446,8 @@ async function handleCommand(runtime: HeadroomRuntime, command: Subcommand, ctx:
 	}
 	ctx.ui.notify(renderStatus(runtime.config, runtime.state), "info");
 }
+
+// --- status / footer --------------------------------------------------------
 
 function refreshStatus(ctx: ExtensionContext, config: HeadroomConfig, state: HeadroomRuntimeState): void {
 	if (!ctx.hasUI) return;
@@ -351,6 +477,17 @@ function renderFooterStatus(ctx: ExtensionContext, config: HeadroomConfig, state
 	if (isRemoteBlocked(config)) return divider + paint("warning", "⚠") + paint("dim", " Headroom remote blocked");
 	if (state.proxyStarting) return divider + paint("dim", "⏳ Headroom starting");
 	if (state.proxyOnline === false) return divider + paint("dim", "○ Headroom not running");
+
+	if (config.routeProvider) {
+		if (!state.routed) return divider + paint("dim", "○ Headroom idle");
+		const saved = state.proxyStats?.tokensSaved ?? 0;
+		if (saved <= 0) return divider + paint("success", "✓") + paint("dim", " Headroom routing");
+		const pct = Math.round(state.proxyStats?.percent ?? 0);
+		return (
+			divider + paint("success", "✓") + paint("dim", ` Headroom -${pct}% (${saved.toLocaleString()} saved)`)
+		);
+	}
+
 	if (state.proxyOnline === null && !state.stats.last) return divider + paint("dim", "○ Headroom idle");
 	if (!state.stats.last || state.stats.tokensBeforeTotal <= 0) {
 		return divider + paint("success", "✓") + paint("dim", " Headroom");
@@ -387,32 +524,55 @@ async function showProxyStats(
 
 function renderStatus(config: HeadroomConfig, state: HeadroomRuntimeState): string {
 	const stats = state.stats;
+	const mode = config.routeProvider ? `proxy routing (${config.provider})` : "sidecar (/v1/compress)";
 	const lines = [
 		"Headroom token compression",
 		`  Enabled: ${state.enabled ? "yes" : "no"}`,
+		`  Mode:    ${mode}`,
 		`  Proxy:   ${config.baseUrl} (${state.proxyOnline === true ? "online" : state.proxyStarting ? "starting" : state.proxyOnline === false ? "not running" : "unknown"})`,
+	];
+	if (config.routeProvider) {
+		lines.push(`  Routing: ${state.routed ? `on — ${config.provider} → ${config.baseUrl}` : "off (provider using default endpoint)"}`);
+	}
+	lines.push(
 		`  Auto-start: ${config.autoStart ? `yes (${config.command})` : "no"}`,
 		`  Shutdown: proxy is left running after Pi exits`,
 		`  Remote:  ${isRemoteBlocked(config) ? "blocked" : config.allowRemote ? "allowed" : "local-only"}`,
-		`  Thresholds: context >= ${config.minContextTokens.toLocaleString()} tokens, toolResult >= ${config.minMessageChars.toLocaleString()} chars`,
-		"",
-		"Session stats:",
-		`  Attempts:     ${stats.attempts}`,
-		`  Applied:      ${stats.applied}`,
-		`  Guard skips:  ${stats.guardSkips}`,
-		`  Tokens saved: ${stats.tokensSaved.toLocaleString()}`,
-	];
-	if (stats.last) {
-		const pct = Math.round((1 - stats.last.compressionRatio) * 100);
+	);
+
+	if (config.routeProvider) {
+		lines.push("", "Cumulative proxy savings (from /stats, matches dashboard):");
+		if (state.proxyStats) {
+			lines.push(
+				`  Tokens saved: ${state.proxyStats.tokensSaved.toLocaleString()}`,
+				`  Reduction:    ${Math.round(state.proxyStats.percent)}%`,
+			);
+		} else {
+			lines.push("  (not fetched yet — run /headroom stats or issue a request)");
+		}
+	} else {
 		lines.push(
+			`  Thresholds: context >= ${config.minContextTokens.toLocaleString()} tokens, toolResult >= ${config.minMessageChars.toLocaleString()} chars`,
 			"",
-			"Last applied compression:",
-			`  ${stats.last.tokensBefore.toLocaleString()} → ${stats.last.tokensAfter.toLocaleString()} tokens (-${pct}%)`,
-			`  Applied messages: ${stats.last.appliedMessages}`,
-			`  Transforms: ${stats.last.transformsApplied.join(", ") || "none"}`,
-			`  CCR hashes: ${stats.last.ccrHashes.length}`,
+			"Session stats:",
+			`  Attempts:     ${stats.attempts}`,
+			`  Applied:      ${stats.applied}`,
+			`  Guard skips:  ${stats.guardSkips}`,
+			`  Tokens saved: ${stats.tokensSaved.toLocaleString()}`,
 		);
+		if (stats.last) {
+			const pct = Math.round((1 - stats.last.compressionRatio) * 100);
+			lines.push(
+				"",
+				"Last applied compression:",
+				`  ${stats.last.tokensBefore.toLocaleString()} → ${stats.last.tokensAfter.toLocaleString()} tokens (-${pct}%)`,
+				`  Applied messages: ${stats.last.appliedMessages}`,
+				`  Transforms: ${stats.last.transformsApplied.join(", ") || "none"}`,
+				`  CCR hashes: ${stats.last.ccrHashes.length}`,
+			);
+		}
 	}
+
 	if (stats.lastSkipReason) lines.push("", `Last guard skip: ${stats.lastSkipReason}`);
 	if (stats.lastError) lines.push("", `Last error: ${stats.lastError}`);
 	return lines.join("\n");
@@ -441,9 +601,9 @@ function renderManualProxyCommand(config: HeadroomConfig): string {
 		const url = new URL(config.baseUrl);
 		const host = url.hostname === "localhost" ? "127.0.0.1" : url.hostname.replace(/^\[(.*)]$/, "$1");
 		const port = url.port || "8788";
-		return `${config.command} proxy --host ${host} --port ${port} --mode token --no-cache`;
+		return `${config.command} proxy --host ${host} --port ${port} --mode cache --no-cache --no-ccr-inject-tool`;
 	} catch {
-		return `${config.command} proxy --mode token --no-cache`;
+		return `${config.command} proxy --mode cache --no-cache --no-ccr-inject-tool`;
 	}
 }
 
@@ -463,4 +623,5 @@ function parseSubcommand(args: string): Subcommand {
 export const __test__ = {
 	isAbortOrTimeoutError,
 	renderFooterStatus,
+	summarizeProxyStats,
 };

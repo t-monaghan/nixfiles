@@ -19,6 +19,19 @@ home-manager, with no runtime npm dependency.
   type-checking only, not runtime behaviour.
 - Changed `STATUS_KEY` from `"headroom"` to `"zz-headroom"` so it sorts to
   the end of pi's alphabetical footer status line (after `status-line`).
+- Added a **proxy-routing mode** (`routeProvider`, default `true`) that diverges
+  from upstream: instead of the `/v1/compress` sidecar, the extension registers a
+  `baseUrl` override (`pi.registerProvider`) so pi's real traffic flows through
+  the local proxy. This is what makes proxied requests show up on the Headroom
+  dashboard (the sidecar path is not ledger-backed). The proxy is launched with
+  `--no-ccr-inject-tool` (compression-only) because pi cannot service the
+  injected `headroom_retrieve` tool. The footer reads the proxy's `/stats`
+  (cumulative, ledger-backed) in this mode. The upstream sidecar behaviour is
+  preserved under `routeProvider: false`.
+
+  Because of this divergence, refreshing from upstream (below) will not carry
+  these changes forward — re-apply the routing logic in `index.ts`,
+  `config.ts`, `types.ts`, and `proxy-manager.ts` after any refresh.
 
 ## Refreshing
 

@@ -67,6 +67,16 @@ export interface HeadroomConfig {
 	minContextTokens: number;
 	minMessageChars: number;
 	timeoutMs: number;
+	/** When true, route the provider through the proxy (proxy compresses on the wire) instead of the /v1/compress sidecar. */
+	routeProvider: boolean;
+	/** Provider whose baseUrl is overridden to point at the proxy (default "anthropic"). */
+	provider: string;
+}
+
+/** Cumulative savings pulled from the proxy's /stats endpoint (ledger-backed, matches the dashboard). */
+export interface ProxyStatsSummary {
+	tokensSaved: number;
+	percent: number;
 }
 
 export interface HeadroomStats {

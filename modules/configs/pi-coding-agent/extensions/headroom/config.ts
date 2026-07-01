@@ -21,6 +21,8 @@ export interface HeadroomSettings {
 	minContextTokens?: number | string;
 	minMessageChars?: number | string;
 	timeoutMs?: number | string;
+	routeProvider?: boolean | string;
+	provider?: string;
 }
 
 export function loadHeadroomSettings(settingsPath: string = HEADROOM_SETTINGS_FILE): HeadroomSettings {
@@ -57,6 +59,8 @@ export function loadHeadroomConfig(
 			1,
 		),
 		timeoutMs: parseInteger(settings.timeoutMs, parseInteger(env.PI_HEADROOM_TIMEOUT_MS, DEFAULT_TIMEOUT_MS, 100), 100),
+		routeProvider: parseBoolean(settings.routeProvider, parseBoolean(env.PI_HEADROOM_ROUTE_PROVIDER, true)),
+		provider: parseString(settings.provider, env.PI_HEADROOM_PROVIDER?.trim() || "anthropic"),
 	};
 }
 
