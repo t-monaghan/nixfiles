@@ -5,6 +5,14 @@
   ...
 }:
 lib.mkIf config.nixfiles.work.cultureAmp.enable {
+  # Work profile uses Anthropic only; overrides the shared pi config default
+  # (GitHub Copilot). See modules/configs/pi-coding-agent.nix.
+  nixfiles.pi.providerSettings = {
+    defaultProvider = "anthropic";
+    defaultModel = "claude-opus-4-8";
+    enabledModels = ["claude-opus-4-7" "claude-sonnet-4-6"];
+  };
+
   home.packages = with pkgs; [
     jira-cli-go
     buildkite-cli

@@ -9,6 +9,7 @@
 in {
   imports = [
     ./configs/worktrunk.nix
+    ./configs/pi-coding-agent.nix
   ];
 
   nixpkgs = {
