@@ -1,30 +1,30 @@
-{colors, ...}: {
+{ ... }: {
   "$schema" = "https://starship.rs/config-schema.json";
   battery = {
     charging_symbol = "󰚥";
     display = [
       {
         discharging_symbol = "󱊣";
-        style = colors.ok;
+        style = "green";
         threshold = 100;
       }
       {
-        style = colors.ok;
+        style = "green";
         threshold = 75;
       }
       {
         discharging_symbol = "󱊢";
-        style = colors.warn;
+        style = "yellow";
         threshold = 50;
       }
       {
         discharging_symbol = "󱊡";
-        style = colors.warn;
+        style = "yellow";
         threshold = 20;
       }
       {
         discharging_symbol = "󰂃";
-        style = colors.error;
+        style = "red";
         threshold = 0;
       }
     ];
@@ -33,10 +33,10 @@
     unknown_symbol = "󱈑";
   };
   character = {
-    error_symbol = "[❯](${colors.error})";
-    success_symbol = "[❯](bold ${colors.accent_alt})";
-    vimcmd_symbol = "[ ](${colors.ok})";
-    vimcmd_visual_symbol = "[ ](${colors.warn})";
+    error_symbol = "[❯](red)";
+    success_symbol = "[❯](bold cyan)";
+    vimcmd_symbol = "[ ](green)";
+    vimcmd_visual_symbol = "[ ](yellow)";
   };
   custom = {
     aws_assumed_role = {
@@ -56,7 +56,7 @@
       description = "Shows AWS profile and region when a role has been assumed";
       format = "[󰅟 $output ]($style)";
       shell = "/bin/bash";
-      style = "bold ${colors.info}";
+      style = "bold blue";
       when = "[[ -n $AWS_PROFILE ]]";
     };
     devbox = {
@@ -64,7 +64,7 @@
       description = "Shows the devbox version if inside a devbox project";
       format = "[$symbol($output )]($style)";
       shell = "/bin/bash";
-      style = "bold ${colors.info}";
+      style = "bold blue";
       symbol = " ";
       when = "[[ -n $DEVBOX_INIT_PATH ]]\n";
     };
@@ -75,10 +75,10 @@
       when = "[[ -n $DIRENV_FILE ]]\n";
     };
   };
-  directory = {style = "bold ${colors.accent_alt}";};
+  directory = {style = "bold cyan";};
   format = "$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom\n$status$character";
   git_branch = {
-    style = colors.warn;
+    style = "yellow";
     symbol = " ";
   };
   git_status = {
@@ -87,11 +87,11 @@
     modified = "󰏫 ($count) ";
     staged = "󰶍 ";
     stashed = "󰴮 ";
-    style = colors.warn;
+    style = "yellow";
     untracked = "󰊇 ($count) ";
   };
   golang = {
-    style = "bold ${colors.ok}";
+    style = "bold green";
     symbol = "󰟓 ";
   };
   java = {
