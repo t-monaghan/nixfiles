@@ -1,5 +1,4 @@
-{colors, ...}:
-let
+{colors, ...}: let
   fonts = import ./fonts.nix;
 in {
   enable = true;
@@ -25,7 +24,7 @@ in {
     cursor-opacity = 0.7;
     cursor-style-blink = false;
     mouse-hide-while-typing = true;
-    background-opacity = 0.95;
+    background-opacity = 0.80;
     background-opacity-cells = true;
     background-blur = 20;
     font-family = fonts.mono;
