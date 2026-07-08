@@ -35,5 +35,5 @@
   nixvim = {dark = "base16-everforest-dark-hard"; light = "monokai-pro-light";};
   ghostty = {dark = "Everforest Dark Hard"; light = "Monokai Pro Light";};
   zed = {dark = "Everforest Dark"; light = "Monokai Pro Light";};
-  bat = {dark = "gruvbox-dark"; light = "Monokai Pro Light";};
+  bat = {dark = "gruvbox-dark"; light = "Monokai Extended Light";};
 }
