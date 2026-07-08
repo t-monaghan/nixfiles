@@ -18,8 +18,8 @@ home-manager.lib.homeManagerConfiguration {
     config.allowUnfree = true;
     overlays = [
       (final: prev: {
-        sandy = sandy.packages.${final.system}.default;
-        imds-broker = imds-broker.packages.${final.system}.default;
+        sandy = sandy.packages.${final.stdenv.hostPlatform.system}.default;
+        imds-broker = imds-broker.packages.${final.stdenv.hostPlatform.system}.default;
       })
     ];
   };
