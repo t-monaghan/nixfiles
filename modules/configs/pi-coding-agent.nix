@@ -28,7 +28,12 @@ in {
     default = {
       defaultProvider = "github-copilot";
       defaultModel = "claude-opus-4.8";
-      enabledModels = ["claude-opus-4.8" "claude-sonnet-4.6"];
+      enabledModels = [
+        "github-copilot/claude-opus-4.8"
+        "github-copilot/claude-sonnet-4.6"
+        "anthropic/claude-opus-4-8"
+        "anthropic/claude-sonnet-4-6"
+      ];
     };
   };
 
