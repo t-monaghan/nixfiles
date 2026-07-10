@@ -266,12 +266,32 @@
       end
     end
 
+    -- Boost contrast for the light colorscheme — Monokai Pro Light's defaults
+    -- are near-invisible on its #faf4f0 cream background.
+    local function boost_light_contrast()
+      if vim.o.background ~= "light" then return end
+      -- Selection: warm dark tone (~2× RGB delta from bg)
+      vim.api.nvim_set_hl(0, "Visual",       { bg = "#96865c" })
+      vim.api.nvim_set_hl(0, "VisualNOS",    { bg = "#96865c" })
+      vim.api.nvim_set_hl(0, "Search",       { bg = "#f0d78c", fg = "#272822" })
+      vim.api.nvim_set_hl(0, "IncSearch",    { bg = "#f0a878", fg = "#272822" })
+      vim.api.nvim_set_hl(0, "CurSearch",    { bg = "#f0a878", fg = "#272822" })
+      -- Cursor: make_transparent() strips CursorLine/CursorLineNr bg; restore them
+      vim.api.nvim_set_hl(0, "CursorLine",   { bg = "#e5d8c8" })
+      vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#272822", bold = true })
+      vim.api.nvim_set_hl(0, "Cursor",       { bg = "#272822", fg = "#faf4f0" })
+      -- Comments: dark warm brown instead of the near-invisible default grey
+      vim.api.nvim_set_hl(0, "Comment",      { fg = "#6b5e48" })
+      vim.api.nvim_set_hl(0, "@comment",     { fg = "#6b5e48" })
+    end
+
     -- Apply transparency after every colorscheme change
     vim.api.nvim_create_autocmd("ColorScheme", {
       group = vim.api.nvim_create_augroup("transparent-bg", { clear = true }),
       callback = function()
         make_transparent()
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
+        boost_light_contrast()
       end,
     })
 
@@ -289,5 +309,6 @@
     -- Also apply now for the initial colorscheme
     make_transparent()
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
+    boost_light_contrast()
   '';
 }
