@@ -15,7 +15,10 @@ case "$target" in
     fi
     ;;
   nixos)
-    sudo nixos-rebuild switch --flake ".#dolomite"
+    private="${NIXFILES_PRIVATE:-$HOME/nixfiles-private}"
+    overlay=()
+    [ -d "$private" ] && overlay=(--override-input private "path:$private")
+    sudo nixos-rebuild switch --flake ".#dolomite" "${overlay[@]}"
     ;;
   *)
     echo "usage: $(basename "$0") {nixos|work|personal}" >&2

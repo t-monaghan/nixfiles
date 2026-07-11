@@ -12,6 +12,8 @@
     imds-broker.inputs.nixpkgs.follows = "nixpkgs";
     sandy.url = "github:t-monaghan/sandy/feat/nix-flake";
     sandy.inputs.nixpkgs.follows = "nixpkgs";
+
+    private.url = "path:./private-stub";
   };
 
   outputs = {
@@ -22,6 +24,7 @@
     awtrix-cli,
     imds-broker,
     sandy,
+    private,
   } @ inputs: let
     mkHost = import ./lib/mkHost.nix inputs;
     mkNixosHost = import ./lib/mkNixosHost.nix inputs;
@@ -41,7 +44,10 @@
 
     nixosConfigurations = {
       dolomite = mkNixosHost {
-        modules = [./nixos/configuration.nix];
+        modules = [
+          ./nixos/configuration.nix
+          private.nixosModules.dolomite
+        ];
       };
     };
   };

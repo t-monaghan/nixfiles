@@ -190,6 +190,18 @@
         "type": "github"
       }
     },
+    "private": {
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-j2bEuE1ydf4I+oU97SWuhdelGq4XW1pHjPN5dF9XzF4=",
+        "path": "./private-stub",
+        "type": "path"
+      },
+      "original": {
+        "path": "./private-stub",
+        "type": "path"
+      }
+    },
     "root": {
       "inputs": {
         "awtrix-cli": "awtrix-cli",
@@ -197,6 +209,7 @@
         "imds-broker": "imds-broker",
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim",
+        "private": "private",
         "sandy": "sandy"
       }
     },

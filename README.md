@@ -14,9 +14,22 @@ config for my home server, `dolomite`, using a unified module pattern.
 `personal` / `work` are home-manager configs (`homeConfigurations`); `dolomite`
 is a full-system NixOS host (`nixosConfigurations`).
 
-> The `dolomite` config here is the **generic, public base**. The box itself
-> builds `.#dolomite` from a private overlay repo that layers additional,
-> non-public config on top of this via `extendModules`.
+### Optional private overlay
+
+`dolomite` here is the **generic, public base** and builds standalone. Anything
+that shouldn't be public lives in a separate private repo
+([`nixfiles-private`](https://github.com/t-monaghan/nixfiles-private)) that
+exports `nixosModules.dolomite`. The flake declares an optional `private` input
+defaulting to the empty `private-stub/` flake, so:
+
+- Macs and public clones build with no access to the private repo (they get the
+  empty stub).
+- On the box, `./scripts/switch nixos` overrides `private` to a local checkout
+  (`$HOME/nixfiles-private`, or `$NIXFILES_PRIVATE`) when it exists, merging the
+  private module into `dolomite`.
+
+The override is a path, so nothing is pinned in either direction — public and
+private each update with a plain `git pull`, no `nix flake update` needed.
 
 ## Structure
 
@@ -38,6 +51,7 @@ nixos/                 # dolomite full-system config
   shell.nix            # fish + CLI tooling (imported when ready)
   lib/colours.nix      # shared colour palette
   modules/             # home-assistant + neovim modules
+private-stub/          # empty default for the optional `private` overlay input
 scripts/switch         # build + switch a config ({nixos|work|personal})
 ```
 
