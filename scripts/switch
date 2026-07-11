@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+target="${1:-}"
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+case "$target" in
+  personal | work)
+    if command -v home-manager &>/dev/null; then
+      home-manager switch --flake ".#$target"
+    else
+      nix shell nixpkgs#home-manager --command home-manager switch --flake ".#$target"
+    fi
+    ;;
+  nixos)
+    sudo nixos-rebuild switch --flake ".#dolomite"
+    ;;
+  *)
+    echo "usage: $(basename "$0") {nixos|work|personal}" >&2
+    exit 1
+    ;;
+esac

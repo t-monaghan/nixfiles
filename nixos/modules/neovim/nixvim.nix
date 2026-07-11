@@ -1,8 +1,6 @@
 {
   pkgs,
   colors,
-  flakePath,
-  homeConfigName,
   ...
 }: {
   enable = true;
@@ -13,10 +11,6 @@
     ./neovim-obsidian.nix
   ];
 
-  # Make the flake path + host config name available to nixvim submodules
-  # (neovim-lsp.nix wires them into nixd's settings).
-  _module.args = {inherit flakePath homeConfigName;};
-
   globals = {
     mapleader = " ";
     maplocalleader = " ";
@@ -24,6 +18,10 @@
   };
 
   opts = {
+    # Force truecolor: base16-nvim uses gui highlights, and Neovim only
+    # auto-enables this when $COLORTERM=truecolor is set — which SSH doesn't
+    # forward. Without it, colours don't render over SSH (white-on-black).
+    termguicolors = true;
     number = true;
     mouse = "a";
     showmode = false;
@@ -190,22 +188,6 @@
       '';
     }
     {
-      event = ["UIEnter"];
-      desc = "Ensure colorscheme is applied";
-      callback.__raw = ''
-        function()
-          local mode = vim.fn.system("defaults read -g AppleInterfaceStyle 2>/dev/null"):gsub("%s+", "")
-          if mode == "Dark" then
-            vim.o.background = "dark"
-            vim.cmd.colorscheme("${colors.nixvim.dark}")
-          else
-            vim.o.background = "light"
-            vim.cmd.colorscheme("${colors.nixvim.light}")
-          end
-        end
-      '';
-    }
-    {
       event = ["FileType"];
       pattern = ["markdown"];
       desc = "Enable soft wrapping for markdown files";
@@ -220,7 +202,7 @@
     }
   ];
 
-  diagnostics = {
+  diagnostic.settings = {
     underline = true;
     update_in_insert = false;
     virtual_text = {
@@ -244,6 +226,16 @@
   };
 
   colorscheme = colors.nixvim.dark;
+  # Formatters that conform runs (must be on nvim's PATH). Without these,
+  # conform's `lsp_format = "fallback"` hands formatting to nixd, which has no
+  # formatter configured -> the RPC error on :w.
+  extraPackages = with pkgs; [
+    alejandra # nix (default)
+    nixpkgs-fmt # nix (inside nixpkgs trees)
+    stylua # lua
+    ruff # python
+    prettierd # typescript
+  ];
   extraPlugins = with pkgs.vimPlugins; [
     base16-nvim
     monokai-pro-nvim
@@ -272,32 +264,12 @@
       end
     end
 
-    -- Boost contrast for the light colorscheme — Monokai Pro Light's defaults
-    -- are near-invisible on its #faf4f0 cream background.
-    local function boost_light_contrast()
-      if vim.o.background ~= "light" then return end
-      -- Selection: warm dark tone (~2× RGB delta from bg)
-      vim.api.nvim_set_hl(0, "Visual",       { bg = "#96865c" })
-      vim.api.nvim_set_hl(0, "VisualNOS",    { bg = "#96865c" })
-      vim.api.nvim_set_hl(0, "Search",       { bg = "#f0d78c", fg = "#272822" })
-      vim.api.nvim_set_hl(0, "IncSearch",    { bg = "#f0a878", fg = "#272822" })
-      vim.api.nvim_set_hl(0, "CurSearch",    { bg = "#f0a878", fg = "#272822" })
-      -- Cursor: make_transparent() strips CursorLine/CursorLineNr bg; restore them
-      vim.api.nvim_set_hl(0, "CursorLine",   { bg = "#e5d8c8" })
-      vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#272822", bold = true })
-      vim.api.nvim_set_hl(0, "Cursor",       { bg = "#272822", fg = "#faf4f0" })
-      -- Comments: dark warm brown instead of the near-invisible default grey
-      vim.api.nvim_set_hl(0, "Comment",      { fg = "#6b5e48" })
-      vim.api.nvim_set_hl(0, "@comment",     { fg = "#6b5e48" })
-    end
-
     -- Apply transparency after every colorscheme change
     vim.api.nvim_create_autocmd("ColorScheme", {
       group = vim.api.nvim_create_augroup("transparent-bg", { clear = true }),
       callback = function()
         make_transparent()
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
-        boost_light_contrast()
       end,
     })
 
@@ -315,6 +287,5 @@
     -- Also apply now for the initial colorscheme
     make_transparent()
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
-    boost_light_contrast()
   '';
 }

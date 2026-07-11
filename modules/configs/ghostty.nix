@@ -8,7 +8,7 @@ in {
     auto-update = "download";
     auto-update-channel = "stable";
 
-    keybind = "global:ctrl+grave_accent=toggle_quick_terminal";
+    keybind = "global:ctrl+grave_accent=toggle_secure_input";
 
     confirm-close-surface = false;
     quit-after-last-window-closed = true;

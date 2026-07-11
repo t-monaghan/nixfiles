@@ -1,4 +1,5 @@
 {
+  self,
   home-manager,
   nixpkgs,
   nixvim,
@@ -9,6 +10,10 @@
 }: {
   name,
   username,
+  # Attr name of this config under the flake's `homeConfigurations`
+  # (e.g. "personal" / "work"). Threaded down to nixd so option-aware
+  # completion targets this specific host's option schema.
+  homeConfigName,
   system ? "aarch64-darwin",
   extraModules ? [],
 }:
@@ -30,5 +35,12 @@ home-manager.lib.homeManagerConfiguration {
       ../hosts/${name}.nix
     ]
     ++ extraModules;
-  extraSpecialArgs = {inherit username;};
+  # `self.outPath` is this flake's source in the store: a stable, immutable,
+  # host-independent path that `builtins.getFlake` can resolve regardless of
+  # username or where the repo is checked out. Used by nixd (see
+  # ./configs/neovim-lsp.nix) for nixpkgs + option completion.
+  extraSpecialArgs = {
+    inherit username homeConfigName;
+    flakePath = self.outPath;
+  };
 }

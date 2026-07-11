@@ -1,8 +1,4 @@
-{
-  flakePath,
-  homeConfigName,
-  ...
-}: {
+{...}: {
   plugins.lsp = {
     enable = true;
 
@@ -16,16 +12,11 @@
         enable = true;
         # These settings are what unlock nixd's best features. Without them it
         # falls back to generic AST completion (~nil-tier).
-        #
-        # `builtins.getFlake "${flakePath}"` resolves this flake's store source
-        # (self.outPath) — stable and identical on every host, so no path or
-        # username guessing. Reflects the option schema as of the last rebuild.
         settings = {
-          # Package-name completion + eval-based hover from this flake's nixpkgs.
-          nixpkgs.expr = ''import (builtins.getFlake "${flakePath}").inputs.nixpkgs { }'';
-          # Option-aware completion + hover docs for this host's home-manager
-          # options (home.*, programs.*, services.*, ...).
-          options.home-manager.expr = ''(builtins.getFlake "${flakePath}").homeConfigurations.${homeConfigName}.options'';
+          # Non-flake: nixd resolves nixpkgs + NixOS options via the channel
+          # (<nixpkgs> comes from NIX_PATH, which channel-based nixos-rebuild sets).
+          nixpkgs.expr = "import <nixpkgs> { }";
+          options.nixos.expr = "(import <nixpkgs/nixos> { configuration = { }; }).options";
           # Formatting is handled by conform (alejandra), so nixd formatting is
           # intentionally left unset.
         };

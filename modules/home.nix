@@ -2,6 +2,8 @@
   pkgs,
   config,
   lib,
+  flakePath,
+  homeConfigName,
   ...
 }: let
   fonts = import ./configs/fonts.nix;
@@ -223,7 +225,19 @@ in {
 
     tmux = import ./configs/tmux.nix {inherit pkgs lib colors;};
 
-    nixvim = import ./configs/nixvim.nix {inherit pkgs colors;};
+    nixvim = import ./configs/nixvim.nix {inherit pkgs colors flakePath homeConfigName;};
+
+    ssh = {
+      enable = true;
+      # Opt out of the deprecated implicit `Host *` defaults; declare our own blocks.
+      enableDefaultConfig = false;
+      settings = {
+        dolomite = {
+          hostname = "dolomite.lan";
+          user = "tom";
+        };
+      };
+    };
 
     sesh = {
       enable = true;
@@ -233,6 +247,14 @@ in {
         default_session = {
           preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
         };
+        session = [
+          {
+            name = "dolomite";
+            path = "~";
+            startup_command = "ssh dolomite";
+            preview_command = "echo 'SSH → dolomite (dolomite.lan)'";
+          }
+        ];
       };
     };
 
@@ -246,7 +268,7 @@ in {
     nix-search-tv = {
       enable = true;
       enableTelevisionIntegration = false;
-      settings.indexes = ["nixpkgs" "home-manager"];
+      settings.indexes = ["nixpkgs" "home-manager" "nixos"];
     };
 
     claude-code = import ./configs/claude-code.nix {};
