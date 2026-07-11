@@ -20,14 +20,7 @@
 in {
   imports = [inputs.nixvim.nixosModules.nixvim];
 
-  programs.nixvim =
-    import ./modules/neovim/nixvim.nix {
-      inherit pkgs colors;
-    }
-    # nixvim now warns when its nixpkgs is overridden via `follows` (as we do in
-    # flake.nix). Point it at our nixpkgs explicitly to silence the warning while
-    # keeping a single nixpkgs in the flake lock.
-    // {
-      nixpkgs.source = pkgs.path;
-    };
+  programs.nixvim = import ./modules/neovim/nixvim.nix {
+    inherit pkgs colors;
+  };
 }
