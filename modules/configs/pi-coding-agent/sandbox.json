@@ -42,6 +42,7 @@
       "~/.claude.json",
       "~/.config",
       "~/.gem_cache",
+      "~/.gitconfig",
       "~/.local",
       "~/.nix-profile",
       "~/.npm-global",
