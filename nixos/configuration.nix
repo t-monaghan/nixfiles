@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
     ./neovim.nix
     ./modules/home-assistant.nix
+    ./shell.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
