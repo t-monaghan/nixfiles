@@ -58,7 +58,26 @@
   services = {
     matter-server = {
       enable = true;
+      openFirewall = true; # opens TCP 5580 (WS API) ONLY — not mDNS.
+    };
+
+    # mDNS / DNS-SD. This is the missing piece for Thread + Matter discovery:
+    #  * HA's Thread panel finds a border router by browsing `_meshcop._udp`.
+    #    Without inbound UDP 5353 those advertisements from the SLZB-06U never
+    #    reach the box, so you get "No border routers were found" even though
+    #    the `otbr` integration can still reach the OTBR REST API on :8081.
+    #  * matter-server does its mDNS via Avahi over D-Bus (the module already
+    #    bind-mounts /run/dbus), so Matter commissioning needs Avahi running.
+    # openFirewall opens inbound UDP 5353, which the default firewall drops.
+    avahi = {
+      enable = true;
       openFirewall = true;
+      nssmdns4 = true; # let the host resolve *.local too (optional)
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+      };
     };
     openssh = {
       enable = true;
