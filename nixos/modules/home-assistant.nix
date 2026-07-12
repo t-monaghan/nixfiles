@@ -34,6 +34,7 @@
       "matter"
       "thread"
       "otbr"
+      "wiim"
       # "hue"
       # "wled"
       # "spotify"
