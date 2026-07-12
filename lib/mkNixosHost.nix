@@ -29,6 +29,10 @@ nixpkgs.lib.nixosSystem {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.extraSpecialArgs = {inherit inputs;};
+        # First activation takes over pre-existing dotfiles (e.g. an old
+        # ~/.config/fish/config.fish or gh/config.yml). Move them aside instead
+        # of aborting; HM owns them on subsequent switches.
+        home-manager.backupFileExtension = "hm-bak";
       }
     ]
     ++ modules;
