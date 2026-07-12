@@ -55,6 +55,22 @@
     git
   ];
 
+  # Work around a matter-server startup crash loop. The DCL occasionally serves
+  # a malformed PAA root certificate; the strict Rust ASN.1 parser in our (very
+  # new) `cryptography` throws ValueError, and python-matter-server doesn't guard
+  # the parse, so `MatterServer.start()` dies BEFORE binding TCP 5580 — the
+  # service just restart-loops and HA's Matter integration can never connect.
+  # The patch skips the bad cert. It touches only the pure-Python package, so
+  # just that one derivation rebuilds (no CHIP recompile). Drop once fixed
+  # upstream: https://github.com/home-assistant-libs/python-matter-server
+  nixpkgs.overlays = [
+    (final: prev: {
+      python-matter-server = prev.python-matter-server.overridePythonAttrs (old: {
+        patches = (old.patches or []) ++ [./modules/matter-server-skip-bad-paa.patch];
+      });
+    })
+  ];
+
   services = {
     matter-server = {
       enable = true;
