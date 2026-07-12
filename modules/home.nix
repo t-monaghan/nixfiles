@@ -25,6 +25,7 @@ in {
     shell.enableFishIntegration = true;
 
     packages = with pkgs; [
+      wakeonlan
       # GUI apps
       gum
       mos
