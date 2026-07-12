@@ -38,14 +38,18 @@
   };
 
   programs = {
+    # System-level fish just makes it a valid login shell and installs vendor
+    # completions; the user-facing config (abbrs, functions, plugins, prompt)
+    # is managed by home-manager (./home.nix → ../modules/shell.nix). atuin,
+    # starship, tmux, direnv, git, … are likewise handled by home-manager now.
     fish.enable = true;
-    atuin = {
-      enable = true;
-      settings.autosync = false;
-    };
   };
   environment.shells = [pkgs.fish];
   users.defaultUserShell = "/run/current-system/sw/bin/fish";
+
+  # Home-manager user config: `tom` gets the shared shell/CLI tooling used by
+  # all three machines (fish, starship, atuin, tmux, git, …).
+  home-manager.users.tom = import ./home.nix;
 
   environment.systemPackages = with pkgs; [
     git

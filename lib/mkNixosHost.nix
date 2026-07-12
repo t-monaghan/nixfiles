@@ -7,7 +7,11 @@
 #
 # The target platform is declared per-host in its hardware-configuration.nix
 # (`nixpkgs.hostPlatform`), so no `system` is passed here.
-inputs @ {nixpkgs, ...}: {
+inputs @ {
+  nixpkgs,
+  home-manager,
+  ...
+}: {
   modules,
 }:
 nixpkgs.lib.nixosSystem {
@@ -15,6 +19,17 @@ nixpkgs.lib.nixosSystem {
   modules =
     [
       {nixpkgs.config.allowUnfree = true;}
+      # Home-manager as a NixOS module: the box's user config (fish, starship,
+      # tmux, …) reuses the same modules as the Macs (see ../nixos/home.nix →
+      # ../modules/shell.nix). useGlobalPkgs shares the system nixpkgs (so
+      # allowUnfree above applies); useUserPackages installs user packages into
+      # the system profile.
+      home-manager.nixosModules.home-manager
+      {
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+        home-manager.extraSpecialArgs = {inherit inputs;};
+      }
     ]
     ++ modules;
 }

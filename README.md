@@ -12,7 +12,8 @@ config for my home server, `dolomite`, using a unified module pattern.
 | `dolomite` | NixOS home server | `./scripts/switch nixos` |
 
 `personal` / `work` are home-manager configs (`homeConfigurations`); `dolomite`
-is a full-system NixOS host (`nixosConfigurations`).
+is a full-system NixOS host (`nixosConfigurations`) that runs home-manager as a
+NixOS module, so all three share the same shell/CLI config (`modules/shell.nix`).
 
 ### Optional private overlay
 
@@ -41,14 +42,15 @@ lib/
 hosts/                 # per-Mac config — imports modules
 modules/               # home-manager modules
   default.nix          # imports home.nix and work modules
-  home.nix             # all packages and program configs
+  home.nix             # Mac packages + program configs (imports shell.nix)
+  shell.nix            # shared shell + CLI tooling used by ALL three machines
   configs/             # imported config files (tmux, fish, etc.)
   work/culture-amp/    # work-specific config (optional module)
 nixos/                 # dolomite full-system config
-  configuration.nix    # dolomite host config
+  configuration.nix    # dolomite host config (wires in home-manager)
+  home.nix             # dolomite's home-manager user config (imports shell.nix)
   hardware-configuration.nix
   neovim.nix           # system-wide nixvim
-  shell.nix            # fish + CLI tooling (imported when ready)
   lib/colours.nix      # shared colour palette
   modules/             # home-assistant + neovim modules
 private-stub/          # empty default for the optional `private` overlay input
@@ -56,8 +58,10 @@ scripts/switch         # build + switch a config ({nixos|work|personal})
 ```
 
 The Mac configuration is consolidated in `modules/home.nix`, with extracted
-config details in `modules/configs/` imported as needed. Work-specific modules
-remain optional and can be enabled per-host.
+config details in `modules/configs/` imported as needed. The shell + CLI tooling
+lives in `modules/shell.nix`, shared by the Macs and the NixOS box alike (Mac-only
+bits are guarded by `pkgs.stdenv.isDarwin`). Work-specific modules remain optional
+and can be enabled per-host.
 
 ## Credits
 

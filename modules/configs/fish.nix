@@ -1,12 +1,13 @@
 {
   pkgs,
+  lib,
   colors,
   ...
 }: {
   enable = true;
 
   loginShellInit = ''
-    fish_add_path $HOME/.rd/bin
+    ${lib.optionalString pkgs.stdenv.isDarwin "fish_add_path $HOME/.rd/bin"}
     fish_add_path $HOME/.npm-global/bin
     fish_add_path $HOME/go/bin
 
@@ -15,14 +16,18 @@
     set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
 
     bind \cx\ce edit_command_buffer
+    ${lib.optionalString pkgs.stdenv.isDarwin ''
 
-    if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-    end
+      # Multi-user nix on macOS isn't on PATH for login shells until its
+      # profile scripts are sourced; on NixOS nix is already in PATH.
+      if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      end
 
-    if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-      fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-    end
+      if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+        fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+      end
+    ''}
   '';
 
   functions = {
@@ -191,6 +196,7 @@
   };
 
   shellAbbrs = {
+    # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
     s = "tv sesh --no-sort";
     nv = "nvim";
     nd = "nvim +'Obsidian today'";
@@ -236,10 +242,8 @@
     hs = "hotel services";
     rmd = "rm -rf .devbox";
 
-    zed = "open -a 'Zed Preview' . && exit";
     rt = "trash-put";
     hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
-    disu = "caffeinate -disu";
 
     tf = "terraform";
     crl = "codex resume --last";
@@ -254,6 +258,10 @@
     jr = "just run";
     deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
     deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
+  }
+  // lib.optionalAttrs pkgs.stdenv.isDarwin {
+    zed = "open -a 'Zed Preview' . && exit";
+    disu = "caffeinate -disu";
   };
 
   plugins = [
