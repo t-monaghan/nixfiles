@@ -220,7 +220,7 @@
     }
   ];
 
-  diagnostics = {
+  diagnostic.settings = {
     underline = true;
     update_in_insert = false;
     virtual_text = {

@@ -13,7 +13,15 @@
     sandy.url = "github:t-monaghan/sandy/feat/nix-flake";
     sandy.inputs.nixpkgs.follows = "nixpkgs";
 
-    private.url = "path:./private-stub";
+    # Optional private overlay (see README). The default is the empty local
+    # stub; `scripts/switch nixos` overrides it with the real private repo on
+    # the box. The `?narHash=` pin is REQUIRED: without it, Nix (>=2.24) treats
+    # a relative `path:` input as "unlocked" and aborts every lock-touching
+    # operation (even `switch` on a dirty tree) with
+    # "lock file contains unlocked input". The hash is content-based and stable
+    # across checkouts; if you ever edit private-stub/, refresh it with
+    # `nix hash path ./private-stub`.
+    private.url = "path:./private-stub?narHash=sha256-j2bEuE1ydf4I+oU97SWuhdelGq4XW1pHjPN5dF9XzF4=";
   };
 
   outputs = {
