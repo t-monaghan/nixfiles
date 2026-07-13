@@ -68,8 +68,21 @@
       python-matter-server = prev.python-matter-server.overridePythonAttrs (old: {
         patches = (old.patches or []) ++ [./modules/matter-server-skip-bad-paa.patch];
       });
+
+      # nixpkgs ships no OTA provider binary, so Matter device firmware
+      # updates fail with "[Errno 2] No such file or directory:
+      # 'chip-ota-provider-app'". Package the prebuilt binary and put it on
+      # the matter-server unit's PATH below. See ./modules/chip-ota-provider-app.nix.
+      chip-ota-provider-app = final.callPackage ./modules/chip-ota-provider-app.nix {};
     })
   ];
+
+  # python-matter-server spawns `chip-ota-provider-app` by bare name (execvp
+  # → $PATH lookup) when a device update is requested. The nixpkgs
+  # matter-server unit runs in a locked-down chroot (RootDirectory) with only
+  # /nix/store bind-mounted, so exposing the store binary on PATH is enough —
+  # its whole closure (glibc/libnl/gcc) lives under the mounted /nix/store.
+  systemd.services.matter-server.path = [pkgs.chip-ota-provider-app];
 
   services = {
     matter-server = {
