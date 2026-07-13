@@ -24,7 +24,7 @@ in {
     cursor-opacity = 0.7;
     cursor-style-blink = false;
     mouse-hide-while-typing = true;
-    background-opacity = 0.80;
+    background-opacity = 0.90;
     background-opacity-cells = true;
     background-blur = 20;
     font-family = fonts.mono;
