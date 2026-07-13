@@ -25,7 +25,7 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
   programs = {
     uv.enable = true;
     awscli.enable = true;
-    mise.enable = true;
+    # mise.enable = true;
 
     granted = {
       enable = true;
