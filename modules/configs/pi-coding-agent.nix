@@ -2,16 +2,14 @@
 #
 # The shared settings live here; the per-profile provider/model difference is
 # merged in via the `nixfiles.pi.providerSettings` option rather than a
-# branching condition. The personal profile uses GitHub Copilot (the option
-# default); the Culture Amp work profile overrides it with Anthropic (see
-# modules/work/culture-amp/home.nix).
+# branching condition.
 {
   config,
   lib,
   ...
 }: let
   sharedPiSettings = {
-    defaultThinkingLevel = "xhigh";
+    defaultThinkingLevel = "medium";
     skills = ["~/.claude/skills"];
     packages = ["npm:pi-mcp-adapter" "npm:pi-sandbox"];
     quietStartup = true;
@@ -31,8 +29,6 @@ in {
       enabledModels = [
         "github-copilot/claude-opus-4.6"
         "github-copilot/claude-sonnet-4.6"
-        # "anthropic/claude-opus-4-6"
-        # "anthropic/claude-sonnet-4-6"
       ];
     };
   };
