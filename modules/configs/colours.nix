@@ -31,9 +31,16 @@
   ok = "#a7c080"; # green
   orange = "#e69875";
 
+  # --- tmux-specific colors ---
+  # These need to be readable on both light and dark terminal backgrounds
+  # since tmux doesn't participate in system light/dark switching.
+  tmux = {
+    active = "#586e75";   # solarized base01 — dark slate, visible on light bg
+  };
+
   # --- per-program theme names ---
-  nixvim = {dark = "base16-everforest-dark-hard"; light = "monokai-pro-light";};
-  ghostty = {dark = "Everforest Dark Hard"; light = "Monokai Pro Light";};
+  nixvim = {dark = "base16-everforest-dark-hard"; light = "base16-solarized-light";};
+  ghostty = {dark = "Everforest Dark Hard"; light = "iTerm2 Solarized Light";};
   zed = {dark = "Everforest Dark"; light = "Monokai Pro Light";};
-  bat = {dark = "gruvbox-dark"; light = "Monokai Extended Light";};
+  bat = {dark = "gruvbox-dark"; light = "Solarized (light)";};
 }

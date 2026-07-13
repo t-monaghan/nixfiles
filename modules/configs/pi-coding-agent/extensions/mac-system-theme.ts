@@ -24,11 +24,11 @@ export default function (pi: ExtensionAPI) {
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
 	pi.on("session_start", async (_event, ctx) => {
-		let currentTheme = (await isDarkMode()) ? "everforest-dark" : "monokai-pro-light";
+		let currentTheme = (await isDarkMode()) ? "everforest-dark" : "solarized-light";
 		ctx.ui.setTheme(currentTheme);
 
 		intervalId = setInterval(async () => {
-			const newTheme = (await isDarkMode()) ? "everforest-dark" : "monokai-pro-light";
+			const newTheme = (await isDarkMode()) ? "everforest-dark" : "solarized-light";
 			if (newTheme !== currentTheme) {
 				currentTheme = newTheme;
 				ctx.ui.setTheme(currentTheme);
