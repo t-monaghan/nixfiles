@@ -2,7 +2,23 @@
   description = "Tom Monaghan's flake for system configuration across machines";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # TEMPORARY ROLLBACK — ld64 "libcxxhardeningfast" regression on aarch64-darwin.
+    #
+    # The nixos-unstable ld64 refactor (nixpkgs 23c052050234, PR #535508
+    # "ld64: drop x86_64-darwin support") dropped
+    # `hardeningDisable = [ "libcxxhardeningfast" ]` from ld64 and bumped it
+    # 956.6 -> 957.1. The resulting `ld` is built with libc++ fast-hardening,
+    # whose assertions abort via __builtin_trap() (`ld: Trace/BPT trap: 5`,
+    # linker exit 133) when linking anything that pulls in notify-rust /
+    # mac_notification_sys with `-dead_strip` + Apple frameworks — e.g.
+    # starship and watchexec. Those aren't cached for aarch64-darwin, so they
+    # build locally and fail, breaking `home-manager switch`.
+    #
+    # The upstream fix is nixpkgs PR #536365 ("ld64: disable hardening again"),
+    # still OPEN on the `staging` branch. b5aa0fbd is the last nixos-unstable
+    # rev with the working ld64 (956.6 + hardeningDisable). Restore
+    # `nixos-unstable` once #536365 has landed and reached the channel.
+    nixpkgs.url = "github:NixOS/nixpkgs/b5aa0fbd538984f6e3d201be0005b4463d8b09f8";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";

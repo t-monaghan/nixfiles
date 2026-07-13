@@ -39,7 +39,14 @@ in {
       jetbrains-mono
       pnpm
       just
-      terminal-notifier
+      # terminal-notifier: temporarily disabled. On this nixpkgs pin the package
+      # isn't in any binary cache (cache.nixos.org 404s), so it builds from
+      # source and cctools `ld` (1010.6) crashes while linking
+      # `-framework ScriptingBridge -framework Cocoa` (Trace/BPT trap: 5, exit
+      # 133) on aarch64-darwin. Upstream toolchain regression, not our config.
+      # Re-enable once a nixpkgs bump ships a working linker, or pin it from a
+      # known-good nixpkgs input.
+      # terminal-notifier
       devbox
       nodejs
       sandy
