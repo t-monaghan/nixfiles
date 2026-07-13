@@ -195,74 +195,76 @@
     };
   };
 
-  shellAbbrs = {
-    # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
-    s = "tv sesh --no-sort";
-    nv = "nvim";
-    nd = "nvim +'Obsidian today'";
+  shellAbbrs =
+    {
+      # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
+      s = "tv sesh --no-sort";
+      nv = "nvim";
+      nd = "nvim +'Obsidian today'";
 
-    ci = "gh altar ci > /dev/null 2>&1 & disown";
-    dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
-    n = "notify";
-    stats = "curl 'http://192.168.1.97/api/stats' | jq";
+      ci = "gh altar ci > /dev/null 2>&1 & disown";
+      dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
+      n = "notify";
+      stats = "curl 'http://192.168.1.97/api/stats' | jq";
 
-    ns = "tv nix-search-tv";
+      ns = "tv nix-search-tv";
 
-    chmox = "chmod a+x";
+      chmox = "chmod a+x";
 
-    gco = "git checkout";
-    gp = "git push";
-    gpf = "git push --force-with-lease";
-    gpu = "git pull --autostash --rebase";
-    gs = "git status";
-    gl = "tv git-log";
-    gd = "git diff";
-    gdc = "git diff --cached";
-    ga = "git add";
-    gc = "git commit -m";
-    ghpr = "gh pr checkout";
-    gsc = "git stash clear";
-    checks = "gh pr checks --required --watch";
-    gsp = "git stash pop";
-    gcob = "git checkout -b";
-    grs = "git restore --staged";
-    grim = "git rebase -i main";
-    grm = "git rebase main";
-    gap = "git add -p";
-    gsl = "git stash list";
-    gfm = "git fetch origin main:main";
+      gco = "git checkout";
+      gp = "git push";
+      gpf = "git push --force-with-lease";
+      gpu = "git pull --autostash --rebase";
+      gs = "git status";
+      gl = "tv git-log";
+      gd = "git diff";
+      gdc = "git diff --cached";
+      ga = "git add";
+      gc = "git commit -m";
+      ghpr = "gh pr checkout";
+      gsc = "git stash clear";
+      checks = "gh pr checks --required --watch";
+      gsp = "git stash pop";
+      gcob = "git checkout -b";
+      grs = "git restore --staged";
+      grim = "git rebase -i main";
+      grm = "git rebase main";
+      gap = "git add -p";
+      gsl = "git stash list";
+      gfm = "git fetch origin main:main";
+      gca = "git commit --amend --no-edit";
 
-    ll = "ls -ltra";
+      ll = "ls -ltra";
 
-    dr = "devbox run";
-    drs = "devbox run setup";
-    drp = "devbox run populate";
-    dsu = "devbox services up --pcflags '--keep-project'";
-    reload = "rm -rf .devbox && direnv reload";
-    hs = "hotel services";
-    rmd = "rm -rf .devbox";
+      dr = "devbox run";
+      drs = "devbox run setup";
+      drp = "devbox run populate";
+      dsu = "devbox services up --pcflags '--keep-project'";
+      reload = "rm -rf .devbox && direnv reload";
+      hs = "hotel services";
+      rmd = "rm -rf .devbox";
 
-    rt = "trash-put";
-    hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
+      rt = "trash-put";
+      hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
 
-    tf = "terraform";
-    crl = "codex resume --last";
-    clc = "claude --continue";
-    pic = "pi --continue";
-    pulls = "gh search prs --author=@me --state=open";
+      tf = "terraform";
+      crl = "codex resume --last";
+      clc = "claude --continue";
+      pic = "pi --continue";
+      pulls = "gh search prs --author=@me --state=open";
 
-    oc = "opencode";
-    occ = "opencode --continue";
+      oc = "opencode";
+      occ = "opencode --continue";
 
-    j = "just";
-    jr = "just run";
-    deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
-    deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
-  }
-  // lib.optionalAttrs pkgs.stdenv.isDarwin {
-    zed = "open -a 'Zed Preview' . && exit";
-    disu = "caffeinate -disu";
-  };
+      j = "just";
+      jr = "just run";
+      deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
+      deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
+    }
+    // lib.optionalAttrs pkgs.stdenv.isDarwin {
+      zed = "open -a 'Zed Preview' . && exit";
+      disu = "caffeinate -disu";
+    };
 
   plugins = [
     {inherit (pkgs.fishPlugins.foreign-env) name src;}
