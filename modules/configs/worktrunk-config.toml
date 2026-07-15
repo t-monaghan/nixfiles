@@ -18,6 +18,13 @@
 # .worktrees/ is globally gitignored (programs.git.ignores in modules/home.nix)
 # so it never shows up as untracked / makes the tree "dirty".
 # Sibling alternative (not sandbox-friendly): "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
+#
+# NOTE: this is the FALLBACK. A `wt` fish wrapper (modules/configs/
+# worktrunk-wt-wrapper.fish, installed by worktrunk.nix) overrides this per
+# invocation to ".worktrees/pr-<N>" when the target branch has an open GitHub
+# PR — worktrunk's path template has no PR variable, so the wrapper injects it
+# via `--config-set`. Branches without a PR (and any non-`switch` command) use
+# the template below unchanged.
 worktree-path = "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
 
 # --- Hooks ------------------------------------------------------------------

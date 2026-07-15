@@ -93,6 +93,95 @@
         wt switch --no-cd -x sh $argv -- -c 'tmux has-session -t "$1" 2>/dev/null || tmux new-session -d -s "$1" -c "$2"; if [ -n "$TMUX" ]; then exec tmux switch-client -t "$1"; else exec tmux attach-session -t "$1"; fi' _ '{{ branch | sanitize }}' '{{ worktree_path }}'
       '';
     };
+    wtclean = {
+      description = "Remove non-main worktrees + their tmux sessions + their zoxide entries (declutters `sesh list`). `--all` sweeps every repo under ~/dev.";
+      body = ''
+        argparse a/all y/yes -- $argv
+        or return 1
+
+        # Which repos to sweep. Default: the current repo only. --all: every
+        # repo under ~/dev that has a .worktrees/ dir. `wt list` errors outside
+        # a git repo, so without --all we need a valid toplevel.
+        set -l repos
+        if set -q _flag_all
+          for d in ~/dev/*/.worktrees
+            test -d $d; and set -a repos (path dirname $d)
+          end
+        else
+          set -l root (git rev-parse --show-toplevel 2>/dev/null)
+          if test -z "$root"
+            echo "wtclean: not in a git repo — use `wtclean --all` to clean every repo under ~/dev." >&2
+            return 1
+          end
+          set repos $root
+        end
+
+        # Gather non-main, non-current worktrees across the selected repos.
+        # kind == "worktree" skips bare-branch entries; is_main keeps the
+        # primary checkout; is_current keeps the worktree you're standing in.
+        set -l repo_col; set -l branch_col; set -l path_col
+        for repo in $repos
+          for row in (wt -C $repo list --format json 2>/dev/null | jq -r '.[] | select(.is_main == false and .is_current == false and .kind == "worktree") | [.branch, .path] | @tsv')
+            set -l parts (string split \t -- $row)
+            set -a repo_col $repo
+            set -a branch_col $parts[1]
+            set -a path_col $parts[2]
+          end
+        end
+
+        if test (count $branch_col) -eq 0
+          echo "No non-main worktrees to clean up."
+          return 0
+        end
+
+        echo "Will remove "(count $branch_col)" worktree(s):"
+        for i in (seq (count $branch_col))
+          printf '  %s  (%s)\n' $branch_col[$i] (path basename $repo_col[$i])
+        end
+        if not set -q _flag_yes
+          read -l -P "Proceed? [y/N] " reply
+          if not string match -qi 'y' -- $reply
+            echo "Aborted."
+            return 1
+          end
+        end
+
+        # Kill tmux sessions whose working dir lives inside a worktree we're
+        # about to remove. Catches both `wts` sessions (named by branch) and
+        # spawn_worktree's `pi-<branch>` sessions without guessing at names.
+        for s in (tmux list-sessions -F '#{session_name}	#{session_path}' 2>/dev/null)
+          set -l sp (string split \t -- $s)
+          for p in $path_col
+            if string match -q "$p*" -- $sp[2]
+              tmux kill-session -t $sp[1] 2>/dev/null
+              echo "Killed tmux session: $sp[1]"
+              break
+            end
+          end
+        end
+
+        # Remove worktrees, grouped per repo (-f: dirty, -D: unmerged branches).
+        for repo in $repos
+          set -l repo_branches
+          for i in (seq (count $branch_col))
+            test "$repo_col[$i]" = "$repo"; and set -a repo_branches $branch_col[$i]
+          end
+          test (count $repo_branches) -gt 0; and wt -C $repo remove -f -D $repo_branches
+        end
+
+        # Drop the now-dead worktree paths (and any sub-dir entries) from
+        # zoxide — otherwise `sesh list` keeps surfacing them. This is the
+        # part `wt remove` alone doesn't do.
+        for z in (zoxide query -l 2>/dev/null)
+          for p in $path_col
+            if test "$z" = "$p"; or string match -q "$p/*" -- $z
+              zoxide remove $z 2>/dev/null
+              break
+            end
+          end
+        end
+      '';
+    };
     ghclone = {
       description = "Clone a GitHub repo to ~/dev and open a session";
       body = ''
@@ -260,6 +349,8 @@
       jr = "just run";
       deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
       deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
+
+      wtsc = "wt switch --create ";
     }
     // lib.optionalAttrs pkgs.stdenv.isDarwin {
       zed = "open -a 'Zed Preview' . && exit";

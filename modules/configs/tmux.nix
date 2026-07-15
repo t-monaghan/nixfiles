@@ -14,6 +14,40 @@
         --preview-window "right:80%")
     [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
+  # Pick a repo from ~/dev, pick one of its open PRs (most-recently-updated
+  # first), and open/attach a session that runs `wt switch pr:<n>` in it.
+  tmux-pr-switch = pkgs.writeShellScript "tmux-pr-switch" ''
+    set -eu
+    dev="$HOME/dev"
+
+    repo=$(${pkgs.findutils}/bin/find "$dev" -maxdepth 1 -mindepth 1 -type d \
+        -exec test -e '{}/.git' ';' -print \
+      | sed "s|$dev/||" | sort \
+      | ${lib.getExe pkgs.fzf} --reverse --prompt="repo> ") || exit 0
+    [ -n "$repo" ] || exit 0
+    repodir="$dev/$repo"
+
+    prs=$(cd "$repodir" && ${lib.getExe pkgs.gh} pr list --state open --limit 50 \
+      --json number,title,updatedAt,author,headRefName 2>/dev/null) || {
+        ${lib.getExe pkgs.tmux} display-message "gh pr list failed in $repo"; exit 1; }
+
+    line=$(printf '%s' "$prs" | ${lib.getExe pkgs.jq} -r '
+        sort_by(.updatedAt) | reverse | .[]
+        | "#\(.number)\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"' \
+      | ${lib.getExe pkgs.fzf} --reverse --delimiter='\t' --with-nth=1,2,3,4 \
+          --prompt="pr ($repo)> ") || exit 0
+    [ -n "$line" ] || exit 0
+
+    num=$(printf '%s' "$line" | cut -f1 | tr -d '#')
+    [ -n "$num" ] || exit 0
+
+    sess="$(printf '%s' "$repo" | tr './:' '-')-$num"
+    if ! ${lib.getExe pkgs.tmux} has-session -t "=$sess" 2>/dev/null; then
+      ${lib.getExe pkgs.tmux} new-session -d -s "$sess" -c "$repodir"
+      ${lib.getExe pkgs.tmux} send-keys -t "$sess" "wt switch pr:$num" Enter
+    fi
+    ${lib.getExe pkgs.tmux} switch-client -t "$sess"
+  '';
   tmux-kill-session = pkgs.writeShellScript "tmux-kill-session" ''
     count=$(${lib.getExe pkgs.tmux} list-sessions | wc -l)
     [ "$count" -le 1 ] && exit 0
@@ -48,9 +82,12 @@ in {
     unbind s
     bind s display-popup -E -w 50 -h 18 "sesh list -i | ${lib.getExe pkgs.fzf} --height=100% --no-sort --reverse --ansi | xargs -r sesh connect"
 
-    # Switch windows via fzf picker (only if multiple windows)
+    # Pick a repo + PR and open/attach a `wt switch pr:<n>` session
     unbind w
-    bind w if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
+    bind w display-popup -h 80% -w 80% -E "${tmux-pr-switch}"
+
+    # Switch windows via fzf picker (only if multiple windows)
+    bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
 
     # Jump to last (MRU) window, or fall back to last session when there's only one window.
     # `l` is taken by pane navigation, so use Tab.
