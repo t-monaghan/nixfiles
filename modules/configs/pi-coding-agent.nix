@@ -27,7 +27,7 @@ in {
       defaultProvider = "github-copilot";
       defaultModel = "claude-opus-4.6";
       enabledModels = [
-        "github-copilot/claude-opus-4.6"
+        "github-copilot/claude-opus-4.8"
         "github-copilot/claude-sonnet-4.6"
       ];
     };
