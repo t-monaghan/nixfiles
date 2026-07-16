@@ -1,5 +1,4 @@
-{aerospace}:
-{
+{aerospace}: {
   start-at-login = true;
   enable-normalization-opposite-orientation-for-nested-containers = false;
   enable-normalization-flatten-containers = false;
@@ -67,16 +66,5 @@
       "if".window-title-regex-substring = "picture-in-picture";
       run = ["layout floating"];
     }
-    {
-      "if" = {
-        app-id = "com.tinyspeck.slackmacgap";
-        window-title-regex-substring = "Huddle";
-      };
-      run = ["layout floating"];
-    }
-  ];
-  exec-on-workspace-change = [
-    "/bin/bash" "-c"
-    "${aerospace}/bin/aerospace list-windows --all --format '%{window-id} %{window-title}' | grep Huddle | awk '{print $1}' | xargs -I{} ${aerospace}/bin/aerospace move-node-to-workspace $AEROSPACE_FOCUSED_WORKSPACE --window-id {}"
   ];
 }
