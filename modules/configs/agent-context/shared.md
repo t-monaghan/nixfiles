@@ -1,3 +1,7 @@
+## Shell
+
+The user uses the fish shell, all shell commands should use fish syntax
+
 ## PR Format
 
 PR descriptions should include the following sections:
