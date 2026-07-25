@@ -17,6 +17,7 @@
       enable = true;
       settings = {
         modes.search.enabled = true;
+        modes.char.enabled = false;
       };
     };
 
