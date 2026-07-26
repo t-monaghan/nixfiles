@@ -11,6 +11,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: let
   colors = import ./configs/colours.nix;
@@ -28,6 +29,13 @@ in {
     hyperfine
     watchexec
   ];
+
+  # Keep worktrunk worktrees (…/repo/.worktrees/branch) out of the zoxide
+  # database so `sesh list` / the tmux session picker aren't cluttered with
+  # long worktree paths. Active worktrees still show up in the picker via
+  # their tmux session name (e.g. `pi-<branch>`), which is the short handle
+  # we actually want. Colon-separated globs; `**` crosses `/`.
+  home.sessionVariables._ZO_EXCLUDE_DIRS = "${config.home.homeDirectory}/**/.worktrees/**";
 
   programs = {
     fish = import ./configs/fish.nix {inherit pkgs lib colors;};

@@ -14,9 +14,11 @@
         --preview-window "right:80%")
     [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
   '';
-  # Pick a repo from ~/dev, pick one of its open PRs (most-recently-updated
-  # first), and open/attach a session that runs `wt switch pr:<n>` in it.
-  tmux-pr-switch = pkgs.writeShellScript "tmux-pr-switch" ''
+  # Pick a repo from ~/dev, then pick either an existing worktree or an open
+  # PR (most-recently-updated first), and open/attach a session that runs
+  # `wt switch <branch>` / `wt switch pr:<n>` in it. Each fzf line carries two
+  # hidden fields (kind, key) ahead of the displayed columns (--with-nth=3..).
+  tmux-wt-switch = pkgs.writeShellScript "tmux-wt-switch" ''
     set -eu
     dev="$HOME/dev"
 
@@ -27,24 +29,52 @@
     [ -n "$repo" ] || exit 0
     repodir="$dev/$repo"
 
-    prs=$(cd "$repodir" && ${lib.getExe pkgs.gh} pr list --state open --limit 50 \
-      --json number,title,updatedAt,author,headRefName 2>/dev/null) || {
-        ${lib.getExe pkgs.tmux} display-message "gh pr list failed in $repo"; exit 1; }
+    # Existing worktrees (minus the primary checkout) via worktrunk, so we
+    # get status symbols, commit age, and last message alongside the branch.
+    worktrees=$(wt list --format=json -C "$repodir" 2>/dev/null \
+      | ${lib.getExe pkgs.jq} -r '
+          def age: (now - .) as $s |
+            if   $s < 3600   then "\(($s/60)    | floor)m"
+            elif $s < 86400  then "\(($s/3600)  | floor)h"
+            elif $s < 604800 then "\(($s/86400) | floor)d"
+            else                  "\(($s/604800)| floor)w" end;
+          .[]
+          | select(.kind == "worktree" and (.is_main | not) and .branch)
+          | "wt\t\(.branch)\t\u2442 \(.branch)\t\(.symbols // "")\t\(.commit.timestamp | age)\t\(.commit.message[0:60])"
+        ') || worktrees=""
 
-    line=$(printf '%s' "$prs" | ${lib.getExe pkgs.jq} -r '
+    prs=$(cd "$repodir" && ${lib.getExe pkgs.gh} pr list --state open --limit 50 \
+      --json number,title,updatedAt,author,headRefName 2>/dev/null) || prs='[]'
+    prlines=$(printf '%s' "$prs" | ${lib.getExe pkgs.jq} -r '
         sort_by(.updatedAt) | reverse | .[]
-        | "#\(.number)\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"' \
-      | ${lib.getExe pkgs.fzf} --reverse --delimiter='\t' --with-nth=1,2,3,4 \
-          --prompt="pr ($repo)> ") || exit 0
+        | "pr\t\(.number)\t#\(.number)\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"')
+
+    line=$(printf '%s\n%s\n' "$worktrees" "$prlines" | grep -v '^$' \
+      | ${lib.getExe pkgs.fzf} --reverse --delimiter='\t' --with-nth=3.. \
+          --prompt="wt/pr ($repo)> ") || exit 0
     [ -n "$line" ] || exit 0
 
-    num=$(printf '%s' "$line" | cut -f1 | tr -d '#')
-    [ -n "$num" ] || exit 0
+    kind=$(printf '%s' "$line" | cut -f1)
+    key=$(printf '%s' "$line" | cut -f2)
+    [ -n "$key" ] || exit 0
 
-    sess="$(printf '%s' "$repo" | tr './:' '-')-$num"
+    san=$(printf '%s' "$key" | tr '/.:' '-')
+    case "$kind" in
+      wt)
+        # Prefer an already-running spawned-agent session for this branch.
+        if ${lib.getExe pkgs.tmux} has-session -t "=pi-$san" 2>/dev/null; then
+          ${lib.getExe pkgs.tmux} switch-client -t "pi-$san"; exit 0
+        fi
+        cmd="wt switch $key" ;;
+      pr)
+        cmd="wt switch pr:$key" ;;
+      *) exit 0 ;;
+    esac
+
+    sess="$(printf '%s' "$repo" | tr './:' '-')-$san"
     if ! ${lib.getExe pkgs.tmux} has-session -t "=$sess" 2>/dev/null; then
       ${lib.getExe pkgs.tmux} new-session -d -s "$sess" -c "$repodir"
-      ${lib.getExe pkgs.tmux} send-keys -t "$sess" "wt switch pr:$num" Enter
+      ${lib.getExe pkgs.tmux} send-keys -t "$sess" "$cmd" Enter
     fi
     ${lib.getExe pkgs.tmux} switch-client -t "$sess"
   '';
@@ -71,6 +101,13 @@ in {
     bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
     bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
+    # Splits and new windows should inherit the active pane's cwd, not the
+    # session start directory (which for `wt switch` sessions is the primary
+    # checkout, not the worktree the shell cd'd into).
+    bind '"' split-window -v -c '#{pane_current_path}'
+    bind % split-window -h -c '#{pane_current_path}'
+    bind c new-window -c '#{pane_current_path}'
+
     # Vim-style visual selection in copy mode
     bind -Tcopy-mode-vi v send -X begin-selection
     bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
@@ -82,9 +119,9 @@ in {
     unbind s
     bind s display-popup -E -w 50 -h 18 "sesh list -i | ${lib.getExe pkgs.fzf} --height=100% --no-sort --reverse --ansi | xargs -r sesh connect"
 
-    # Pick a repo + PR and open/attach a `wt switch pr:<n>` session
+    # Pick a repo, then a worktree or PR, and open/attach a `wt switch` session
     unbind w
-    bind w display-popup -h 80% -w 80% -E "${tmux-pr-switch}"
+    bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
 
     # Switch windows via fzf picker (only if multiple windows)
     bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
