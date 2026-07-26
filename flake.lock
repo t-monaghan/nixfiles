@@ -264,7 +264,8 @@
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim",
         "private": "private",
-        "sandy": "sandy"
+        "sandy": "sandy",
+        "spendable": "spendable"
       }
     },
     "sandy": {
@@ -287,6 +288,26 @@
         "owner": "t-monaghan",
         "ref": "feat/nix-flake",
         "repo": "sandy",
+        "type": "github"
+      }
+    },
+    "spendable": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785106517,
+        "narHash": "sha256-AICIkO3hQKqFEciOoE57jFFA8rMb1K95oee9Lz1/vVs=",
+        "owner": "t-monaghan",
+        "repo": "spendable",
+        "rev": "9945b9c3168e0f37b7d03ae8760edd25ed2b3778",
+        "type": "github"
+      },
+      "original": {
+        "owner": "t-monaghan",
+        "repo": "spendable",
         "type": "github"
       }
     },
