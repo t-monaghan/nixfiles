@@ -28,6 +28,8 @@
     imds-broker.inputs.nixpkgs.follows = "nixpkgs";
     sandy.url = "github:t-monaghan/sandy/feat/nix-flake";
     sandy.inputs.nixpkgs.follows = "nixpkgs";
+    spendable.url = "github:t-monaghan/spendable";
+    spendable.inputs.nixpkgs.follows = "nixpkgs";
 
     # Optional private overlay (see README). The default is the empty local
     # stub; `scripts/switch nixos` overrides it with the real private repo on
@@ -48,6 +50,7 @@
     awtrix-cli,
     imds-broker,
     sandy,
+    spendable,
     private,
   } @ inputs: let
     mkHost = import ./lib/mkHost.nix inputs;

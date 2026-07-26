@@ -4,6 +4,7 @@
 {
   config,
   lib,
+  inputs,
   pkgs,
   ...
 }: {
@@ -11,7 +12,12 @@
     ./hardware-configuration.nix
     ./neovim.nix
     ./modules/home-assistant.nix
+     inputs.spendable.nixosModules.default
   ];
+
+  nix.extraOptions = ''
+    !include /etc/nix/access-tokens.conf
+  '';
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -24,6 +30,12 @@
   time.timeZone = "Australia/Melbourne";
 
   i18n.defaultLocale = "en_AU.UTF-8";
+  services.spendable = {
+  enable = true;
+  address = ":1997";
+  environmentFile = "/run/secrets/spendable.env";
+  openFirewall = true;
+  };
 
   users.users.tom = {
     isNormalUser = true;
@@ -31,10 +43,20 @@
     packages = with pkgs; [
       vim
       tree
+      parted
+      agenix-cli
+      age
+      lsof
     ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGumOqP9Fp+Ozt4aNyj6CMOdxdcs+LbhZACc4DdgD6U2 tomaghan@gmail.com"
     ];
+  };
+
+  fileSystems."/media" = {
+    device = "/dev/disk/by-uuid/3e01d16f-cedf-4913-9858-e0677715f700";
+    fsType = "ext4";
+    options = ["defaults" "nofail"];
   };
 
   programs = {
@@ -125,6 +147,11 @@
         };
       };
     };
+  };
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = [pkgs.intel-media-driver];
   };
 
   networking.firewall.allowedTCPPorts = [80];
