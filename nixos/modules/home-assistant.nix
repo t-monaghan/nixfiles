@@ -24,7 +24,38 @@
         unit_system = "metric";
         time_zone = "Australia/Melbourne";
       };
-
+      rest = [
+        {
+          resource = "http://localhost:1997/tom";
+          scan_interval = "1800";
+          sensor = [
+            {
+              name = "toms.spendable";
+              value_template = "{{ value_json.spendable }}";
+            }
+          ];
+        }
+        {
+          resource = "http://localhost:1997/kelsey";
+          scan_interval = "1800";
+          sensor = [
+            {
+              name = "kelseys.spendable";
+              value_template = "{{ value_json.spendable }}";
+            }
+          ];
+        }
+        {
+          resource = "http://localhost:1997/joint";
+          scan_interval = "1800";
+          sensor = [
+            {
+              name = "joint.spendable";
+              value_template = "{{ value_json.spendable }}";
+            }
+          ];
+        }
+      ];
       http = {
         server_host = "0.0.0.0";
         use_x_forwarded_for = true;
