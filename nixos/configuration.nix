@@ -1,6 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 {
   config,
   lib,
@@ -12,29 +9,32 @@
     ./hardware-configuration.nix
     ./neovim.nix
     ./modules/home-assistant.nix
-     inputs.spendable.nixosModules.default
+    inputs.spendable.nixosModules.default
   ];
 
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+  # used for private github repo access
+  # `access-tokens = github.com=TOKEN_HERE`
   nix.extraOptions = ''
     !include /etc/nix/access-tokens.conf
   '';
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
 
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  networking = {
+    firewall.allowedTCPPorts = [80];
+    networkmanager.enable = true;
+    hostName = "dolomite";
+  };
 
-  networking.networkmanager.enable = true;
-  networking.hostName = "dolomite";
-
-  time.timeZone = "Australia/Melbourne";
-
-  i18n.defaultLocale = "en_AU.UTF-8";
   services.spendable = {
-  enable = true;
-  address = ":1997";
-  environmentFile = "/run/secrets/spendable.env";
-  openFirewall = true;
+    enable = true;
+    address = ":1997";
+    environmentFile = "/run/secrets/spendable.env";
+    openFirewall = true;
   };
 
   users.users.tom = {
@@ -53,24 +53,10 @@
     ];
   };
 
-  fileSystems."/media" = {
-    device = "/dev/disk/by-uuid/3e01d16f-cedf-4913-9858-e0677715f700";
-    fsType = "ext4";
-    options = ["defaults" "nofail"];
-  };
-
-  programs = {
-    # System-level fish just makes it a valid login shell and installs vendor
-    # completions; the user-facing config (abbrs, functions, plugins, prompt)
-    # is managed by home-manager (./home.nix → ../modules/shell.nix). atuin,
-    # starship, tmux, direnv, git, … are likewise handled by home-manager now.
-    fish.enable = true;
-  };
+  programs.fish.enable = true;
   environment.shells = [pkgs.fish];
   users.defaultUserShell = "/run/current-system/sw/bin/fish";
 
-  # Home-manager user config: `tom` gets the shared shell/CLI tooling used by
-  # all three machines (fish, starship, atuin, tmux, git, …).
   home-manager.users.tom = import ./home.nix;
 
   environment.systemPackages = with pkgs; [
@@ -99,31 +85,18 @@
     })
   ];
 
-  # python-matter-server spawns `chip-ota-provider-app` by bare name (execvp
-  # → $PATH lookup) when a device update is requested. The nixpkgs
-  # matter-server unit runs in a locked-down chroot (RootDirectory) with only
-  # /nix/store bind-mounted, so exposing the store binary on PATH is enough —
-  # its whole closure (glibc/libnl/gcc) lives under the mounted /nix/store.
   systemd.services.matter-server.path = [pkgs.chip-ota-provider-app];
 
   services = {
     matter-server = {
       enable = true;
-      openFirewall = true; # opens TCP 5580 (WS API) ONLY — not mDNS.
+      openFirewall = true;
     };
-
-    # mDNS / DNS-SD. This is the missing piece for Thread + Matter discovery:
-    #  * HA's Thread panel finds a border router by browsing `_meshcop._udp`.
-    #    Without inbound UDP 5353 those advertisements from the SLZB-06U never
-    #    reach the box, so you get "No border routers were found" even though
-    #    the `otbr` integration can still reach the OTBR REST API on :8081.
-    #  * matter-server does its mDNS via Avahi over D-Bus (the module already
-    #    bind-mounts /run/dbus), so Matter commissioning needs Avahi running.
-    # openFirewall opens inbound UDP 5353, which the default firewall drops.
+    # avahi used in matter/thread setup
     avahi = {
       enable = true;
       openFirewall = true;
-      nssmdns4 = true; # let the host resolve *.local too (optional)
+      nssmdns4 = true;
       publish = {
         enable = true;
         addresses = true;
@@ -137,24 +110,21 @@
         PermitRootLogin = "no";
       };
     };
-    nginx = {
-      enable = true;
-      recommendedProxySettings = true;
-      virtualHosts = {
-        "ha.dolomite.lan".locations."/" = {
-          proxyPass = "http://localhost:8123";
-          proxyWebsockets = true;
-        };
-      };
-    };
+  };
+
+  fileSystems."/media" = {
+    device = "/dev/disk/by-uuid/3e01d16f-cedf-4913-9858-e0677715f700";
+    fsType = "ext4";
+    options = ["defaults" "nofail"];
   };
 
   hardware.graphics = {
     enable = true;
-    extraPackages = [pkgs.intel-media-driver];
+    extraPackages = [pkgs.intel-media-driver]; # to provide transcoding
   };
 
-  networking.firewall.allowedTCPPorts = [80];
+  time.timeZone = "Australia/Melbourne";
+  i18n.defaultLocale = "en_AU.UTF-8";
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
