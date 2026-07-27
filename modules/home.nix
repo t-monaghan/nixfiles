@@ -15,6 +15,11 @@ in {
     ./configs/pi-coding-agent.nix
   ];
 
+  nix.package = pkgs.nix;
+  nix.extraOptions = ''
+    !include ${config.home.homeDirectory}/.config/secrets/access-tokens.conf
+  '';
+
   nixpkgs = {
     config.allowUnfree = true;
   };
