@@ -23,7 +23,8 @@
   };
 
   networking = {
-    firewall.allowedTCPPorts = [80];
+    firewall.allowedTCPPorts = [80 53];
+    firewall.allowedUDPPorts = [53];
     networkmanager.enable = true;
     hostName = "dolomite";
   };
