@@ -24,7 +24,7 @@
     scan_interval = "300";
     sensor = [
       {
-        name = "kelseys.spendable";
+        name = "joint.spendable";
         value_template = "{{ value_json.spendable }}";
       }
     ];
