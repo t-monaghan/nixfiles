@@ -300,7 +300,8 @@
         "narHash": "sha256-j2bEuE1ydf4I+oU97SWuhdelGq4XW1pHjPN5dF9XzF4=",
         "path": "./private-stub",
         "type": "path"
-      }
+      },
+      "parent": []
     },
     "root": {
       "inputs": {
