@@ -115,6 +115,10 @@
       settings = {
         dns = {
           upstream_dns = [
+            "https://1.1.1.1/dns-query"
+            "https://1.0.0.1/dns-query"
+          ];
+          bootstrap_dns = [
             "1.1.1.1"
             "1.0.0.1"
           ];
