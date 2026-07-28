@@ -150,7 +150,7 @@ in {
       includes = ["~/.orbstack/ssh/config"];
       settings = {
         dolomite = {
-          hostname = "192.168.1.215";
+          hostname = "ssh.dolomite.lan";
           user = "tom";
         };
       };
