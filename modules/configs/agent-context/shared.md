@@ -1,3 +1,7 @@
+## Tone
+
+Use ASD-STE100 (Simplified Technical English) for prose
+
 ## Shell
 
 The user uses the fish shell, all shell commands should use fish syntax
