@@ -131,6 +131,7 @@
           {
             domain = "*.dolomite.lan";
             answer = "192.168.1.215";
+            enabled = true;
           }
         ];
       };
