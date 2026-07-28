@@ -31,6 +31,19 @@
     spendable.url = "github:t-monaghan/spendable";
     spendable.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Secret management for dolomite (Mullvad WireGuard key, spendable env, …).
+    # Generic infra, so it lives in the public flake; the actual secrets and
+    # their `age.secrets` declarations stay in the private overlay.
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.inputs.home-manager.follows = "home-manager";
+
+    # Per-service VPN network namespaces (Mullvad-only egress for the *arr /
+    # qbittorrent stack). A dependency-free leaf flake, so no `follows` needed.
+    # Only *used* by the private dolomite overlay, but the module is imported
+    # here so the private flake can stay a zero-input leaf (see its README).
+    vpn-confinement.url = "github:Maroka-chan/vpn-confinement";
+
     # Optional private overlay (see README). The default is the empty local
     # stub; `scripts/switch nixos` overrides it with the real private repo on
     # the box. The `?narHash=` pin is REQUIRED: without it, Nix (>=2.24) treats
@@ -51,6 +64,8 @@
     imds-broker,
     sandy,
     spendable,
+    agenix,
+    vpn-confinement,
     private,
   } @ inputs: let
     mkHost = import ./lib/mkHost.nix inputs;
@@ -73,6 +88,8 @@
       dolomite = mkNixosHost {
         modules = [
           ./nixos/configuration.nix
+          agenix.nixosModules.default
+          vpn-confinement.nixosModules.default
           private.nixosModules.dolomite
         ];
       };
