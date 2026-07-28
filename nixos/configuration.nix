@@ -29,13 +29,6 @@
     hostName = "dolomite";
   };
 
-  services.spendable = {
-    enable = true;
-    address = ":1997";
-    environmentFile = "/run/secrets/spendable.env";
-    openFirewall = true;
-  };
-
   users.users.tom = {
     isNormalUser = true;
     extraGroups = ["wheel"];
