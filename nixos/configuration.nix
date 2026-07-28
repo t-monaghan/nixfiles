@@ -115,7 +115,7 @@
       settings = {
         dns = {
           upstream_dns = [
-            "10.64.0.1" # mullvads in tunnel dns resolver
+            "1.1.1.1"
           ];
         };
       };
