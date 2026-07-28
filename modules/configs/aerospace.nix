@@ -66,5 +66,9 @@
       "if".window-title-regex-substring = "picture-in-picture";
       run = ["layout floating"];
     }
+    {
+      "if".app-id = "com.tinyspeck.slackmacgap";
+      run = ["layout tiling"];
+    }
   ];
 }
