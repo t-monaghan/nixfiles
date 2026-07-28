@@ -48,6 +48,7 @@
     ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGumOqP9Fp+Ozt4aNyj6CMOdxdcs+LbhZACc4DdgD6U2 tomaghan@gmail.com"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN+b+a2qqmf90tuwcKHrVGCL41PRmQvL/BU2kXhhxA5J cultureamp-2026"
     ];
   };
 
