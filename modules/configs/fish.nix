@@ -287,7 +287,7 @@
   shellAbbrs =
     {
       # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
-      s = "tv sesh --no-sort";
+      s = "sesh picker -i";
       nv = "nvim";
       nd = "nvim +'Obsidian today'";
 

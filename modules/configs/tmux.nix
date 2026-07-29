@@ -117,7 +117,7 @@ in {
 
     # Open sesh picker instead of default session tree
     unbind s
-    bind s display-popup -E -w 50 -h 18 "sesh list -i | ${lib.getExe pkgs.fzf} --height=100% --no-sort --reverse --ansi | xargs -r sesh connect"
+    bind s display-popup -E -w 80% -h 80% "sesh picker -i"
 
     # Pick a repo, then a worktree or PR, and open/attach a `wt switch` session
     unbind w

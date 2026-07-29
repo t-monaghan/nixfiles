@@ -126,7 +126,16 @@ in {
       enable = true;
       enableAlias = false;
       enableTmuxIntegration = false;
-      settings.default_session.preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
+      settings = {
+        default_session.preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
+        tui = {
+          preview = true;
+          show_icons = true;
+          show_windows = true;
+          preview_min_width = 80;
+          preview_border = "line";
+        };
+      };
     };
 
     television = {
