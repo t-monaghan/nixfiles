@@ -1,10 +1,9 @@
 {
   colors,
+  fonts,
   lib,
   ...
 }: let
-  fonts = import ./fonts.nix;
-
   # A Ghostty theme file built from one of our palettes. Ghostty resolves theme
   # names against $XDG_CONFIG_HOME/ghostty/themes, so these are our own files,
   # not upstream themes — the name is a filename, not a choice of colours.
@@ -21,59 +20,61 @@
     palette = lib.imap0 (i: hex: "${toString i}=${hex}") (colors.terminalPalette p);
   };
 in {
-  enable = true;
-  package = null;
-  enableFishIntegration = true;
+  programs.ghostty = {
+    enable = true;
+    package = null;
+    enableFishIntegration = true;
 
-  themes = {
-    nixfiles-dark = mkTheme colors.palettes.dark;
-    nixfiles-light = mkTheme colors.palettes.light;
-  };
+    themes = {
+      nixfiles-dark = mkTheme colors.palettes.dark;
+      nixfiles-light = mkTheme colors.palettes.light;
+    };
 
-  settings = {
-    auto-update = "download";
-    auto-update-channel = "tip";
+    settings = {
+      auto-update = "download";
+      auto-update-channel = "tip";
 
-    keybind = "global:ctrl+grave_accent=toggle_secure_input";
+      keybind = "global:ctrl+grave_accent=toggle_secure_input";
 
-    confirm-close-surface = false;
-    quit-after-last-window-closed = true;
+      confirm-close-surface = false;
+      quit-after-last-window-closed = true;
 
-    clipboard-read = "allow";
-    clipboard-write = "allow";
-    clipboard-trim-trailing-spaces = true;
-    copy-on-select = "clipboard";
+      clipboard-read = "allow";
+      clipboard-write = "allow";
+      clipboard-trim-trailing-spaces = true;
+      copy-on-select = "clipboard";
 
-    theme = "light:nixfiles-light,dark:nixfiles-dark";
-    cursor-style = "block";
-    cursor-invert-fg-bg = true;
-    cursor-opacity = 0.7;
-    cursor-style-blink = false;
-    mouse-hide-while-typing = true;
-    background-opacity = 0.90;
-    background-opacity-cells = true;
-    background-blur = 20;
-    font-family = fonts.mono;
-    font-size = fonts.size;
-    font-thicken = true;
-    font-thicken-strength = 255;
-    font-feature = "+zero,-liga,-calt";
-    adjust-cell-height = "10%";
+      theme = "light:nixfiles-light,dark:nixfiles-dark";
+      cursor-style = "block";
+      cursor-invert-fg-bg = true;
+      cursor-opacity = 0.7;
+      cursor-style-blink = false;
+      mouse-hide-while-typing = true;
+      background-opacity = 0.90;
+      background-opacity-cells = true;
+      background-blur = 20;
+      font-family = fonts.mono;
+      font-size = fonts.size;
+      font-thicken = true;
+      font-thicken-strength = 255;
+      font-feature = "+zero,-liga,-calt";
+      adjust-cell-height = "10%";
 
-    macos-option-as-alt = "right";
-    macos-titlebar-style = "hidden";
-    macos-icon = "retro";
-    macos-icon-frame = "plastic";
-    shell-integration = "fish";
-    shell-integration-features = "no-cursor";
+      macos-option-as-alt = "right";
+      macos-titlebar-style = "hidden";
+      macos-icon = "retro";
+      macos-icon-frame = "plastic";
+      shell-integration = "fish";
+      shell-integration-features = "no-cursor";
 
-    window-padding-x = 2;
-    window-padding-y = 2;
-    window-padding-balance = true;
+      window-padding-x = 2;
+      window-padding-y = 2;
+      window-padding-balance = true;
 
-    quick-terminal-position = "right";
-    quick-terminal-animation-duration = 0;
+      quick-terminal-position = "right";
+      quick-terminal-animation-duration = 0;
 
-    resize-overlay = "never";
+      resize-overlay = "never";
+    };
   };
 }

@@ -2,12 +2,10 @@
   pkgs,
   config,
   lib,
-  flakePath,
-  homeConfigName,
+  colors,
+  fonts,
   ...
 }: let
-  fonts = import ./configs/fonts.nix;
-  colors = import ./configs/colours.nix;
   # Alacritty and jankyborders have no system-appearance hook, so they cannot
   # follow light/dark the way Ghostty, Neovim, bat and Zed do. Both take the
   # dark palette (see ./configs/colours.nix).
@@ -15,8 +13,18 @@
 in {
   imports = [
     ./shell.nix
-    ./configs/worktrunk.nix
+    # One file per program; each sets its own `programs.<name>` /
+    # `services.<name>` block, and takes `pkgs`, `lib`, `config`, `colors` and
+    # `fonts` as module arguments (see ./args.nix).
+    ./configs/aerospace.nix
+    ./configs/claude-code.nix
+    ./configs/ghostty.nix
+    ./configs/neovim
+    ./configs/opencode.nix
     ./configs/pi-coding-agent.nix
+    ./configs/syncthing.nix
+    ./configs/worktrunk.nix
+    ./configs/zed.nix
   ];
 
   nix.package = pkgs.nix;
@@ -111,8 +119,6 @@ in {
         width = 8;
       };
     };
-
-    syncthing = import ./configs/syncthing.nix {};
   };
 
   home.sessionVariables = {
@@ -143,8 +149,6 @@ in {
 
     antigravity-cli.enable = true;
 
-    nixvim = import ./configs/neovim {inherit pkgs colors flakePath homeConfigName;};
-
     ssh = {
       enable = true;
       # Opt out of the deprecated implicit `Host *` defaults; declare our own blocks.
@@ -171,19 +175,7 @@ in {
       }
     ];
 
-    claude-code = import ./configs/claude-code.nix {};
-
-    opencode = import ./configs/opencode.nix {inherit pkgs lib;};
-
     # GUI Programs
-    aerospace = {
-      enable = true;
-      launchd.enable = true;
-      settings = import ./configs/aerospace.nix {aerospace = config.programs.aerospace.package;};
-    };
-
-    ghostty = import ./configs/ghostty.nix {inherit colors lib;};
-
     alacritty = {
       enable = true;
       settings = {
@@ -236,8 +228,6 @@ in {
       enable = true;
       host = "192.18.1.97";
     };
-
-    zed-editor = import ./configs/zed.nix {inherit pkgs lib colors;};
 
     mcp = {
       enable = true;

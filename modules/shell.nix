@@ -10,10 +10,18 @@
 # module (e.g. ./home.nix for the Macs).
 {
   pkgs,
-  lib,
   config,
   ...
 }: {
+  imports = [
+    # `colors` + `fonts` as module arguments (used by the configs below).
+    ./args.nix
+    # One file per program; each sets its own `programs.<name>` block.
+    ./configs/fish.nix
+    ./configs/starship.nix
+    ./configs/tmux.nix
+  ];
+
   # CLI baseline shared across machines. Programs with their own home-manager
   # module (ripgrep, fd, bat, …) are configured below rather than listed here.
   home.packages = with pkgs; [
@@ -36,8 +44,6 @@
   home.sessionVariables._ZO_EXCLUDE_DIRS = "${config.home.homeDirectory}/**/.worktrees/**";
 
   programs = {
-    fish = import ./configs/fish.nix {inherit pkgs lib;};
-
     # --- shell-integrated tooling -------------------------------------------
     ripgrep.enable = true;
     fd.enable = true;
@@ -85,13 +91,6 @@
       };
     };
 
-    starship = {
-      enable = true;
-      enableFishIntegration = true;
-      enableTransience = true;
-      settings = import ./configs/starship.nix {};
-    };
-
     fzf = {
       enable = true;
       tmux.enableShellIntegration = true;
@@ -120,8 +119,6 @@
         warn_timeout = "1h";
       };
     };
-
-    tmux = import ./configs/tmux.nix {inherit pkgs lib;};
 
     sesh = {
       enable = true;

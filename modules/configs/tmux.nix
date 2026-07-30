@@ -95,69 +95,81 @@
     ${lib.getExe pkgs.tmux} kill-session -t "$target"
   '';
 in {
-  enable = true;
-  mouse = true;
-  escapeTime = 100;
-  keyMode = "vi";
-  customPaneNavigationAndResize = true;
-  historyLimit = 50000;
-  terminal = "screen-256color";
-  extraConfig = ''
-    set -g status off
-    set -g detach-on-destroy off
-    set -g pane-border-status top
-    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=yellow]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=colour16],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=yellow],#[fg=colour20]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
-    bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
-    bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
+  programs.tmux = {
+    enable = true;
+    mouse = true;
+    escapeTime = 100;
+    keyMode = "vi";
+    customPaneNavigationAndResize = true;
+    historyLimit = 50000;
+    terminal = "screen-256color";
+    extraConfig = ''
+      set -g status off
+      set -g detach-on-destroy off
+      set -g pane-border-status top
+      set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=yellow]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=colour16],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=yellow],#[fg=colour20]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+      bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
+      bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
-    # Splits and new windows should inherit the active pane's cwd, not the
-    # session start directory (which for `wt switch` sessions is the primary
-    # checkout, not the worktree the shell cd'd into).
-    bind '"' split-window -v -c '#{pane_current_path}'
-    bind % split-window -h -c '#{pane_current_path}'
-    bind c new-window -c '#{pane_current_path}'
+      # Splits and new windows should inherit the active pane's cwd, not the
+      # session start directory (which for `wt switch` sessions is the primary
+      # checkout, not the worktree the shell cd'd into).
+      bind '"' split-window -v -c '#{pane_current_path}'
+      bind % split-window -h -c '#{pane_current_path}'
+      bind c new-window -c '#{pane_current_path}'
 
-    # Vim-style visual selection in copy mode
-    bind -Tcopy-mode-vi v send -X begin-selection
-    bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
+      # Vim-style visual selection in copy mode
+      bind -Tcopy-mode-vi v send -X begin-selection
+      bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
 
-    # Highlight active pane background when prefix is pressed
-    bind -Troot C-b select-pane -P 'bg=colour18' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
+      # Highlight active pane background when prefix is pressed
+      bind -Troot C-b select-pane -P 'bg=colour18' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
 
-    # Open sesh picker instead of default session tree
-    unbind s
-    bind s display-popup -E -w 80% -h 80% "sesh picker -i"
+      # Open sesh picker instead of default session tree
+      unbind s
+      bind s display-popup -E -w 80% -h 80% "sesh picker -i"
 
-    # Pick a repo, then a worktree or PR, and open/attach a `wt switch` session
-    unbind w
-    bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
+      # Pick a repo, then a worktree or PR, and open/attach a `wt switch` session
+      unbind w
+      bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
 
-    # Switch windows via fzf picker (only if multiple windows)
-    bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
+      # Switch windows via fzf picker (only if multiple windows)
+      bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
 
-    # Jump to last (MRU) window, or fall back to last session when there's only one window.
-    # `l` is taken by pane navigation, so use Tab.
-    bind -N "last-window-or-session" Tab if -F '#{?#{e|>:#{session_windows},1},1,}' 'last-window' 'switch-client -l'
+      # Jump to last (MRU) window, or fall back to last session when there's only one window.
+      # `l` is taken by pane navigation, so use Tab.
+      bind -N "last-window-or-session" Tab if -F '#{?#{e|>:#{session_windows},1},1,}' 'last-window' 'switch-client -l'
 
-    # Last session via sesh (only if multiple sessions)
-    bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
+      # Last session via sesh (only if multiple sessions)
+      bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
 
-    # Kill current session and switch to previous
-    bind X run-shell '${tmux-kill-session}'
+      # From a worktrunk worktree session (…/repo/.worktrees/branch), jump to the
+      # session for the repository itself. `sesh connect --root <path>` resolves
+      # the git worktree/repository root of that path and connects to its
+      # session, creating it when it does not exist. `$(pwd)` is the pane's
+      # directory: `run-shell` runs the command in the pane's working directory.
+      # `m` is tmux's `select-pane -m` (mark pane) by default, which this
+      # replaces.
+      unbind m
+      bind -N "root session (via sesh)" m run-shell "sesh connect --root $(pwd)"
 
-    # Clone GitHub repo and open session
-    bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
+      # Kill current session and switch to previous
+      bind X run-shell '${tmux-kill-session}'
 
-    # Notification bracket cleanup (`[work]` -> `work`) is intentionally NOT
-    # tied to window/session switches — the bracket should persist as a
-    # "needs attention" marker until you actually engage with pi.
-    # `tmux-notify.ts` already unbrackets on `turn_start` (you sent input) and
-    # `session_shutdown` (pi exited), which is the right trigger.
-    # If a session ends up stuck bracketed (e.g. pi crashed), the next
-    # `turn_start` from any pi in that session will clean it up; otherwise rename
-    # by hand with `tmux rename-session work`.
+      # Clone GitHub repo and open session
+      bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
 
-    set -g extended-keys on
-    set -g extended-keys-format csi-u
-  '';
+      # Notification bracket cleanup (`[work]` -> `work`) is intentionally NOT
+      # tied to window/session switches — the bracket should persist as a
+      # "needs attention" marker until you actually engage with pi.
+      # `tmux-notify.ts` already unbrackets on `turn_start` (you sent input) and
+      # `session_shutdown` (pi exited), which is the right trigger.
+      # If a session ends up stuck bracketed (e.g. pi crashed), the next
+      # `turn_start` from any pi in that session will clean it up; otherwise rename
+      # by hand with `tmux rename-session work`.
+
+      set -g extended-keys on
+      set -g extended-keys-format csi-u
+    '';
+  };
 }

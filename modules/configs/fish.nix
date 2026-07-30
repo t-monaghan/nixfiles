@@ -6,370 +6,372 @@
   lib,
   ...
 }: {
-  enable = true;
+  programs.fish = {
+    enable = true;
 
-  loginShellInit = ''
-    ${lib.optionalString pkgs.stdenv.isDarwin "fish_add_path $HOME/.rd/bin"}
-    fish_add_path $HOME/.npm-global/bin
-    fish_add_path $HOME/go/bin
+    loginShellInit = ''
+      ${lib.optionalString pkgs.stdenv.isDarwin "fish_add_path $HOME/.rd/bin"}
+      fish_add_path $HOME/.npm-global/bin
+      fish_add_path $HOME/go/bin
 
-    set -gx fish_color_autosuggestion blue
-    set -gx AWTRIX_HOST 192.168.1.97
-    set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
+      set -gx fish_color_autosuggestion blue
+      set -gx AWTRIX_HOST 192.168.1.97
+      set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
 
-    bind \cx\ce edit_command_buffer
-    ${lib.optionalString pkgs.stdenv.isDarwin ''
+      bind \cx\ce edit_command_buffer
+      ${lib.optionalString pkgs.stdenv.isDarwin ''
 
-      # Multi-user nix on macOS isn't on PATH for login shells until its
-      # profile scripts are sourced; on NixOS nix is already in PATH.
-      if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-      end
-
-      if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-        fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-      end
-    ''}
-  '';
-
-  functions = {
-    git-https = {
-      description = "Changes the git remote to https from ssh";
-      body = ''
-        set current_url (git remote get-url origin)
-        set new_url (echo $current_url | sed 's/https:\/\/github.com\///' | sed 's/git@github.com://')
-        git remote set-url origin https://github.com/$new_url
-      '';
-    };
-    fish_greeting = {
-      body = '''';
-    };
-    starship_transient_rprompt_func = {
-      body = ''starship module time'';
-    };
-    gw = {
-      wraps = ''gradle'';
-      body = ''./gradlew $argv'';
-    };
-    mkcd = {
-      body = ''mkdir $argv && cd $argv'';
-    };
-    notify = {
-      description = "Run a command and send AWTRIX notification on completion";
-      body = ''
-        set start (date +%s)
-        $argv
-        set cmd_status $status
-        set elapsed (math (date +%s) - $start)
-
-        if test $cmd_status -eq 0
-          set colour "#00FF00"
-          set text "DONE"
-        else
-          set colour "#FF0000"
-          set text "FAILED"
+        # Multi-user nix on macOS isn't on PATH for login shells until its
+        # profile scripts are sourced; on NixOS nix is already in PATH.
+        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+          fenv source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         end
 
-        curl -s -X POST "http://$AWTRIX_HOST/api/notify" \
-          -H "Content-Type: application/json" \
-          -d "{\"text\":\"$text: $argv[1] ("$elapsed"s)\",\"color\":\"$colour\",\"duration\":10}" \
-          > /dev/null 2>&1 &
-
-        return $cmd_status
-      '';
-    };
-    wts = {
-      wraps = "wt switch";
-      description = "wt switch, but open/attach a tmux session for the worktree (named by branch) instead of cd-ing into it";
-      body = ''
-        # --no-cd: worktrunk writes no cd directive, so the current shell stays put.
-        # $argv forwards the branch and any flags (e.g. -c/--create, -b/--base) to wt.
-        #
-        # We route through `sh -c` because worktrunk's -x execs its program
-        # directly (no shell) and we need a two-step tmux dance:
-        #   1. `has-session || new-session -d` — idempotent detached create, so
-        #      it's safe whether or not we're already inside tmux.
-        #   2. Use `switch-client` if inside tmux ($TMUX is set), otherwise `attach-session`.
-        # Session name = {{ branch | sanitize }} (/ and \ become -).
-        # Start dir   = {{ worktree_path }} (only applied at creation time).
-        wt switch --no-cd -x sh $argv -- -c 'tmux has-session -t "$1" 2>/dev/null || tmux new-session -d -s "$1" -c "$2"; if [ -n "$TMUX" ]; then exec tmux switch-client -t "$1"; else exec tmux attach-session -t "$1"; fi' _ '{{ branch | sanitize }}' '{{ worktree_path }}'
-      '';
-    };
-    wtclean = {
-      description = "Remove non-main worktrees + their tmux sessions + their zoxide entries (declutters `sesh list`). `--all` sweeps every repo under ~/dev.";
-      body = ''
-        argparse a/all y/yes -- $argv
-        or return 1
-
-        # Which repos to sweep. Default: the current repo only. --all: every
-        # repo under ~/dev that has a .worktrees/ dir. `wt list` errors outside
-        # a git repo, so without --all we need a valid toplevel.
-        set -l repos
-        if set -q _flag_all
-          for d in ~/dev/*/.worktrees
-            test -d $d; and set -a repos (path dirname $d)
-          end
-        else
-          set -l root (git rev-parse --show-toplevel 2>/dev/null)
-          if test -z "$root"
-            echo "wtclean: not in a git repo — use `wtclean --all` to clean every repo under ~/dev." >&2
-            return 1
-          end
-          set repos $root
+        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          fenv source /nix/var/nix/profiles/default/etc/profile.d/nix.sh
         end
+      ''}
+    '';
 
-        # Gather non-main, non-current worktrees across the selected repos.
-        # kind == "worktree" skips bare-branch entries; is_main keeps the
-        # primary checkout; is_current keeps the worktree you're standing in.
-        set -l repo_col; set -l branch_col; set -l path_col
-        for repo in $repos
-          for row in (wt -C $repo list --format json 2>/dev/null | jq -r '.[] | select(.is_main == false and .is_current == false and .kind == "worktree") | [.branch, .path] | @tsv')
-            set -l parts (string split \t -- $row)
-            set -a repo_col $repo
-            set -a branch_col $parts[1]
-            set -a path_col $parts[2]
-          end
-        end
-
-        if test (count $branch_col) -eq 0
-          echo "No non-main worktrees to clean up."
-          return 0
-        end
-
-        echo "Will remove "(count $branch_col)" worktree(s):"
-        for i in (seq (count $branch_col))
-          printf '  %s  (%s)\n' $branch_col[$i] (path basename $repo_col[$i])
-        end
-        if not set -q _flag_yes
-          read -l -P "Proceed? [y/N] " reply
-          if not string match -qi 'y' -- $reply
-            echo "Aborted."
-            return 1
-          end
-        end
-
-        # Kill tmux sessions whose working dir lives inside a worktree we're
-        # about to remove. Catches both `wts` sessions (named by branch) and
-        # spawn_worktree's `pi-<branch>` sessions without guessing at names.
-        for s in (tmux list-sessions -F '#{session_name}	#{session_path}' 2>/dev/null)
-          set -l sp (string split \t -- $s)
-          for p in $path_col
-            if string match -q "$p*" -- $sp[2]
-              tmux kill-session -t $sp[1] 2>/dev/null
-              echo "Killed tmux session: $sp[1]"
-              break
-            end
-          end
-        end
-
-        # Remove worktrees, grouped per repo (-f: dirty, -D: unmerged branches).
-        for repo in $repos
-          set -l repo_branches
-          for i in (seq (count $branch_col))
-            test "$repo_col[$i]" = "$repo"; and set -a repo_branches $branch_col[$i]
-          end
-          test (count $repo_branches) -gt 0; and wt -C $repo remove -f -D $repo_branches
-        end
-
-        # Drop the now-dead worktree paths (and any sub-dir entries) from
-        # zoxide — otherwise `sesh list` keeps surfacing them. This is the
-        # part `wt remove` alone doesn't do.
-        for z in (zoxide query -l 2>/dev/null)
-          for p in $path_col
-            if test "$z" = "$p"; or string match -q "$p/*" -- $z
-              zoxide remove $z 2>/dev/null
-              break
-            end
-          end
-        end
-      '';
-    };
-    ghclone = {
-      description = "Clone a GitHub repo to ~/dev and open a session";
-      body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: ghclone org/repo [directory-name]"
-          return 1
-        end
-
-        set slug $argv[1]
-
-        # If slug doesn't contain "/", prepend cultureamp org
-        if not string match -q "*/*" $slug
-          set slug "cultureamp/$slug"
-        end
-
-        if test (count $argv) -ge 2
-          set repo_name $argv[2]
-        else
-          set repo_name (basename $slug)
-        end
-
-        set dev_path ~/dev/$repo_name
-
-        if not test -d $dev_path
-          git clone https://github.com/$slug $dev_path >/dev/null 2>&1
-          if test $status -ne 0
-            echo "Failed to clone repository"
-            return 1
-          end
-        end
-
-        sesh connect $dev_path
-      '';
-    };
-    bkw = {
-      description = "Watch Buildkite builds for the current repo and branch";
-      body = ''
-        set repo (basename (git remote get-url origin) .git)
-        set branch (git branch --show-current)
-
-        bk build watch --pipeline $repo --branch $branch $argv
-      '';
-    };
-    bkr = {
-      description = "Trigger a new Buildkite build for the current repo and branch";
-      body = ''
-        set repo (basename (git remote get-url origin) .git)
-        set branch (git branch --show-current)
-
-        bk build create --yes --pipeline $repo --branch $branch $argv
-      '';
-    };
-    bko = {
-      description = "Open the most recent Buildkite build for the current repo and branch in the browser";
-      body = ''
-        set repo (basename (git remote get-url origin) .git)
-        set branch (git branch --show-current)
-
-        bk build view --pipeline $repo --branch $branch --web $argv
-      '';
-    };
-    bkl = {
-      description = "Login to Buildkite CLI with culture-amp org";
-      body = ''
-        bk auth login --org culture-amp --token $BUILDKITE_API_KEY
-      '';
-    };
-    assume = {
-      description = "Select and assume AWS roles using fzf";
-      body = ''
-        # Find the granted assume.fish script
-        set assume_script (readlink -f (which assume) | sed 's|/bin/assume|/share/assume.fish|')
-
-        # Get all profiles from config
-        set all_profiles (grep '^\[profile' ~/.aws/config | sed 's/\[profile \(.*\)\]/\1/' | sort)
-
-        set result (
-          printf '%s\n' $all_profiles \
-          | fzf --prompt="AWS Profile > " \
-                --preview="grep -A 10 '^\[profile {}\]' ~/.aws/config | grep granted_sso_account_id | head -1 | awk '{print \$NF}'" \
-                --preview-label="Account ID" \
-                --preview-window=down:1:wrap \
-                --bind="ctrl-c:abort" \
-                --expect="ctrl-o" \
-                --header="Enter: assume | Ctrl-o: assume + open console" \
-                --height=40%
-        )
-
-        set key $result[1]
-        set profile $result[2]
-
-        if test -n "$profile"
-          if test "$key" = "ctrl-o"
-            source $assume_script $profile -c
-          else
-            source $assume_script $profile
-          end
-        end
-      '';
-    };
-  };
-
-  shellAbbrs =
-    {
-      # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
-      s = "sesh picker -i";
-      nv = "nvim";
-      nd = "nvim +'Obsidian today'";
-
-      ci = "gh altar ci > /dev/null 2>&1 & disown";
-      dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
-      n = "notify";
-      stats = "curl 'http://192.168.1.97/api/stats' | jq";
-
-      ns = "tv nix-search-tv";
-
-      chmox = "chmod a+x";
-
-      gco = "git checkout";
-      gp = "git push";
-      gpf = "git push --force-with-lease";
-      gpu = "git pull --autostash --rebase";
-      gs = "git status";
-      gl = "tv git-log";
-      gd = "git diff";
-      gdc = "git diff --cached";
-      ga = "git add";
-      gc = "git commit -m";
-      ghpr = "gh pr checkout";
-      gsc = "git stash clear";
-      checks = "gh pr checks --required --watch";
-      gsp = "git stash pop";
-      gcob = "git checkout -b";
-      grs = "git restore --staged";
-      grim = "git rebase -i main";
-      grm = "git rebase main";
-      gap = "git add -p";
-      gsl = "git stash list";
-      gfm = "git fetch origin main:main";
-      gca = "git commit --amend --no-edit";
-
-      ll = "ls -ltra";
-
-      dr = "devbox run";
-      drs = "devbox run setup";
-      drp = "devbox run populate";
-      dsu = "devbox services up --pcflags '--keep-project'";
-      reload = "rm -rf .devbox && direnv reload";
-      hs = "hotel services";
-      rmd = "rm -rf .devbox";
-
-      rt = "trash-put";
-      hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
-
-      tf = "terraform";
-      crl = "codex resume --last";
-      clc = "claude --continue";
-      pic = "pi --continue";
-      pulls = "gh search prs --author=@me --state=open";
-
-      oc = "opencode";
-      occ = "opencode --continue";
-
-      j = "just";
-      jr = "just run";
-      deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
-      deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
-
-      wtsc = "wt switch --create ";
-    }
-    // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      zed = "open -a 'Zed Preview' . && exit";
-      disu = "caffeinate -disu";
-      ssh = "ghostty +ssh --";
-    };
-
-  plugins = [
-    {inherit (pkgs.fishPlugins.foreign-env) name src;}
-    {
-      name = "pnpm-shell-completion";
-      src = pkgs.fetchFromGitHub {
-        owner = "g-plane";
-        repo = "pnpm-shell-completion";
-        rev = "v0.5.2";
-        sha256 = "sha256-VCIT1HobLXWRe3yK2F3NPIuWkyCgckytLPi6yQEsSIE=";
+    functions = {
+      git-https = {
+        description = "Changes the git remote to https from ssh";
+        body = ''
+          set current_url (git remote get-url origin)
+          set new_url (echo $current_url | sed 's/https:\/\/github.com\///' | sed 's/git@github.com://')
+          git remote set-url origin https://github.com/$new_url
+        '';
       };
-    }
-  ];
+      fish_greeting = {
+        body = '''';
+      };
+      starship_transient_rprompt_func = {
+        body = ''starship module time'';
+      };
+      gw = {
+        wraps = ''gradle'';
+        body = ''./gradlew $argv'';
+      };
+      mkcd = {
+        body = ''mkdir $argv && cd $argv'';
+      };
+      notify = {
+        description = "Run a command and send AWTRIX notification on completion";
+        body = ''
+          set start (date +%s)
+          $argv
+          set cmd_status $status
+          set elapsed (math (date +%s) - $start)
+
+          if test $cmd_status -eq 0
+            set colour "#00FF00"
+            set text "DONE"
+          else
+            set colour "#FF0000"
+            set text "FAILED"
+          end
+
+          curl -s -X POST "http://$AWTRIX_HOST/api/notify" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\":\"$text: $argv[1] ("$elapsed"s)\",\"color\":\"$colour\",\"duration\":10}" \
+            > /dev/null 2>&1 &
+
+          return $cmd_status
+        '';
+      };
+      wts = {
+        wraps = "wt switch";
+        description = "wt switch, but open/attach a tmux session for the worktree (named by branch) instead of cd-ing into it";
+        body = ''
+          # --no-cd: worktrunk writes no cd directive, so the current shell stays put.
+          # $argv forwards the branch and any flags (e.g. -c/--create, -b/--base) to wt.
+          #
+          # We route through `sh -c` because worktrunk's -x execs its program
+          # directly (no shell) and we need a two-step tmux dance:
+          #   1. `has-session || new-session -d` — idempotent detached create, so
+          #      it's safe whether or not we're already inside tmux.
+          #   2. Use `switch-client` if inside tmux ($TMUX is set), otherwise `attach-session`.
+          # Session name = {{ branch | sanitize }} (/ and \ become -).
+          # Start dir   = {{ worktree_path }} (only applied at creation time).
+          wt switch --no-cd -x sh $argv -- -c 'tmux has-session -t "$1" 2>/dev/null || tmux new-session -d -s "$1" -c "$2"; if [ -n "$TMUX" ]; then exec tmux switch-client -t "$1"; else exec tmux attach-session -t "$1"; fi' _ '{{ branch | sanitize }}' '{{ worktree_path }}'
+        '';
+      };
+      wtclean = {
+        description = "Remove non-main worktrees + their tmux sessions + their zoxide entries (declutters `sesh list`). `--all` sweeps every repo under ~/dev.";
+        body = ''
+          argparse a/all y/yes -- $argv
+          or return 1
+
+          # Which repos to sweep. Default: the current repo only. --all: every
+          # repo under ~/dev that has a .worktrees/ dir. `wt list` errors outside
+          # a git repo, so without --all we need a valid toplevel.
+          set -l repos
+          if set -q _flag_all
+            for d in ~/dev/*/.worktrees
+              test -d $d; and set -a repos (path dirname $d)
+            end
+          else
+            set -l root (git rev-parse --show-toplevel 2>/dev/null)
+            if test -z "$root"
+              echo "wtclean: not in a git repo — use `wtclean --all` to clean every repo under ~/dev." >&2
+              return 1
+            end
+            set repos $root
+          end
+
+          # Gather non-main, non-current worktrees across the selected repos.
+          # kind == "worktree" skips bare-branch entries; is_main keeps the
+          # primary checkout; is_current keeps the worktree you're standing in.
+          set -l repo_col; set -l branch_col; set -l path_col
+          for repo in $repos
+            for row in (wt -C $repo list --format json 2>/dev/null | jq -r '.[] | select(.is_main == false and .is_current == false and .kind == "worktree") | [.branch, .path] | @tsv')
+              set -l parts (string split \t -- $row)
+              set -a repo_col $repo
+              set -a branch_col $parts[1]
+              set -a path_col $parts[2]
+            end
+          end
+
+          if test (count $branch_col) -eq 0
+            echo "No non-main worktrees to clean up."
+            return 0
+          end
+
+          echo "Will remove "(count $branch_col)" worktree(s):"
+          for i in (seq (count $branch_col))
+            printf '  %s  (%s)\n' $branch_col[$i] (path basename $repo_col[$i])
+          end
+          if not set -q _flag_yes
+            read -l -P "Proceed? [y/N] " reply
+            if not string match -qi 'y' -- $reply
+              echo "Aborted."
+              return 1
+            end
+          end
+
+          # Kill tmux sessions whose working dir lives inside a worktree we're
+          # about to remove. Catches both `wts` sessions (named by branch) and
+          # spawn_worktree's `pi-<branch>` sessions without guessing at names.
+          for s in (tmux list-sessions -F '#{session_name}	#{session_path}' 2>/dev/null)
+            set -l sp (string split \t -- $s)
+            for p in $path_col
+              if string match -q "$p*" -- $sp[2]
+                tmux kill-session -t $sp[1] 2>/dev/null
+                echo "Killed tmux session: $sp[1]"
+                break
+              end
+            end
+          end
+
+          # Remove worktrees, grouped per repo (-f: dirty, -D: unmerged branches).
+          for repo in $repos
+            set -l repo_branches
+            for i in (seq (count $branch_col))
+              test "$repo_col[$i]" = "$repo"; and set -a repo_branches $branch_col[$i]
+            end
+            test (count $repo_branches) -gt 0; and wt -C $repo remove -f -D $repo_branches
+          end
+
+          # Drop the now-dead worktree paths (and any sub-dir entries) from
+          # zoxide — otherwise `sesh list` keeps surfacing them. This is the
+          # part `wt remove` alone doesn't do.
+          for z in (zoxide query -l 2>/dev/null)
+            for p in $path_col
+              if test "$z" = "$p"; or string match -q "$p/*" -- $z
+                zoxide remove $z 2>/dev/null
+                break
+              end
+            end
+          end
+        '';
+      };
+      ghclone = {
+        description = "Clone a GitHub repo to ~/dev and open a session";
+        body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: ghclone org/repo [directory-name]"
+            return 1
+          end
+
+          set slug $argv[1]
+
+          # If slug doesn't contain "/", prepend cultureamp org
+          if not string match -q "*/*" $slug
+            set slug "cultureamp/$slug"
+          end
+
+          if test (count $argv) -ge 2
+            set repo_name $argv[2]
+          else
+            set repo_name (basename $slug)
+          end
+
+          set dev_path ~/dev/$repo_name
+
+          if not test -d $dev_path
+            git clone https://github.com/$slug $dev_path >/dev/null 2>&1
+            if test $status -ne 0
+              echo "Failed to clone repository"
+              return 1
+            end
+          end
+
+          sesh connect $dev_path
+        '';
+      };
+      bkw = {
+        description = "Watch Buildkite builds for the current repo and branch";
+        body = ''
+          set repo (basename (git remote get-url origin) .git)
+          set branch (git branch --show-current)
+
+          bk build watch --pipeline $repo --branch $branch $argv
+        '';
+      };
+      bkr = {
+        description = "Trigger a new Buildkite build for the current repo and branch";
+        body = ''
+          set repo (basename (git remote get-url origin) .git)
+          set branch (git branch --show-current)
+
+          bk build create --yes --pipeline $repo --branch $branch $argv
+        '';
+      };
+      bko = {
+        description = "Open the most recent Buildkite build for the current repo and branch in the browser";
+        body = ''
+          set repo (basename (git remote get-url origin) .git)
+          set branch (git branch --show-current)
+
+          bk build view --pipeline $repo --branch $branch --web $argv
+        '';
+      };
+      bkl = {
+        description = "Login to Buildkite CLI with culture-amp org";
+        body = ''
+          bk auth login --org culture-amp --token $BUILDKITE_API_KEY
+        '';
+      };
+      assume = {
+        description = "Select and assume AWS roles using fzf";
+        body = ''
+          # Find the granted assume.fish script
+          set assume_script (readlink -f (which assume) | sed 's|/bin/assume|/share/assume.fish|')
+
+          # Get all profiles from config
+          set all_profiles (grep '^\[profile' ~/.aws/config | sed 's/\[profile \(.*\)\]/\1/' | sort)
+
+          set result (
+            printf '%s\n' $all_profiles \
+            | fzf --prompt="AWS Profile > " \
+                  --preview="grep -A 10 '^\[profile {}\]' ~/.aws/config | grep granted_sso_account_id | head -1 | awk '{print \$NF}'" \
+                  --preview-label="Account ID" \
+                  --preview-window=down:1:wrap \
+                  --bind="ctrl-c:abort" \
+                  --expect="ctrl-o" \
+                  --header="Enter: assume | Ctrl-o: assume + open console" \
+                  --height=40%
+          )
+
+          set key $result[1]
+          set profile $result[2]
+
+          if test -n "$profile"
+            if test "$key" = "ctrl-o"
+              source $assume_script $profile -c
+            else
+              source $assume_script $profile
+            end
+          end
+        '';
+      };
+    };
+
+    shellAbbrs =
+      {
+        # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
+        s = "sesh picker -i";
+        nv = "nvim";
+        nd = "nvim +'Obsidian today'";
+
+        ci = "gh altar ci > /dev/null 2>&1 & disown";
+        dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";
+        n = "notify";
+        stats = "curl 'http://192.168.1.97/api/stats' | jq";
+
+        ns = "tv nix-search-tv";
+
+        chmox = "chmod a+x";
+
+        gco = "git checkout";
+        gp = "git push";
+        gpf = "git push --force-with-lease";
+        gpu = "git pull --autostash --rebase";
+        gs = "git status";
+        gl = "tv git-log";
+        gd = "git diff";
+        gdc = "git diff --cached";
+        ga = "git add";
+        gc = "git commit -m";
+        ghpr = "gh pr checkout";
+        gsc = "git stash clear";
+        checks = "gh pr checks --required --watch";
+        gsp = "git stash pop";
+        gcob = "git checkout -b";
+        grs = "git restore --staged";
+        grim = "git rebase -i main";
+        grm = "git rebase main";
+        gap = "git add -p";
+        gsl = "git stash list";
+        gfm = "git fetch origin main:main";
+        gca = "git commit --amend --no-edit";
+
+        ll = "ls -ltra";
+
+        dr = "devbox run";
+        drs = "devbox run setup";
+        drp = "devbox run populate";
+        dsu = "devbox services up --pcflags '--keep-project'";
+        reload = "rm -rf .devbox && direnv reload";
+        hs = "hotel services";
+        rmd = "rm -rf .devbox";
+
+        rt = "trash-put";
+        hlogs = "tail -f ~/.local/share/hotel/log.jsonl | fblog -m event";
+
+        tf = "terraform";
+        crl = "codex resume --last";
+        clc = "claude --continue";
+        pic = "pi --continue";
+        pulls = "gh search prs --author=@me --state=open";
+
+        oc = "opencode";
+        occ = "opencode --continue";
+
+        j = "just";
+        jr = "just run";
+        deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
+        deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
+
+        wtsc = "wt switch --create ";
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        zed = "open -a 'Zed Preview' . && exit";
+        disu = "caffeinate -disu";
+        ssh = "ghostty +ssh --";
+      };
+
+    plugins = [
+      {inherit (pkgs.fishPlugins.foreign-env) name src;}
+      {
+        name = "pnpm-shell-completion";
+        src = pkgs.fetchFromGitHub {
+          owner = "g-plane";
+          repo = "pnpm-shell-completion";
+          rev = "v0.5.2";
+          sha256 = "sha256-VCIT1HobLXWRe3yK2F3NPIuWkyCgckytLPi6yQEsSIE=";
+        };
+      }
+    ];
+  };
 }
