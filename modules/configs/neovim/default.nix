@@ -1,21 +1,36 @@
+# Shared nixvim configuration — used by ALL three machines.
+#
+# Called as a function (`programs.nixvim = import ./configs/neovim {…}`) from
+# both the Mac home-manager configs (../../home.nix) and the NixOS box
+# (../../../nixos/neovim.nix). Host differences are limited to:
+#
+# - `flakePath` + `homeConfigName` (Mac only): nixd resolves nixpkgs and
+#   home-manager options from this flake. When absent (NixOS), nixd falls back
+#   to the channel-based `<nixpkgs>` expressions — see ./lsp.nix.
+# - `pkgs.stdenv.isDarwin`: gates the macOS `defaults read` light/dark probe,
+#   the Monokai-light contrast overrides, and the Obsidian plugin.
 {
   pkgs,
   colors,
-  flakePath,
-  homeConfigName,
+  flakePath ? null,
+  homeConfigName ? null,
   ...
-}: {
+}: let
+  inherit (pkgs) lib;
+  isDarwin = pkgs.stdenv.isDarwin;
+in {
   enable = true;
   defaultEditor = true;
   imports = [
-    ./neovim-plugins.nix
-    ./neovim-lsp.nix
-    ./neovim-obsidian.nix
+    ./plugins.nix
+    ./lsp.nix
+    ./obsidian.nix
   ];
 
-  # Make the flake path + host config name available to nixvim submodules
-  # (neovim-lsp.nix wires them into nixd's settings).
-  _module.args = {inherit flakePath homeConfigName;};
+  # Make the host parameters available to nixvim submodules
+  # (lsp.nix wires flakePath/homeConfigName into nixd's settings;
+  # obsidian.nix gates on isDarwin).
+  _module.args = {inherit flakePath homeConfigName isDarwin;};
 
   globals = {
     mapleader = " ";
@@ -24,6 +39,10 @@
   };
 
   opts = {
+    # Force truecolor: base16-nvim uses gui highlights, and Neovim only
+    # auto-enables this when $COLORTERM=truecolor is set — which SSH doesn't
+    # forward. Without it, colours don't render over SSH (white-on-black).
+    termguicolors = true;
     number = true;
     mouse = "a";
     showmode = false;
@@ -137,59 +156,76 @@
     terminal-config = {clear = true;};
   };
 
-  autoCmd = [
-    {
-      event = ["TermEnter"];
-      group = "terminal-config";
-      command = "setlocal winhighlight=Normal:ActiveTerm";
-    }
-    {
-      event = ["TermLeave"];
-      group = "terminal-config";
-      command = "setlocal winhighlight=Normal:NC";
-    }
-    {
-      event = ["TermOpen"];
-      group = "terminal-config";
-      callback.__raw = ''
-        function()
-          vim.cmd([[ setlocal nonumber norelativenumber signcolumn=no ]])
-          vim.opt.scrolloff = 0
-          vim.opt.sidescrolloff = 0
-          vim.opt.guicursor:append("t:block-blinkon0")
-          vim.keymap.set("n", "<C-c>", [[ i<C-c><C-\><C-n> ]], { buffer = 0 })
-          vim.keymap.set("n", "<C-n>", [[ i<C-n><C-\><C-n> ]], { buffer = 0 })
-          vim.keymap.set("n", "<C-p>", [[ i<C-p><C-\><C-n> ]], { buffer = 0 })
-          vim.keymap.set("n", "<CR>", [[ i<CR><C-\><C-n> ]], { buffer = 0 })
-          vim.keymap.set("t", "jk", [[<C-\><C-n>]], { desc = "Exit terminal mode"  })
-          vim.cmd("startinsert")
-        end
-      '';
-    }
-    {
-      event = ["TermRequest"];
-      group = "terminal-config";
-      desc = "Pass through OSC 777 notifications to parent terminal";
-      callback.__raw = ''
-        function(ev)
-          local seq = ev.data and ev.data.sequence
-          if seq and seq:match("^\027]777;") then
-            io.stdout:write(seq)
+  autoCmd =
+    [
+      {
+        event = ["TermEnter"];
+        group = "terminal-config";
+        command = "setlocal winhighlight=Normal:ActiveTerm";
+      }
+      {
+        event = ["TermLeave"];
+        group = "terminal-config";
+        command = "setlocal winhighlight=Normal:NC";
+      }
+      {
+        event = ["TermOpen"];
+        group = "terminal-config";
+        callback.__raw = ''
+          function()
+            vim.cmd([[ setlocal nonumber norelativenumber signcolumn=no ]])
+            vim.opt.scrolloff = 0
+            vim.opt.sidescrolloff = 0
+            vim.opt.guicursor:append("t:block-blinkon0")
+            vim.keymap.set("n", "<C-c>", [[ i<C-c><C-\><C-n> ]], { buffer = 0 })
+            vim.keymap.set("n", "<C-n>", [[ i<C-n><C-\><C-n> ]], { buffer = 0 })
+            vim.keymap.set("n", "<C-p>", [[ i<C-p><C-\><C-n> ]], { buffer = 0 })
+            vim.keymap.set("n", "<CR>", [[ i<CR><C-\><C-n> ]], { buffer = 0 })
+            vim.keymap.set("t", "jk", [[<C-\><C-n>]], { desc = "Exit terminal mode"  })
+            vim.cmd("startinsert")
           end
-        end
-      '';
-    }
-    {
-      event = ["TextYankPost"];
-      desc = "Highlight when yanking (copying) text";
-      group = "kickstart-highlight-yank";
-      callback.__raw = ''
-        function()
-          vim.highlight.on_yank()
-        end
-      '';
-    }
-    {
+        '';
+      }
+      {
+        event = ["TermRequest"];
+        group = "terminal-config";
+        desc = "Pass through OSC 777 notifications to parent terminal";
+        callback.__raw = ''
+          function(ev)
+            local seq = ev.data and ev.data.sequence
+            if seq and seq:match("^\027]777;") then
+              io.stdout:write(seq)
+            end
+          end
+        '';
+      }
+      {
+        event = ["TextYankPost"];
+        desc = "Highlight when yanking (copying) text";
+        group = "kickstart-highlight-yank";
+        callback.__raw = ''
+          function()
+            vim.highlight.on_yank()
+          end
+        '';
+      }
+      {
+        event = ["FileType"];
+        pattern = ["markdown"];
+        desc = "Enable soft wrapping for markdown files";
+        group = "markdown-wrap";
+        callback.__raw = ''
+          function()
+            vim.opt_local.wrap = true
+            vim.opt_local.linebreak = true
+            vim.opt_local.conceallevel = 2
+          end
+        '';
+      }
+    ]
+    # macOS only: probe the system appearance once the UI attaches, since
+    # auto-dark-mode's first poll can lag the initial colorscheme.
+    ++ lib.optional isDarwin {
       event = ["UIEnter"];
       desc = "Ensure colorscheme is applied";
       callback.__raw = ''
@@ -204,21 +240,7 @@
           end
         end
       '';
-    }
-    {
-      event = ["FileType"];
-      pattern = ["markdown"];
-      desc = "Enable soft wrapping for markdown files";
-      group = "markdown-wrap";
-      callback.__raw = ''
-        function()
-          vim.opt_local.wrap = true
-          vim.opt_local.linebreak = true
-          vim.opt_local.conceallevel = 2
-        end
-      '';
-    }
-  ];
+    };
 
   diagnostic.settings = {
     underline = true;
@@ -244,6 +266,16 @@
   };
 
   colorscheme = colors.nixvim.dark;
+  # Formatters that conform runs (must be on nvim's PATH). Without these,
+  # conform's `lsp_format = "fallback"` hands formatting to nixd, which has no
+  # formatter configured -> the RPC error on :w.
+  extraPackages = with pkgs; [
+    alejandra # nix (default)
+    nixpkgs-fmt # nix (inside nixpkgs trees)
+    stylua # lua
+    ruff # python
+    prettierd # typescript
+  ];
   extraPlugins = with pkgs.vimPlugins; [
     base16-nvim
     monokai-pro-nvim
@@ -271,33 +303,34 @@
         vim.api.nvim_set_hl(0, group, { bg = "NONE" })
       end
     end
+    ${lib.optionalString isDarwin ''
 
-    -- Boost contrast for the light colorscheme — Monokai Pro Light's defaults
-    -- are near-invisible on its #faf4f0 cream background.
-    local function boost_light_contrast()
-      if vim.o.background ~= "light" then return end
-      -- Selection: warm dark tone (~2× RGB delta from bg)
-      vim.api.nvim_set_hl(0, "Visual",       { bg = "#96865c" })
-      vim.api.nvim_set_hl(0, "VisualNOS",    { bg = "#96865c" })
-      vim.api.nvim_set_hl(0, "Search",       { bg = "#f0d78c", fg = "#272822" })
-      vim.api.nvim_set_hl(0, "IncSearch",    { bg = "#f0a878", fg = "#272822" })
-      vim.api.nvim_set_hl(0, "CurSearch",    { bg = "#f0a878", fg = "#272822" })
-      -- Cursor: make_transparent() strips CursorLine/CursorLineNr bg; restore them
-      vim.api.nvim_set_hl(0, "CursorLine",   { bg = "#e5d8c8" })
-      vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#272822", bold = true })
-      vim.api.nvim_set_hl(0, "Cursor",       { bg = "#272822", fg = "#faf4f0" })
-      -- Comments: dark warm brown instead of the near-invisible default grey
-      vim.api.nvim_set_hl(0, "Comment",      { fg = "#6b5e48" })
-      vim.api.nvim_set_hl(0, "@comment",     { fg = "#6b5e48" })
-    end
-
+      -- Boost contrast for the light colorscheme — Monokai Pro Light's defaults
+      -- are near-invisible on its #faf4f0 cream background.
+      local function boost_light_contrast()
+        if vim.o.background ~= "light" then return end
+        -- Selection: warm dark tone (~2× RGB delta from bg)
+        vim.api.nvim_set_hl(0, "Visual",       { bg = "#96865c" })
+        vim.api.nvim_set_hl(0, "VisualNOS",    { bg = "#96865c" })
+        vim.api.nvim_set_hl(0, "Search",       { bg = "#f0d78c", fg = "#272822" })
+        vim.api.nvim_set_hl(0, "IncSearch",    { bg = "#f0a878", fg = "#272822" })
+        vim.api.nvim_set_hl(0, "CurSearch",    { bg = "#f0a878", fg = "#272822" })
+        -- Cursor: make_transparent() strips CursorLine/CursorLineNr bg; restore them
+        vim.api.nvim_set_hl(0, "CursorLine",   { bg = "#e5d8c8" })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#272822", bold = true })
+        vim.api.nvim_set_hl(0, "Cursor",       { bg = "#272822", fg = "#faf4f0" })
+        -- Comments: dark warm brown instead of the near-invisible default grey
+        vim.api.nvim_set_hl(0, "Comment",      { fg = "#6b5e48" })
+        vim.api.nvim_set_hl(0, "@comment",     { fg = "#6b5e48" })
+      end
+    ''}
     -- Apply transparency after every colorscheme change
     vim.api.nvim_create_autocmd("ColorScheme", {
       group = vim.api.nvim_create_augroup("transparent-bg", { clear = true }),
       callback = function()
         make_transparent()
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
-        boost_light_contrast()
+        ${lib.optionalString isDarwin "boost_light_contrast()"}
       end,
     })
 
@@ -315,6 +348,6 @@
     -- Also apply now for the initial colorscheme
     make_transparent()
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
-    boost_light_contrast()
+    ${lib.optionalString isDarwin "boost_light_contrast()"}
   '';
 }

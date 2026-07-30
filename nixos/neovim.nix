@@ -7,7 +7,7 @@
 in {
   imports = [inputs.nixvim.nixosModules.nixvim];
 
-  programs.nixvim = import ./modules/neovim/nixvim.nix {
+  programs.nixvim = import ../modules/configs/neovim {
     inherit pkgs colors;
   };
 }

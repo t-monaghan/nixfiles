@@ -52,7 +52,7 @@ home-manager.lib.homeManagerConfiguration {
   # `self.outPath` is this flake's source in the store: a stable, immutable,
   # host-independent path that `builtins.getFlake` can resolve regardless of
   # username or where the repo is checked out. Used by nixd (see
-  # ./configs/neovim-lsp.nix) for nixpkgs + option completion.
+  # ../modules/configs/neovim/lsp.nix) for nixpkgs + option completion.
   extraSpecialArgs = {
     inherit username homeConfigName;
     flakePath = self.outPath;

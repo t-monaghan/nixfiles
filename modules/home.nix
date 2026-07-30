@@ -139,7 +139,7 @@ in {
 
     antigravity-cli.enable = true;
 
-    nixvim = import ./configs/nixvim.nix {inherit pkgs colors flakePath homeConfigName;};
+    nixvim = import ./configs/neovim {inherit pkgs colors flakePath homeConfigName;};
 
     ssh = {
       enable = true;

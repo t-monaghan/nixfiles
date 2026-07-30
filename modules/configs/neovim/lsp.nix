@@ -1,4 +1,11 @@
-{...}: {
+# `flakePath` + `homeConfigName` arrive via `_module.args` (see ./default.nix).
+# On the Macs they point nixd at this flake; on the NixOS box they are null
+# and nixd falls back to the channel-based `<nixpkgs>` expressions.
+{
+  flakePath,
+  homeConfigName,
+  ...
+}: {
   plugins.lsp = {
     enable = true;
 
@@ -12,14 +19,27 @@
         enable = true;
         # These settings are what unlock nixd's best features. Without them it
         # falls back to generic AST completion (~nil-tier).
-        settings = {
-          # Non-flake: nixd resolves nixpkgs + NixOS options via the channel
-          # (<nixpkgs> comes from NIX_PATH, which channel-based nixos-rebuild sets).
-          nixpkgs.expr = "import <nixpkgs> { }";
-          options.nixos.expr = "(import <nixpkgs/nixos> { configuration = { }; }).options";
-          # Formatting is handled by conform (alejandra), so nixd formatting is
-          # intentionally left unset.
-        };
+        # Formatting is handled by conform (alejandra), so nixd formatting is
+        # intentionally left unset in both branches.
+        settings =
+          if flakePath != null
+          then {
+            # `builtins.getFlake "${flakePath}"` resolves this flake's store
+            # source (self.outPath) — stable and identical on every host, so no
+            # path or username guessing. Reflects the option schema as of the
+            # last rebuild.
+            # Package-name completion + eval-based hover from this flake's nixpkgs.
+            nixpkgs.expr = ''import (builtins.getFlake "${flakePath}").inputs.nixpkgs { }'';
+            # Option-aware completion + hover docs for this host's home-manager
+            # options (home.*, programs.*, services.*, ...).
+            options.home-manager.expr = ''(builtins.getFlake "${flakePath}").homeConfigurations.${homeConfigName}.options'';
+          }
+          else {
+            # Non-flake: nixd resolves nixpkgs + NixOS options via the channel
+            # (<nixpkgs> comes from NIX_PATH, which channel-based nixos-rebuild sets).
+            nixpkgs.expr = "import <nixpkgs> { }";
+            options.nixos.expr = "(import <nixpkgs/nixos> { configuration = { }; }).options";
+          };
       };
       taplo.enable = true;
       ty.enable = true;

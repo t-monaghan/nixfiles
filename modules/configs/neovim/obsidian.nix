@@ -1,7 +1,13 @@
-{pkgs, ...}: {
+# `isDarwin` arrives via `_module.args` (see ./default.nix). The Obsidian
+# vault only exists on the Macs, so the plugin stays off on the NixOS box.
+{
+  pkgs,
+  isDarwin,
+  ...
+}: {
   plugins = {
     obsidian = {
-      enable = true;
+      enable = isDarwin;
       settings = {
         workspaces = [
           {
