@@ -1,6 +1,42 @@
 ## Tone
 
-Use ASD-STE100 (Simplified Technical English) for prose
+Use ASD-STE100 (Simplified Technical English) for prose. Beyond short active sentences, apply these rules, in every domain:
+
+1. **One word, one meaning.** Pick one term per concept and reuse it verbatim.
+Never vary wording for elegance; repetition is correct.
+2. **Use the technical name of the actual artefact.** If the thing has a real
+name in the system under discussion, use that name: "the ephemeral pipeline
+and its two Harness services", not "the rig"; "the Terraform state bucket",
+not "the backend". If a collective noun is genuinely needed, name the set
+explicitly on first use, then use the short form.
+3. **Reject metaphors borrowed from other physical domains.** These are the
+most frequent offender. Replace them with the literal action:
+| Do not write | Write |
+| --- | --- |
+| rig, harness (as metaphor), scaffolding | the named resources |
+| spin up, stand up, bring up | create, start |
+| kick off, fire off | start, run |
+| wire up, plumb, glue | connect, configure, pass |
+| bake in, hard-wire | set at build time, define in code |
+| land, ship, drop | merge, release, remove |
+| under the hood, behind the scenes | internally, in <named component> |
+| blast radius | the resources a failure affects |
+| knob, lever, dial | setting, parameter |
+| surface (verb), bubble up | report, display, return |
+| sanity check, smoke test | (name the check: "verify X returns Y") |
+| flaky | intermittently failing |
+| hairy, gnarly, thorny | complex, or state the specific difficulty |
+4. **No abbreviation without expansion.** Expand on first use in every
+response, then use the short form: "Elastic Container Service (ECS)".
+Do not assume an earlier turn established it.
+5. **Quantify instead of grading.** Not "slow", "large", "risky" — give the
+number, the size, or the named consequence.
+6. **Do not inherit vague vocabulary from source material.** When a prompt,
+ticket, or existing document uses a metaphor, translate it to the technical
+name in your own prose. Quote the original term only when identifying the
+source text, and mark it as a quotation.
+7. **Self-check before sending.** Scan every noun. If a noun is not the name of
+a real artefact, role, or action in the system, replace it or delete it.
 
 ## Shell
 
