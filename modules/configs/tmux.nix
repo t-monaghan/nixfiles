@@ -1,7 +1,16 @@
+# Colours here name ANSI slots rather than hex values, so they follow the
+# terminal's palette — which Ghostty sets per appearance mode from
+# ./colours.nix. tmux doesn't participate in system light/dark switching itself,
+# so this is what makes the pane border readable in both modes:
+#
+#   yellow / cyan / brightblack   base0A / base0C / base03
+#   colour16                      base09, orange (no ANSI equivalent)
+#   colour18                      base01, the lighter background
+#   colour20                      base04, a mid-tone readable in BOTH modes
+#                                 (this replaced a hand-picked hex value)
 {
   pkgs,
   lib,
-  colors,
   ...
 }: let
   # Preview is piped through `tail` so the bottom of the pane (where the action is)
@@ -97,7 +106,7 @@ in {
     set -g status off
     set -g detach-on-destroy off
     set -g pane-border-status top
-    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=${colors.warn}]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=${colors.accent_alt} bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=${colors.orange}],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=${colors.warn}],#[fg=${colors.tmux.active}]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+    set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=yellow]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=colour16],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=yellow],#[fg=colour20]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
     bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
     bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
@@ -113,7 +122,7 @@ in {
     bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
 
     # Highlight active pane background when prefix is pressed
-    bind -Troot C-b select-pane -P 'bg=${colors.bg1}' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
+    bind -Troot C-b select-pane -P 'bg=colour18' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
 
     # Open sesh picker instead of default session tree
     unbind s

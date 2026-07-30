@@ -45,14 +45,15 @@ modules/               # home-manager modules
   home.nix             # Mac packages + program configs (imports shell.nix)
   shell.nix            # shared shell + CLI tooling used by ALL three machines
   configs/             # imported config files (tmux, fish, etc.)
+    colours.nix        # the two base16 palettes (dark/light) every program derives from
+    neovim/            # nixvim config, shared by ALL three machines
   work/culture-amp/    # work-specific config (optional module)
 nixos/                 # dolomite full-system config
   configuration.nix    # dolomite host config (wires in home-manager)
   home.nix             # dolomite's home-manager user config (imports shell.nix)
   hardware-configuration.nix
-  neovim.nix           # system-wide nixvim
-  lib/colours.nix      # shared colour palette
-  modules/             # home-assistant + neovim modules
+  neovim.nix           # system-wide nixvim (imports ../modules/configs/neovim)
+  modules/             # home-assistant + chip-ota-provider-app modules
 private-stub/          # empty default for the optional `private` overlay input
 scripts/switch         # build + switch a config ({nixos|work|personal})
 ```

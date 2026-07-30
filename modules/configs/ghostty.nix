@@ -1,9 +1,35 @@
-{colors, ...}: let
+{
+  colors,
+  lib,
+  ...
+}: let
   fonts = import ./fonts.nix;
+
+  # A Ghostty theme file built from one of our palettes. Ghostty resolves theme
+  # names against $XDG_CONFIG_HOME/ghostty/themes, so these are our own files,
+  # not upstream themes — the name is a filename, not a choice of colours.
+  #
+  # `palette` entries are "<index>=<hex>"; home-manager writes the list as
+  # repeated `palette = …` lines. The index order is base16's, defined once in
+  # ./colours.nix, and is what lets bat, fish, tmux and starship follow the mode.
+  mkTheme = p: {
+    background = p.base00;
+    foreground = p.base05;
+    cursor-color = p.base05;
+    selection-background = p.base02;
+    selection-foreground = p.base05;
+    palette = lib.imap0 (i: hex: "${toString i}=${hex}") (colors.terminalPalette p);
+  };
 in {
   enable = true;
   package = null;
   enableFishIntegration = true;
+
+  themes = {
+    nixfiles-dark = mkTheme colors.palettes.dark;
+    nixfiles-light = mkTheme colors.palettes.light;
+  };
+
   settings = {
     auto-update = "download";
     auto-update-channel = "tip";
@@ -18,7 +44,7 @@ in {
     clipboard-trim-trailing-spaces = true;
     copy-on-select = "clipboard";
 
-    theme = "light:${colors.ghostty.light},dark:${colors.ghostty.dark}";
+    theme = "light:nixfiles-light,dark:nixfiles-dark";
     cursor-style = "block";
     cursor-invert-fg-bg = true;
     cursor-opacity = 0.7;

@@ -1,7 +1,9 @@
+# Colours here name ANSI slots rather than hex values, so they follow the
+# terminal's palette — which Ghostty sets per appearance mode from
+# ./colours.nix. Nothing to switch, and no palette argument needed.
 {
   pkgs,
   lib,
-  colors,
   ...
 }: {
   enable = true;
@@ -11,7 +13,7 @@
     fish_add_path $HOME/.npm-global/bin
     fish_add_path $HOME/go/bin
 
-    set -gx fish_color_autosuggestion ${colors.info}
+    set -gx fish_color_autosuggestion blue
     set -gx AWTRIX_HOST 192.168.1.97
     set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
 

@@ -13,9 +13,7 @@
   lib,
   config,
   ...
-}: let
-  colors = import ./configs/colours.nix;
-in {
+}: {
   # CLI baseline shared across machines. Programs with their own home-manager
   # module (ripgrep, fd, bat, …) are configured below rather than listed here.
   home.packages = with pkgs; [
@@ -38,7 +36,7 @@ in {
   home.sessionVariables._ZO_EXCLUDE_DIRS = "${config.home.homeDirectory}/**/.worktrees/**";
 
   programs = {
-    fish = import ./configs/fish.nix {inherit pkgs lib colors;};
+    fish = import ./configs/fish.nix {inherit pkgs lib;};
 
     # --- shell-integrated tooling -------------------------------------------
     ripgrep.enable = true;
@@ -79,8 +77,11 @@ in {
     bat = {
       enable = true;
       config = {
-        theme-dark = colors.bat.dark;
-        theme-light = colors.bat.light;
+        # `base16` renders through ANSI 0–21 instead of hex, so bat follows the
+        # terminal's palette — which Ghostty sets per appearance mode from
+        # ./configs/colours.nix. One theme covers both modes, so there is no
+        # theme-dark / theme-light to keep in step.
+        theme = "base16";
       };
     };
 
@@ -88,7 +89,7 @@ in {
       enable = true;
       enableFishIntegration = true;
       enableTransience = true;
-      settings = import ./configs/starship.nix {inherit colors;};
+      settings = import ./configs/starship.nix {};
     };
 
     fzf = {
@@ -120,7 +121,7 @@ in {
       };
     };
 
-    tmux = import ./configs/tmux.nix {inherit pkgs lib colors;};
+    tmux = import ./configs/tmux.nix {inherit pkgs lib;};
 
     sesh = {
       enable = true;

@@ -3,7 +3,8 @@
   inputs,
   ...
 }: let
-  colors = import ./lib/colours.nix;
+  # Shared with the Macs (see ../modules/configs/colours.nix).
+  colors = import ../modules/configs/colours.nix;
 in {
   imports = [inputs.nixvim.nixosModules.nixvim];
 

@@ -8,6 +8,10 @@
 }: let
   fonts = import ./configs/fonts.nix;
   colors = import ./configs/colours.nix;
+  # Alacritty and jankyborders have no system-appearance hook, so they cannot
+  # follow light/dark the way Ghostty, Neovim, bat and Zed do. Both take the
+  # dark palette (see ./configs/colours.nix).
+  palette = colors.palettes.dark;
 in {
   imports = [
     ./shell.nix
@@ -102,7 +106,7 @@ in {
     jankyborders = {
       enable = true;
       settings = {
-        active_color = "0xff${builtins.substring 1 6 colors.accent}";
+        active_color = "0xff${builtins.substring 1 6 palette.base0B}"; # green
         hidpi = "on";
         width = 8;
       };
@@ -178,7 +182,7 @@ in {
       settings = import ./configs/aerospace.nix {aerospace = config.programs.aerospace.package;};
     };
 
-    ghostty = import ./configs/ghostty.nix {inherit colors;};
+    ghostty = import ./configs/ghostty.nix {inherit colors lib;};
 
     alacritty = {
       enable = true;
@@ -199,28 +203,28 @@ in {
         };
         colors = {
           primary = {
-            background = colors.base00;
-            foreground = colors.base05;
+            background = palette.base00;
+            foreground = palette.base05;
           };
           normal = {
-            black = colors.base00;
-            red = colors.base08;
-            green = colors.base0B;
-            yellow = colors.base0A;
-            blue = colors.base0D;
-            magenta = colors.base0E;
-            cyan = colors.base0C;
-            white = colors.base06;
+            black = palette.base00;
+            red = palette.base08;
+            green = palette.base0B;
+            yellow = palette.base0A;
+            blue = palette.base0D;
+            magenta = palette.base0E;
+            cyan = palette.base0C;
+            white = palette.base06;
           };
           bright = {
-            black = colors.base03;
-            red = colors.base08;
-            green = colors.base0B;
-            yellow = colors.base0A;
-            blue = colors.base0D;
-            magenta = colors.base0E;
-            cyan = colors.base0C;
-            white = colors.base07;
+            black = palette.base03;
+            red = palette.base08;
+            green = palette.base0B;
+            yellow = palette.base0A;
+            blue = palette.base0D;
+            magenta = palette.base0E;
+            cyan = palette.base0C;
+            white = palette.base07;
           };
         };
         mouse.hide_when_typing = true;

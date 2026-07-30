@@ -7,8 +7,13 @@
 # - `flakePath` + `homeConfigName` (Mac only): nixd resolves nixpkgs and
 #   home-manager options from this flake. When absent (NixOS), nixd falls back
 #   to the channel-based `<nixpkgs>` expressions — see ./lsp.nix.
-# - `pkgs.stdenv.isDarwin`: gates the macOS `defaults read` light/dark probe,
-#   the Monokai-light contrast overrides, and the Obsidian plugin.
+# - `pkgs.stdenv.isDarwin`: gates the macOS `defaults read` light/dark probe and
+#   the Obsidian plugin.
+#
+# Colours come from the two palettes in ../colours.nix, handed to base16-nvim as
+# hex slots. No colorscheme is named here: `colorschemes.base16.colorscheme`
+# takes the slots directly, and auto-dark-mode swaps palettes at runtime by
+# calling `setup` again.
 {
   pkgs,
   colors,
@@ -18,6 +23,11 @@
 }: let
   inherit (pkgs) lib;
   isDarwin = pkgs.stdenv.isDarwin;
+
+  inherit (colors) palettes;
+  # base16-nvim's `setup` takes the 16 slots as a Lua table. The palettes hold
+  # nothing else, so every attribute is emitted.
+  toLuaTable = p: "{ ${lib.concatStringsSep " " (lib.mapAttrsToList (slot: hex: ''${slot} = "${hex}",'') p)} }";
 in {
   enable = true;
   defaultEditor = true;
@@ -231,13 +241,7 @@ in {
       callback.__raw = ''
         function()
           local mode = vim.fn.system("defaults read -g AppleInterfaceStyle 2>/dev/null"):gsub("%s+", "")
-          if mode == "Dark" then
-            vim.o.background = "dark"
-            vim.cmd.colorscheme("${colors.nixvim.dark}")
-          else
-            vim.o.background = "light"
-            vim.cmd.colorscheme("${colors.nixvim.light}")
-          end
+          _G.nixfiles_set_appearance(mode == "Dark" and "dark" or "light")
         end
       '';
     };
@@ -265,7 +269,13 @@ in {
     };
   };
 
-  colorscheme = colors.nixvim.dark;
+  # Dark is the startup palette; auto-dark-mode switches to light below if the
+  # system is in light mode.
+  colorschemes.base16 = {
+    enable = true;
+    colorscheme = palettes.dark;
+  };
+
   # Formatters that conform runs (must be on nvim's PATH). Without these,
   # conform's `lsp_format = "fallback"` hands formatting to nixd, which has no
   # formatter configured -> the RPC error on :w.
@@ -276,10 +286,7 @@ in {
     ruff # python
     prettierd # typescript
   ];
-  extraPlugins = with pkgs.vimPlugins; [
-    base16-nvim
-    monokai-pro-nvim
-  ];
+  # base16-nvim itself comes from `colorschemes.base16` above.
 
   extraConfigLua = ''
     vim.schedule(function()
@@ -303,51 +310,53 @@ in {
         vim.api.nvim_set_hl(0, group, { bg = "NONE" })
       end
     end
-    ${lib.optionalString isDarwin ''
 
-      -- Boost contrast for the light colorscheme — Monokai Pro Light's defaults
-      -- are near-invisible on its #faf4f0 cream background.
-      local function boost_light_contrast()
-        if vim.o.background ~= "light" then return end
-        -- Selection: warm dark tone (~2× RGB delta from bg)
-        vim.api.nvim_set_hl(0, "Visual",       { bg = "#96865c" })
-        vim.api.nvim_set_hl(0, "VisualNOS",    { bg = "#96865c" })
-        vim.api.nvim_set_hl(0, "Search",       { bg = "#f0d78c", fg = "#272822" })
-        vim.api.nvim_set_hl(0, "IncSearch",    { bg = "#f0a878", fg = "#272822" })
-        vim.api.nvim_set_hl(0, "CurSearch",    { bg = "#f0a878", fg = "#272822" })
-        -- Cursor: make_transparent() strips CursorLine/CursorLineNr bg; restore them
-        vim.api.nvim_set_hl(0, "CursorLine",   { bg = "#e5d8c8" })
-        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#272822", bold = true })
-        vim.api.nvim_set_hl(0, "Cursor",       { bg = "#272822", fg = "#faf4f0" })
-        -- Comments: dark warm brown instead of the near-invisible default grey
-        vim.api.nvim_set_hl(0, "Comment",      { fg = "#6b5e48" })
-        vim.api.nvim_set_hl(0, "@comment",     { fg = "#6b5e48" })
-      end
-    ''}
-    -- Apply transparency after every colorscheme change
+    local base16 = require("base16-colorscheme")
+
+    local palettes = {
+      dark = ${toLuaTable palettes.dark},
+      light = ${toLuaTable palettes.light},
+    }
+
+    -- Floating windows sit one step off the background: base01 of the palette
+    -- in use.
+    local float_bg = {
+      dark = "${palettes.dark.base01}",
+      light = "${palettes.light.base01}",
+    }
+
+    -- The one place that changes palette. base16-nvim's `setup` assigns
+    -- highlights directly instead of running `:colorscheme`, so it fires no
+    -- ColorScheme event and every call resets Normal's background to base00 --
+    -- which undoes the transparency. Re-apply the overrides here, after each
+    -- `setup`, or the background turns opaque on the first appearance poll.
+    function _G.nixfiles_set_appearance(mode)
+      vim.o.background = mode
+      base16.setup(palettes[mode])
+      make_transparent()
+      vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg[mode] })
+    end
+
+    -- A manual `:colorscheme` does fire the event, so keep honouring it.
     vim.api.nvim_create_autocmd("ColorScheme", {
       group = vim.api.nvim_create_augroup("transparent-bg", { clear = true }),
       callback = function()
         make_transparent()
-        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
-        ${lib.optionalString isDarwin "boost_light_contrast()"}
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg[vim.o.background] })
       end,
     })
 
     require("auto-dark-mode").setup({
       set_dark_mode = function()
-        vim.o.background = "dark"
-        vim.cmd.colorscheme("${colors.nixvim.dark}")
+        _G.nixfiles_set_appearance("dark")
       end,
       set_light_mode = function()
-        vim.o.background = "light"
-        vim.cmd.colorscheme("${colors.nixvim.light}")
+        _G.nixfiles_set_appearance("light")
       end,
     })
 
-    -- Also apply now for the initial colorscheme
-    make_transparent()
-    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "${colors.bg1}" })
-    ${lib.optionalString isDarwin "boost_light_contrast()"}
+    -- Apply now: nixvim ran its own `base16.setup` before this file, so the
+    -- overrides are not yet in place.
+    _G.nixfiles_set_appearance(vim.o.background)
   '';
 }
