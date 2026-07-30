@@ -6,7 +6,7 @@ in {
   enableFishIntegration = true;
   settings = {
     auto-update = "download";
-    auto-update-channel = "stable";
+    auto-update-channel = "tip";
 
     keybind = "global:ctrl+grave_accent=toggle_secure_input";
 

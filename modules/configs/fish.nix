@@ -355,6 +355,7 @@
     // lib.optionalAttrs pkgs.stdenv.isDarwin {
       zed = "open -a 'Zed Preview' . && exit";
       disu = "caffeinate -disu";
+      ssh = "ghostty +ssh --";
     };
 
   plugins = [
