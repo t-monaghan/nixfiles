@@ -55,23 +55,6 @@ PR descriptions should include the following sections:
 
 Never comment on GitHub on behalf of the user without being asked to.
 
-## OpenSpec
-
-This user uses [fission-ai/openspec](https://github.com/fission-ai/openspec) for spec-driven development. Run it with:
-
-```bash
-npx @fission-ai/openspec@latest <command>
-```
-
-### Common commands
-
-- `npx @fission-ai/openspec@latest init` — Initialize OpenSpec in a project
-- `npx @fission-ai/openspec@latest list` — List changes and specs
-- `npx @fission-ai/openspec@latest view` — Interactive terminal dashboard
-- `npx @fission-ai/openspec@latest validate` — Check artifacts for structural issues
-- `npx @fission-ai/openspec@latest archive` — Finalize completed changes
-- `npx @fission-ai/openspec@latest status` — Display artifact completion progress
-
 ## Worktrunk (`wt`)
 
 This user manages git worktrees for parallel agent workflows with [worktrunk](https://worktrunk.dev) (`github.com/max-sixty/worktrunk`). The binary is `wt`. Worktrees share the repository's tracked files but **not** untracked/gitignored files (secrets, `.env`, build caches) — those are handled by hooks (see below). The user config is managed declaratively in nix (`modules/configs/worktrunk.nix` + `modules/configs/worktrunk-config.toml`) — edit those rather than `~/.config/worktrunk/config.toml`.
