@@ -1,4 +1,4 @@
-## Tone
+# Tone
 
 Use ASD-STE100 (Simplified Technical English) for prose. Beyond short active sentences, apply these rules, in every domain:
 
@@ -38,10 +38,15 @@ source text, and mark it as a quotation.
 7. **Self-check before sending.** Scan every noun. If a noun is not the name of
 a real artefact, role, or action in the system, replace it or delete it.
 
-## Shell
+# Shell
 
 The user uses the fish shell, all shell commands should use fish syntax
 
+# Code comments
+
+Only leave code comments in areas of unclear, non-idiomatic, or complex/magic looking code. Explanations of the intent of code is best left in READMEs.
+
+# PRs
 ## PR Format
 
 PR descriptions should include the following sections:
@@ -55,11 +60,11 @@ PR descriptions should include the following sections:
 
 Never comment on GitHub on behalf of the user without being asked to.
 
-## Worktrunk (`wt`)
+# Worktrunk (`wt`)
 
 This user manages git worktrees for parallel agent workflows with [worktrunk](https://worktrunk.dev) (`github.com/max-sixty/worktrunk`). The binary is `wt`. Worktrees share the repository's tracked files but **not** untracked/gitignored files (secrets, `.env`, build caches) — those are handled by hooks (see below). The user config is managed declaratively in nix (`modules/configs/worktrunk.nix` + `modules/configs/worktrunk-config.toml`) — edit those rather than `~/.config/worktrunk/config.toml`.
 
-### Common commands
+## Common commands
 
 - `wt switch --create <branch>` (`-c`) — Create a worktree + branch and `cd` into it
 - `wt switch <branch>` — Switch to an existing worktree (creates if needed)
@@ -73,7 +78,7 @@ This user manages git worktrees for parallel agent workflows with [worktrunk](ht
 - `wt hook <type> [name]` — Run a hook on demand (handy for testing); `--yes` skips approval prompts
 - `-v` / `-vv` — Verbose; prints resolved template variables for hooks/aliases
 
-### Config files
+## Config files
 
 Manage with `wt config create` (user) and `wt config create --project` (project); `wt config show` prints locations and the current project identifier; `wt config shell install` installs shell integration (required for `cd`).
 
@@ -99,7 +104,7 @@ worktree-path = "{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}"
 
 Worktrees are kept **inside** the repo (under `.worktrees/`, globally gitignored) rather than as siblings. This is because pi runs in a sandbox whose only writable tree is the repo it launched in (`.`) plus the `.git` dirs at `../.git`, `../../.git`, and `../../../.git` — a sibling worktree lands in `~/dev` (read-only), so pi could create it but never `wt remove` it. In-repo worktrees keep both the working dir and `.git` metadata writable, so pi can create **and** clean them up.
 
-### Hooks
+## Hooks
 
 Hooks are shell commands run at lifecycle points. `pre-*` hooks **block** (failure aborts the operation); `post-*` run in the **background** (output logged, find with `wt config state logs`). User hooks run first and need no approval; project hooks run after and require approval.
 
@@ -115,7 +120,7 @@ Forms (chosen by TOML shape): a string is one command; a `[table]` runs commands
 
 Key template variables: `{{ branch }}`, `{{ worktree_path }}`, `{{ primary_worktree_path }}`, `{{ repo }}`, `{{ repo_path }}`, `{{ default_branch }}`, `{{ target }}`, and `{{ worktree_path_of_branch('main') }}`. Variables are auto shell-escaped — don't quote `{{ ... }}`.
 
-#### Grabbing secrets / untracked files into new worktrees
+### Grabbing secrets / untracked files into new worktrees
 
 Gitignored files (secrets, `.env`, caches) don't exist in a fresh worktree. The user's secret file is `.envrc.private` (sourced by a tracked `.envrc` via direnv). It's copied into each new worktree on creation by a `pre-start` user hook in `modules/configs/worktrunk-config.toml` (applies to every repo, no approval needed):
 
