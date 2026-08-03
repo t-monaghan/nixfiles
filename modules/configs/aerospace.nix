@@ -9,7 +9,11 @@ in {
     launchd.enable = true;
 
     settings = {
+      config-version = 2;
       start-at-login = true;
+
+      persistent-workspaces = ["1" "2" "3" "4" "5" "6" "7"];
+
       enable-normalization-opposite-orientation-for-nested-containers = false;
       enable-normalization-flatten-containers = false;
       default-root-container-orientation = "auto";
