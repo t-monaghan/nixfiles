@@ -62,8 +62,6 @@ in {
 
       macos-option-as-alt = "right";
       macos-titlebar-style = "hidden";
-      macos-icon = "retro";
-      macos-icon-frame = "plastic";
       shell-integration = "fish";
       shell-integration-features = "no-cursor";
 
