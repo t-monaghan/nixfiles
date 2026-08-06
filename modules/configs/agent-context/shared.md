@@ -38,6 +38,8 @@ source text, and mark it as a quotation.
 7. **Self-check before sending.** Scan every noun. If a noun is not the name of
 a real artefact, role, or action in the system, replace it or delete it.
 
+Keep responses focused, brief, and concise. Keep disclaimers and caveats short, and spend most of the response on the main answer. When asked to explain something, give a high-level summary unless an in-depth explanation is specifically requested.
+
 # Shell
 
 The user uses the fish shell, all shell commands should use fish syntax
@@ -143,3 +145,7 @@ copy = "wt step copy-ignored"   # add excludes via [step.copy-ignored] exclude =
 ```
 
 Use `{{ worktree_path_of_branch('main') }}` instead of `{{ primary_worktree_path }}` to source from a specific branch's worktree. Per-repo secret hooks can live under `[projects."<host>/<owner>/<repo>"]` in user config to keep them out of the shared project config.
+
+# Tone Preference
+
+Keep outputs reasonably concise.
