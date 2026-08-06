@@ -9,9 +9,9 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
     defaultProvider = "github-copilot";
     defaultModel = "claude-opus-4-8";
     enabledModels = [
-      "anthropic/claude-opus-5"
+      "github-copilot/claude-opus-4.8"
+      "github-copilot/claude-sonnet-4.6"
       "anthropic/claude-fable-5"
-      "github-copilot/claude-sonnet-5"
     ];
   };
 
