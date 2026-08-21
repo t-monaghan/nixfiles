@@ -8,6 +8,7 @@
     ./neovim.nix
     ./modules/home-assistant.nix
     inputs.spendable.nixosModules.default
+    inputs.agenix.nixosModules.default
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
@@ -36,7 +37,6 @@
       vim
       tree
       parted
-      agenix-cli
       age
       lsof
       dig
@@ -45,6 +45,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGumOqP9Fp+Ozt4aNyj6CMOdxdcs+LbhZACc4DdgD6U2 tomaghan@gmail.com"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN+b+a2qqmf90tuwcKHrVGCL41PRmQvL/BU2kXhhxA5J cultureamp-2026"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILA8fMUiRTSP7vgj5ezBhhAeFJNlTQFgjdZf3WeYlHOf #SSH ID - @tmonaghan"
     ];
   };
 
@@ -125,7 +126,7 @@
         filtering.rewrites = [
           {
             domain = "*.dolomite.lan";
-            answer = "192.168.1.215";
+            answer = "100.106.57.115";
             enabled = true;
           }
         ];
