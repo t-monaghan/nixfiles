@@ -292,7 +292,7 @@
         # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
         s = "sesh picker -i";
         nv = "nvim";
-        nd = "nvim +'Obsidian today'";
+        nd = "nvim ~/notes/notes.md";
 
         ci = "gh altar ci > /dev/null 2>&1 & disown";
         dismiss = "curl 'http://192.168.1.97/api/notify/dismiss'";

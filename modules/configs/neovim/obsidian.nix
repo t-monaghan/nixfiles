@@ -19,6 +19,11 @@
           min_chars = 2;
         };
         new_notes_location = "current_dir";
+        frontmatter.enabled.__raw = ''
+          function(fname)
+            return not fname:match("notes%.md$")
+          end
+        '';
         note_id_func.__raw = ''
           function(title)
             if title ~= nil then
@@ -80,7 +85,7 @@
     {
       mode = "n";
       key = "<leader>od";
-      action = "<cmd>Obsidian today<CR>";
+      action = "<cmd>edit ~/notes/notes.md<CR>";
       options.desc = "[O]bsidian [D]aily note";
     }
     {
@@ -180,19 +185,13 @@
     }
     {
       mode = "n";
-      key = "<leader>op";
-      action = "<cmd>Obsidian yesterday<CR>";
-      options.desc = "[O]bsidian [P]revious";
-    }
-    {
-      mode = "n";
       key = "<leader>ot";
       action.__raw = ''
         function()
           local entry_display = require('telescope.pickers.entry_display')
           require('telescope.builtin').grep_string({
             search = '- [ ]',
-            cwd = vim.fn.expand('~/notes/daily'),
+            cwd = vim.fn.expand('~/notes'),
             prompt_title = 'Open Todos',
             only_sort_text = true,
             disable_coordinates = true,
