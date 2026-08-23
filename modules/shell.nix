@@ -52,6 +52,9 @@
     gh = {
       enable = true;
       gitCredentialHelper.enable = true;
+      settings = {
+        color_labels = true;
+      };
     };
 
     difftastic = {
