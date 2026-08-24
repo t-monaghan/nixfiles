@@ -122,16 +122,6 @@
             "1.0.0.1"
           ];
         };
-        # Resolve every *.dolomite.lan subdomain to this box so the Caddy
-        # reverse proxy (see the private module) can route each service.
-        # NOTE: set this to dolomite's LAN IP (give it a DHCP reservation).
-        filtering.rewrites = [
-          {
-            domain = "*.dolomite.lan";
-            answer = "100.106.57.115";
-            enabled = true;
-          }
-        ];
       };
     };
   };
