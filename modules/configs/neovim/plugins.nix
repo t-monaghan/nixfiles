@@ -16,7 +16,7 @@
     flash = {
       enable = true;
       settings = {
-        modes.search.enabled = true;
+        modes.search.enabled = false;
         modes.char.enabled = false;
       };
     };
