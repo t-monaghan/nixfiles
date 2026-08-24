@@ -347,11 +347,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785106517,
-        "narHash": "sha256-AICIkO3hQKqFEciOoE57jFFA8rMb1K95oee9Lz1/vVs=",
+        "lastModified": 1785192295,
+        "narHash": "sha256-FL0Nw3L3OvVD82NUkPCKYwBPtcPcg5A7IBILyg5JOHM=",
         "owner": "t-monaghan",
         "repo": "spendable",
-        "rev": "9945b9c3168e0f37b7d03ae8760edd25ed2b3778",
+        "rev": "85e2fc840c5c656a965f87fbc5c6cf066593ebbc",
         "type": "github"
       },
       "original": {
