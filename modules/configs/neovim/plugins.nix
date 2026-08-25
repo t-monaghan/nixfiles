@@ -193,7 +193,7 @@
             function(bufnr)
               local path = vim.api.nvim_buf_get_name(bufnr)
               if path:match("%.hujson$") then
-                return {"hujsonfmt"}
+                return {"hujsonfmt_spaces"}
               end
               return {}
             end
@@ -214,8 +214,8 @@
           python = ["ruff"];
           typescript = ["prettierd"];
         };
-        formatters.hujsonfmt = {
-          command = "hujsonfmt";
+        formatters.hujsonfmt_spaces = {
+          command = "hujsonfmt-spaces";
           stdin = true;
         };
       };

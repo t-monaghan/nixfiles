@@ -30,6 +30,23 @@
   # base16-nvim's `setup` takes the 16 slots as a Lua table. The palettes hold
   # nothing else, so every attribute is emitted.
   toLuaTable = p: "{ ${lib.concatStringsSep " " (lib.mapAttrsToList (slot: hex: ''${slot} = "${hex}",'') p)} }";
+
+  hujsonfmtSpaces = pkgs.writeShellApplication {
+    name = "hujsonfmt-spaces";
+    runtimeInputs = with pkgs; [
+      gawk
+      hujsonfmt
+    ];
+    text = ''
+      hujsonfmt "$@" | gawk '{
+        indentation = ""
+        while (sub(/^\t/, "")) {
+          indentation = indentation "  "
+        }
+        print indentation $0
+      }'
+    '';
+  };
 in {
   programs.nixvim = {
     enable = true;
@@ -56,6 +73,10 @@ in {
       # auto-enables this when $COLORTERM=truecolor is set — which SSH doesn't
       # forward. Without it, colours don't render over SSH (white-on-black).
       termguicolors = true;
+      expandtab = true;
+      shiftwidth = 2;
+      softtabstop = 2;
+      tabstop = 2;
       number = true;
       mouse = "a";
       showmode = false;
@@ -284,7 +305,7 @@ in {
     # formatter configured -> the RPC error on :w.
     extraPackages = with pkgs; [
       alejandra # nix (default)
-      hujsonfmt # hujson
+      hujsonfmtSpaces # hujson
       nixpkgs-fmt # nix (inside nixpkgs trees)
       stylua # lua
       ruff # python
