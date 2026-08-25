@@ -66,6 +66,9 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
         };
         lifecycle = "lazy";
       };
+      datadog = {
+        url = "https://mcp.datadoghq.com/v1/mcp";
+      };
       atlassian = {
         url = "https://mcp.atlassian.com/v1/sse";
         auth = "oauth";
