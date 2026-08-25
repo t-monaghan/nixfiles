@@ -43,7 +43,15 @@
       };
       taplo.enable = true;
       ty.enable = true;
-      jsonls.enable = true;
+      jsonls = {
+        enable = true;
+        settings.json.schemas = [
+          {
+            fileMatch = ["*.hujson"];
+            schema.allowTrailingCommas = true;
+          }
+        ];
+      };
       ruff.enable = true;
       yamlls.enable = true;
       terraformls.enable = true;

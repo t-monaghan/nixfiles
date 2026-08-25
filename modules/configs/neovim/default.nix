@@ -284,6 +284,7 @@ in {
     # formatter configured -> the RPC error on :w.
     extraPackages = with pkgs; [
       alejandra # nix (default)
+      hujsonfmt # hujson
       nixpkgs-fmt # nix (inside nixpkgs trees)
       stylua # lua
       ruff # python
@@ -292,6 +293,12 @@ in {
     # base16-nvim itself comes from `colorschemes.base16` above.
 
     extraConfigLua = ''
+      vim.filetype.add({
+        extension = {
+          hujson = "jsonc",
+        },
+      })
+
       vim.schedule(function()
         vim.opt.clipboard = "unnamedplus"
       end)

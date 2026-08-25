@@ -189,6 +189,15 @@
           end
         '';
         formatters_by_ft = {
+          jsonc.__raw = ''
+            function(bufnr)
+              local path = vim.api.nvim_buf_get_name(bufnr)
+              if path:match("%.hujson$") then
+                return {"hujsonfmt"}
+              end
+              return {}
+            end
+          '';
           lua = ["stylua"];
           nix = {
             __raw = ''
@@ -204,6 +213,10 @@
           };
           python = ["ruff"];
           typescript = ["prettierd"];
+        };
+        formatters.hujsonfmt = {
+          command = "hujsonfmt";
+          stdin = true;
         };
       };
     };
