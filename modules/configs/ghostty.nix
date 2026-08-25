@@ -32,7 +32,7 @@ in {
 
     settings = {
       auto-update = "download";
-      auto-update-channel = "tip";
+      auto-update-channel = "stable";
 
       keybind = "global:ctrl+grave_accent=toggle_secure_input";
 
