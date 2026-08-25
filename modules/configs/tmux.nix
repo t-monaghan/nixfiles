@@ -136,12 +136,12 @@ in {
       # Switch windows via fzf picker (only if multiple windows)
       bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
 
-      # Jump to last (MRU) window, or fall back to last session when there's only one window.
-      # `l` is taken by pane navigation, so use Tab.
-      bind -N "last-window-or-session" Tab if -F '#{?#{e|>:#{session_windows},1},1,}' 'last-window' 'switch-client -l'
+      # Jump to the last window, or use the tmux last-session stack when there
+      # is only one window. `l` is taken by pane navigation, so use Tab.
+      bind -N "last-window-or-session" Tab if -F '#{e|>:#{session_windows},1}' 'last-window' 'switch-client -l'
 
-      # Last session via sesh (only if multiple sessions)
-      bind -N "last-session (via sesh)" a if-shell '[ $(tmux list-sessions | wc -l) -gt 1 ]' "run-shell 'sesh last'"
+      # Always use the same tmux last-session stack as the Tab fallback.
+      bind -N "last-session" a switch-client -l
 
       # From a worktrunk worktree session (…/repo/.worktrees/branch), jump to the
       # session for the repository itself. `sesh connect --root <path>` resolves
