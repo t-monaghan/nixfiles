@@ -1,3 +1,13 @@
+## AWS access
+
+Do not run the `aws` CLI. The pi sandbox network allowlist
+(`~/.pi/agent/sandbox.json`) does not include `*.amazonaws.com`, so `aws` CLI
+calls always fail. For any AWS task, use the `aws-sandy` skill: the
+`imds-broker` MCP server supplies credentials, and the `sandy` CLI runs AWS
+SDK scripts in a Docker container. Use only the Docker backend of sandy, never
+the shuru backend. If Docker fails, OrbStack is probably not running, or the
+IMDS server needs a stop/create cycle — see the skill.
+
 ## spawn_worktree cleanup
 
 Worktrees created via the `spawn_worktree` tool (or `/spawn`) live **inside the
