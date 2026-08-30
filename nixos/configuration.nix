@@ -34,6 +34,7 @@
     isNormalUser = true;
     extraGroups = ["wheel"];
     packages = with pkgs; [
+      pi-coding-agent
       vim
       tree
       parted
