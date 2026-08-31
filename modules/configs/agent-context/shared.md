@@ -20,7 +20,8 @@ Keep responses focused, brief, and concise. Keep disclaimers and caveats short, 
 
 # Shell
 
-The user uses the fish shell, all shell commands should use fish syntax
+For tool calls use bash shell
+The user uses the fish shell, all shell commands suggested to the user should use fish syntax
 
 # Code comments
 

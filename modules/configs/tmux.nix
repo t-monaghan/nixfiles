@@ -87,6 +87,26 @@
     fi
     ${lib.getExe pkgs.tmux} switch-client -t "$sess"
   '';
+  tmux-wt-create = pkgs.writeShellScript "tmux-wt-create" ''
+    set -eu
+
+    printf 'New branch (tfm/<name>): '
+    IFS= read -r name || exit 0
+    [ -n "$name" ] || exit 0
+
+    branch="tfm/$name"
+    if ! ${lib.getExe pkgs.git} check-ref-format --branch "$branch" >/dev/null 2>&1; then
+      printf 'Invalid branch name: %s\nPress Enter to close.' "$branch"
+      IFS= read -r _
+      exit 1
+    fi
+
+    if ! ${lib.getExe pkgs.fish} -c 'wts -c $argv[1]' -- "$branch"; then
+      printf '\nFailed to create worktree for %s.\nPress Enter to close.' "$branch"
+      IFS= read -r _
+      exit 1
+    fi
+  '';
   tmux-kill-session = pkgs.writeShellScript "tmux-kill-session" ''
     count=$(${lib.getExe pkgs.tmux} list-sessions | wc -l)
     [ "$count" -le 1 ] && exit 0
@@ -132,6 +152,10 @@ in {
       # Pick a repo, then a worktree or PR, and open/attach a `wt switch` session
       unbind w
       bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
+
+      # Create a tfm/<name> branch and worktree from the active repository, then
+      # open/attach its tmux session through the `wts` fish function.
+      bind -N "new tfm worktree" b display-popup -d '#{pane_current_path}' -E "${tmux-wt-create}"
 
       # Switch windows via fzf picker (only if multiple windows)
       bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
