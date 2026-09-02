@@ -14,14 +14,8 @@ case "$target" in
       nix shell nixpkgs#home-manager --command home-manager switch --flake ".#$target"
     fi
     ;;
-  nixos)
-    private="${NIXFILES_PRIVATE:-$HOME/nixfiles-private}"
-    overlay=()
-    [ -d "$private" ] && overlay=(--override-input private "path:$private")
-    sudo nixos-rebuild switch --flake ".#dolomite" "${overlay[@]}"
-    ;;
   *)
-    echo "usage: $(basename "$0") {nixos|work|personal}" >&2
+    echo "usage: $(basename "$0") {work|personal}" >&2
     exit 1
     ;;
 esac

@@ -7,16 +7,9 @@
     ./hardware-configuration.nix
     ./neovim.nix
     ./modules/home-assistant.nix
-    inputs.spendable.nixosModules.default
-    inputs.agenix.nixosModules.default
   ];
 
   nix.settings.experimental-features = ["nix-command" "flakes"];
-  # used for private github repo access
-  # `access-tokens = github.com=TOKEN_HERE`
-  nix.extraOptions = ''
-    !include /etc/nix/access-tokens.conf
-  '';
 
   boot.loader = {
     systemd-boot.enable = true;
