@@ -27,6 +27,10 @@ The user uses the fish shell, all shell commands suggested to the user should us
 
 Only leave code comments in areas of unclear, non-idiomatic, or complex/magic looking code. Explanations of the intent of code is best left in READMEs.
 
+# Commit messages
+
+Should be completely in lowercase, and follow the standard in repositories with semantic commit
+
 # PRs
 ## PR Format
 
