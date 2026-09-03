@@ -195,7 +195,7 @@ in {
       # `m` is tmux's `select-pane -m` (mark pane) by default, which this
       # replaces.
       unbind m
-      bind -N "root session (via sesh)" m run-shell "sesh connect --root $(pwd)"
+      bind -N "root session (via sesh)" m run-shell "sesh connect --root #{q:pane_current_path}"
 
       # Kill current session and switch to previous. Check the session count in
       # the tmux server and pass the target name to avoid two tmux client calls.
