@@ -44,7 +44,7 @@
       "~/.gem_cache",
       "~/.gitconfig",
       "~/.local",
-      "~/.nix-profile",
+      "~/.nix-profile/**",
       "~/.npm-global",
       "~/.npmrc",
       "~/.pi",
