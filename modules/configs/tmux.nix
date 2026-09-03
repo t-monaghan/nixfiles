@@ -38,29 +38,41 @@
     [ -n "$repo" ] || exit 0
     repodir="$dev/$repo"
 
-    # Existing worktrees (minus the primary checkout) via worktrunk, so we
-    # get status symbols, commit age, and last message alongside the branch.
-    worktrees=$(wt list --format=json -C "$repodir" 2>/dev/null \
-      | ${lib.getExe pkgs.jq} -r '
-          def age: (now - .) as $s |
-            if   $s < 3600   then "\(($s/60)    | floor)m"
-            elif $s < 86400  then "\(($s/3600)  | floor)h"
-            elif $s < 604800 then "\(($s/86400) | floor)d"
-            else                  "\(($s/604800)| floor)w" end;
-          .[]
-          | select(.kind == "worktree" and (.is_main | not) and .branch)
-          | "wt\t\(.branch)\t\u2442 \(.branch)\t\(.symbols // "")\t\(.commit.timestamp | age)\t\(.commit.message[0:60])"
-        ') || worktrees=""
+    # Stream worktrees and PRs into fzf from independent producers. This lets
+    # fzf show local worktrees while the GitHub request is still in progress.
+    line=$(
+      {
+        (
+          wt list --format=json -C "$repodir" 2>/dev/null \
+            | ${lib.getExe pkgs.jq} -r '
+                def age: (now - .) as $s |
+                  if   $s < 3600   then "\(($s/60)    | floor)m"
+                  elif $s < 86400  then "\(($s/3600)  | floor)h"
+                  elif $s < 604800 then "\(($s/86400) | floor)d"
+                  else                  "\(($s/604800)| floor)w" end;
+                .[]
+                | select(.kind == "worktree" and (.is_main | not) and .branch)
+                | "wt\t\(.branch)\t\u2442 \(.branch)\t\(.symbols // "")\t\(.commit.timestamp | age)\t\(.commit.message[0:60])"
+              '
+        ) &
+        worktrees_pid=$!
 
-    prs=$(cd "$repodir" && ${lib.getExe pkgs.gh} pr list --state open --limit 50 \
-      --json number,title,updatedAt,author,headRefName 2>/dev/null) || prs='[]'
-    prlines=$(printf '%s' "$prs" | ${lib.getExe pkgs.jq} -r '
-        sort_by(.updatedAt) | reverse | .[]
-        | "pr\t\(.number)\t#\(.number)\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"')
+        (
+          cd "$repodir"
+          ${lib.getExe pkgs.gh} pr list --state open --limit 50 \
+            --json number,title,updatedAt,author,headRefName 2>/dev/null \
+            | ${lib.getExe pkgs.jq} -r '
+                sort_by(.updatedAt) | reverse | .[]
+                | "pr\t\(.number)\t#\(.number)\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"
+              '
+        ) &
+        prs_pid=$!
 
-    line=$(printf '%s\n%s\n' "$worktrees" "$prlines" | grep -v '^$' \
-      | ${lib.getExe pkgs.fzf} --reverse --delimiter='\t' --with-nth=3.. \
-          --prompt="wt/pr ($repo)> ") || exit 0
+        wait "$worktrees_pid" || :
+        wait "$prs_pid" || :
+      } | ${lib.getExe pkgs.fzf} --reverse --delimiter='\t' --with-nth=3.. \
+          --prompt="wt/pr ($repo)> "
+    ) || exit 0
     [ -n "$line" ] || exit 0
 
     kind=$(printf '%s' "$line" | cut -f1)
@@ -116,9 +128,7 @@
     fi
   '';
   tmux-kill-session = pkgs.writeShellScript "tmux-kill-session" ''
-    count=$(${lib.getExe pkgs.tmux} list-sessions | wc -l)
-    [ "$count" -le 1 ] && exit 0
-    target=$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')
+    target=$1
     sesh last 2>/dev/null || ${lib.getExe pkgs.tmux} switch-client -n
     ${lib.getExe pkgs.tmux} kill-session -t "$target"
   '';
@@ -126,7 +136,7 @@ in {
   programs.tmux = {
     enable = true;
     mouse = true;
-    escapeTime = 100;
+    escapeTime = 10;
     keyMode = "vi";
     customPaneNavigationAndResize = true;
     historyLimit = 50000;
@@ -150,8 +160,10 @@ in {
       bind -Tcopy-mode-vi v send -X begin-selection
       bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
 
-      # Highlight active pane background when prefix is pressed
-      bind -Troot C-b select-pane -P 'bg=colour18' \; switch-client -Tprefix \; run -b 'sleep 1 && tmux select-pane -P bg=default'
+      # Highlight the active pane while the prefix table is active. The format
+      # avoids starting a shell and a sleeping process for each prefix press.
+      set -g window-active-style 'bg=#{?client_prefix,colour18,default}'
+      bind -Troot C-b switch-client -Tprefix
 
       # Open sesh picker instead of default session tree
       unbind s
@@ -185,8 +197,9 @@ in {
       unbind m
       bind -N "root session (via sesh)" m run-shell "sesh connect --root $(pwd)"
 
-      # Kill current session and switch to previous
-      bind X run-shell '${tmux-kill-session}'
+      # Kill current session and switch to previous. Check the session count in
+      # the tmux server and pass the target name to avoid two tmux client calls.
+      bind X if -F '#{e|>:#{server_sessions},1}' 'run-shell "${tmux-kill-session} #{q:session_name}"' ""
 
       # Clone GitHub repo and open session
       bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
