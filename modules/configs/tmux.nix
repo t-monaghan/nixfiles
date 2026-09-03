@@ -89,6 +89,14 @@
   '';
   tmux-wt-create = pkgs.writeShellScript "tmux-wt-create" ''
     set -eu
+    dev="$HOME/dev"
+
+    repo=$(${pkgs.findutils}/bin/find "$dev" -maxdepth 1 -mindepth 1 -type d \
+        -exec test -e '{}/.git' ';' -print \
+      | sed "s|$dev/||" | sort \
+      | ${lib.getExe pkgs.fzf} --reverse --prompt="repo> ") || exit 0
+    [ -n "$repo" ] || exit 0
+    cd "$dev/$repo"
 
     printf 'New branch (tfm/<name>): '
     IFS= read -r name || exit 0
@@ -153,9 +161,9 @@ in {
       unbind w
       bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
 
-      # Create a tfm/<name> branch and worktree from the active repository, then
-      # open/attach its tmux session through the `wts` fish function.
-      bind -N "new tfm worktree" b display-popup -d '#{pane_current_path}' -E "${tmux-wt-create}"
+      # Pick a repo, create a tfm/<name> branch and worktree, then open/attach
+      # its tmux session through the `wts` fish function.
+      bind -N "new tfm worktree" b display-popup -h 80% -w 80% -E "${tmux-wt-create}"
 
       # Switch windows via fzf picker (only if multiple windows)
       bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
