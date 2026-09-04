@@ -6,6 +6,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   sharedPiSettings = {
@@ -16,6 +17,10 @@
     warnings.anthropicExtraUsage = false;
   };
 in {
+  home.packages = [
+    pkgs.pi-coding-agent
+    pkgs.nodejs
+  ];
   options.nixfiles.pi.providerSettings = lib.mkOption {
     type = lib.types.attrs;
     description = ''

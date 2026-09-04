@@ -52,7 +52,6 @@ in {
       obsidian
 
       # Development tools
-      pi-coding-agent
       devbox
       just
       pnpm
