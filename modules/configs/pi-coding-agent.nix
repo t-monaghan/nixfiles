@@ -18,10 +18,6 @@
     warnings.anthropicExtraUsage = false;
   };
 in {
-  home.packages = [
-    pkgs.pi-coding-agent
-    pkgs.nodejs
-  ];
   options.nixfiles.pi.providerSettings = lib.mkOption {
     type = lib.types.attrs;
     description = ''
@@ -38,7 +34,12 @@ in {
       ];
     };
   };
-
-  config.home.file.".pi/agent/settings.json".text =
-    builtins.toJSON (sharedPiSettings // config.nixfiles.pi.providerSettings);
+  config.home = {
+    file.".pi/agent/settings.json".text =
+      builtins.toJSON (sharedPiSettings // config.nixfiles.pi.providerSettings);
+    packages = [
+      pkgs.pi-coding-agent
+      pkgs.nodejs
+    ];
+  };
 }

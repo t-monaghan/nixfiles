@@ -6,7 +6,10 @@
 # `pkgs.stdenv.isDarwin`, so on this Linux box it evaluates to the generic
 # baseline. Box-only additions (if any) go here.
 {...}: {
-  imports = [../modules/shell.nix];
+  imports = [
+    ../modules/shell.nix
+    ../modules/configs/pi-coding-agent.nix
+  ];
 
   home = {
     username = "tom";
