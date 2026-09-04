@@ -130,6 +130,12 @@ in {
       }
       {
         mode = "n";
+        key = "S";
+        action = "<Nop>";
+        options.desc = "Disable substitute line";
+      }
+      {
+        mode = "n";
         key = "<leader>q";
         action.__raw = "vim.diagnostic.setloclist";
         options.desc = "Open diagnostic [Q]uickfix list";
