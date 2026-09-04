@@ -12,6 +12,7 @@
   sharedPiSettings = {
     defaultThinkingLevel = "medium";
     skills = ["~/.claude/skills"];
+    treeFilterMode = "no-tools";
     packages = ["npm:pi-mcp-adapter" "npm:pi-sandbox"];
     quietStartup = true;
     warnings.anthropicExtraUsage = false;
