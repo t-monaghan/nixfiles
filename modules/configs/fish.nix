@@ -309,8 +309,8 @@
         gpu = "git pull --autostash --rebase";
         gs = "git status";
         gl = "tv git-log";
-        gd = "git diff";
-        gdc = "git diff --cached";
+        gd = "git difftool";
+        gdc = "git difftool --cached";
         ga = "git add";
         gc = "git commit -m";
         ghpr = "gh pr checkout";

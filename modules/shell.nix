@@ -74,7 +74,8 @@
         push.autoSetupRemote = true;
         pull.rebase = true;
         init.defaultBranch = "main";
-        pager.difftool = true;
+        difftool.prompt = "false";
+        pager.difftool = "true";
         rerere.enabled = true;
         branch.sort = "-committerdate";
       };
