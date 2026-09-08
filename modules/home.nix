@@ -162,6 +162,14 @@ in {
         startup_command = "ssh dolomite";
         preview_command = "echo 'SSH → dolomite (dolomite.lan)'";
       }
+      {
+        name = "notes";
+        path = "~/notes";
+        startup_command = "nvim ~/notes/notes.md && exit";
+        preview_command = "bat ~/notes/notes.md";
+        alias = "nd";
+        alias_auto_connect = true;
+      }
     ];
 
     # GUI Programs
