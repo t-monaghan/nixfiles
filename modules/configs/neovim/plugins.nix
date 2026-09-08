@@ -265,10 +265,10 @@
           mappings = {
             add = "Sa";
             delete = "Sd";
+            highlight = "Sh";
+            replace = "Sr";
             find = "";
             find_left = "";
-            highlight = "";
-            replace = "Sr";
             update_n_lines = "";
           };
         };
