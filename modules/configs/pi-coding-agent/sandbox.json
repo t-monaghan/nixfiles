@@ -1,6 +1,6 @@
 {
   "enabled": true,
-  "allowBrowserProcess": true,
+  "mode": "sandbox",
   "network": {
     "allowLocalBinding": true,
     "allowAllUnixSockets": true,

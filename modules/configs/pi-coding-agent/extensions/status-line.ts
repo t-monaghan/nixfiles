@@ -3,16 +3,15 @@
  *
  * Adds segments to pi's default footer to match claude-code-status-line.sh.
  * Only adds what the default footer doesn't already show:
- * dir, git branch/status, AWS profile, sandbox status.
+ * dir, git branch/status, AWS profile.
  *
  * The default footer already shows: tokens, cost, context %, model.
- * Overrides the verbose sandbox extension status with a compact claude-code style indicator.
+ * The sandbox extension supplies its own runtime status.
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { basename } from "node:path";
 
 function git(cwd: string, args: string): string | null {
 	try {
@@ -63,27 +62,6 @@ function buildStatus(ctx: any, theme: any): string {
 		parts.push(theme.fg("accent", `│ 󰅟 ${profile}${region}`));
 	}
 
-	// Sandbox status — compact indicator (overrides verbose sandbox extension output)
-	let sandboxed = false;
-	try {
-		const paths = [
-			join(process.env.HOME || "~", ".pi", "agent", "sandbox.json"),
-			join(cwd, ".pi", "sandbox.json"),
-		];
-		for (const p of paths) {
-			if (existsSync(p)) {
-				const cfg = JSON.parse(readFileSync(p, "utf8"));
-				if (cfg?.enabled === true) {
-					sandboxed = true;
-					break;
-				}
-			}
-		}
-	} catch {}
-	parts.push(
-		sandboxed ? theme.fg("success", "│ 󰒃 sandbox") : theme.fg("error", "│ ✗ sandbox"),
-	);
-
 	return parts.join(" ");
 }
 
@@ -92,9 +70,8 @@ export default function (pi: ExtensionAPI) {
 		try {
 			const theme = ctx.ui.theme;
 			ctx.ui.setStatus("status-line", buildStatus(ctx, theme));
-			// Hide verbose status from pi-mcp-adapter and pi-sandbox
+			// Hide verbose status from pi-mcp-adapter.
 			ctx.ui.setStatus("mcp", undefined);
-			ctx.ui.setStatus("sandbox", undefined);
 		} catch {}
 	}
 

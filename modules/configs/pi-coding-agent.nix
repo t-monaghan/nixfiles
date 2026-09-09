@@ -9,11 +9,40 @@
   pkgs,
   ...
 }: let
+  sandboxSource = ./pi-sandbox;
+  sandboxDir = "${config.home.homeDirectory}/.local/share/pi/extensions/sandbox";
+  installSandbox = pkgs.writeShellScript "install-pi-sandbox" ''
+    set -eu
+    export PATH=${lib.makeBinPath [pkgs.nodejs pkgs.coreutils pkgs.git]}:$PATH
+    source=${sandboxSource}
+    target=${lib.escapeShellArg sandboxDir}
+    revision="$source:${pkgs.nodejs}"
+
+    if [ -f "$target/.installed-revision" ] &&
+       [ "$(cat "$target/.installed-revision")" = "$revision" ] &&
+       [ -d "$target/node_modules" ]; then
+      exit 0
+    fi
+
+    mkdir -p "$target"
+    rm -f "$target/.installed-revision"
+    cp -R --no-preserve=mode "$source/." "$target/"
+    cd "$target"
+    npm ci --include=dev --ignore-scripts=false --no-audit --no-fund
+    printf '%s\n' "$revision" > .installed-revision
+  '';
   sharedPiSettings = {
     defaultThinkingLevel = "medium";
     skills = ["~/.claude/skills"];
     treeFilterMode = "no-tools";
-    packages = ["npm:pi-mcp-adapter" "npm:pi-sandbox"];
+    packages = [
+      "npm:pi-mcp-adapter"
+      (
+        if pkgs.stdenv.isDarwin
+        then sandboxDir
+        else "npm:pi-sandbox"
+      )
+    ];
     quietStartup = true;
     warnings.anthropicExtraUsage = false;
   };
@@ -35,6 +64,11 @@ in {
     };
   };
   config.home = {
+    activation.piSandboxInstall = lib.mkIf pkgs.stdenv.isDarwin (
+      lib.hm.dag.entryAfter ["writeBoundary"] ''
+        run ${installSandbox}
+      ''
+    );
     file.".pi/agent/settings.json".text =
       builtins.toJSON (sharedPiSettings // config.nixfiles.pi.providerSettings);
     packages = [
