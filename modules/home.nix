@@ -170,6 +170,13 @@ in {
         alias = "nd";
         alias_auto_connect = true;
       }
+      {
+        name = "nixfiles";
+        path = "~/dev/nixfiles/";
+        preview_command = "git status";
+        alias = "nixf";
+        alias_auto_connect = true;
+      }
     ];
 
     # GUI Programs
