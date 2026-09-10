@@ -26,7 +26,7 @@ try {
 }
 
 function pickVerb(): string {
-  if (verbs.length === 0) return "Working...";
+  if (verbs.length === 0) return "Working";
   return verbs[Math.floor(Math.random() * verbs.length)]!;
 }
 
@@ -34,7 +34,7 @@ export default function (pi: ExtensionAPI) {
   if (verbs.length === 0) return;
 
   const apply = (ctx: ExtensionContext) => {
-    ctx.ui.setWorkingMessage(`${pickVerb()}...`);
+    ctx.ui.setWorkingMessage(pickVerb());
   };
 
   pi.on("session_start", async (_event, ctx) => apply(ctx));
