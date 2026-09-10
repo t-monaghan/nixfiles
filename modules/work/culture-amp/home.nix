@@ -9,9 +9,10 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
     defaultProvider = "github-copilot";
     defaultModel = "gpt-5.6-sol";
     enabledModels = [
-      "github-copilot/gpt-5.6-sol"
+      "anthropic/claude-fable-5-1"
+      "github-copilot/gpt-6-astra"
       "github-copilot/kimi-k3"
-      "anthropic/claude-fable-5"
+      "github-copilot/gpt-5.6-sol"
     ];
   };
 
