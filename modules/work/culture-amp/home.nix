@@ -54,6 +54,10 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
     };
 
     mcp.servers = {
+      agentsview = {
+        command = "agentsview";
+        args = ["mcp"];
+      };
       hotel-mcp = {
         command = "hotel";
         args = ["mcp-server"];
