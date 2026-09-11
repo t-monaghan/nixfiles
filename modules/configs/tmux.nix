@@ -13,28 +13,132 @@
   lib,
   ...
 }: let
-  # Preview is piped through `tail` so the bottom of the pane (where the action is)
-  # stays visible when the preview window is shorter than the source pane.
+  # List each tmux session as a parent row followed by its window rows. Hidden
+  # stable IDs drive selection and previews. The picker preserves tmux order and
+  # supports filtering by session or window name.
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
-    session="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
-    selected=$(${lib.getExe pkgs.tmux} list-windows -t "$session" -F '#{window_index}: #{pane_title}' \
-      | ${lib.getExe pkgs.fzf} --no-sort --reverse --delimiter=':' \
-        --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t '$session':{1} | tail -n \$FZF_PREVIEW_LINES" \
-        --preview-window "right:80%")
-    [ -n "$selected" ] && ${lib.getExe pkgs.tmux} select-window -t "$session:''${selected%%:*}"
+    selected=$(
+      {
+        for session_id in $(${lib.getExe pkgs.tmux} list-sessions -F '#{session_id}'); do
+          session_name=$(${lib.getExe pkgs.tmux} display-message -p -t "$session_id" '#{session_name}')
+          session_pane=$(${lib.getExe pkgs.tmux} display-message -p -t "$session_id" '#{pane_id}')
+          printf 'session\t%s\t%s\t%s\t%s\n' \
+            "$session_id" "$session_pane" "$session_id" "$session_name"
+
+          window_ids=$(${lib.getExe pkgs.tmux} list-windows -t "$session_id" -F '#{window_id}')
+          window_count=$(printf '%s\n' "$window_ids" | ${pkgs.coreutils}/bin/wc -l | tr -d ' ')
+          window_number=0
+          for window_id in $window_ids; do
+            window_number=$((window_number + 1))
+            if [ "$window_number" -eq "$window_count" ]; then
+              connector='└─'
+            else
+              connector='├─'
+            fi
+            pane_id=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" '#{pane_id}')
+            window_label=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" '#{window_index}: #{window_name}')
+            printf 'window\t%s\t%s\t%s\t  %s %s\n' \
+              "$window_id" "$pane_id" "$session_id" "$connector" "$window_label"
+          done
+        done
+      } | ${lib.getExe pkgs.fzf} --no-sort --reverse --prompt="session/window> " \
+        --delimiter='\t' --with-nth=5.. \
+        --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t {3}" \
+        --preview-window "right:80%"
+    ) || exit 0
+    [ -n "$selected" ] || exit 0
+
+    kind=$(printf '%s' "$selected" | cut -f1)
+    target_id=$(printf '%s' "$selected" | cut -f2)
+    session_id=$(printf '%s' "$selected" | cut -f4)
+    if [ "$kind" = window ]; then
+      ${lib.getExe pkgs.tmux} select-window -t "$target_id"
+    fi
+    ${lib.getExe pkgs.tmux} switch-client -t "$session_id"
   '';
-  # Pick a repo from ~/dev, then pick either an existing worktree or an open
-  # PR (most-recently-updated first), and open/attach a session that runs
-  # `wt switch <branch>` / `wt switch pr:<n>` in it. Each fzf line carries two
-  # hidden fields (kind, key) ahead of the displayed columns (--with-nth=3..).
+  # Resolve or create a worktree outside the picker popup, then open it in the
+  # repository session and switch the client that started the operation.
+  tmux-wt-open = pkgs.writeShellScript "tmux-wt-open" ''
+    set -eu
+    client_name=$1
+    repodir=$2
+    kind=$3
+    key=$4
+
+    case "$kind" in
+      wt)
+        target="$key"
+        window_name="$key" ;;
+      pr)
+        target="pr:$key"
+        window_name="#$key" ;;
+      *) exit 0 ;;
+    esac
+
+    # Use fish so the worktrunk wrapper can apply PR-number worktree paths.
+    if ! result=$(
+      cd "$repodir"
+      ${lib.getExe pkgs.fish} -c 'wt switch --no-cd --format json $argv[1]' -- "$target" 2>/dev/null
+    ); then
+      ${lib.getExe pkgs.tmux} display-message -c "$client_name" "Worktrunk failed for $target"
+      exit 1
+    fi
+    worktree_path=$(printf '%s\n' "$result" | ${lib.getExe pkgs.jq} -r '.path // empty')
+    if [ -z "$worktree_path" ]; then
+      ${lib.getExe pkgs.tmux} display-message -c "$client_name" "Worktrunk returned no path for $target"
+      exit 1
+    fi
+
+    # Match by the canonical repository path. Session names can change when an
+    # agent needs attention, so names are not stable identifiers.
+    repodir=$(cd "$repodir" && pwd -P)
+    session_id=$(
+      ${lib.getExe pkgs.tmux} list-sessions -F '#{session_id} #{session_path}' \
+        | while read -r id path; do
+            canonical=$(cd "$path" 2>/dev/null && pwd -P) || continue
+            if [ "$canonical" = "$repodir" ]; then
+              printf '%s\n' "$id"
+              break
+            fi
+          done
+    )
+
+    if [ -n "$session_id" ]; then
+      window_id=$(${lib.getExe pkgs.tmux} new-window -d -P -F '#{window_id}' \
+        -t "$session_id:" -n "$window_name" -c "$worktree_path")
+    else
+      # No repository session: create it with the worktree as its only window.
+      # `new-session -c` sets session_path to the repository so later runs
+      # match it; the initial window it creates is replaced by the worktree one.
+      session_name=$(basename "$repodir" | tr '.:' '--')
+      candidate="$session_name"
+      suffix=2
+      while ${lib.getExe pkgs.tmux} has-session -t "=$candidate" 2>/dev/null; do
+        candidate="$session_name-$suffix"
+        suffix=$((suffix + 1))
+      done
+      initial_window=$(${lib.getExe pkgs.tmux} new-session -d -P -F '#{window_id}' \
+        -s "$candidate" -c "$repodir")
+      session_id=$(${lib.getExe pkgs.tmux} display-message -p -t "$initial_window" '#{session_id}')
+      window_id=$(${lib.getExe pkgs.tmux} new-window -d -P -F '#{window_id}' \
+        -t "$session_id:" -n "$window_name" -c "$worktree_path")
+      ${lib.getExe pkgs.tmux} kill-window -t "$initial_window"
+    fi
+    ${lib.getExe pkgs.tmux} set-option -w -t "$window_id" automatic-rename off
+    ${lib.getExe pkgs.tmux} select-window -t "$window_id"
+    ${lib.getExe pkgs.tmux} switch-client -c "$client_name" -t "$session_id"
+  '';
+  # Pick a zoxide entry below ~/dev, then pick either an existing worktree or
+  # an open PR (most-recently-updated first). The picker starts tmux-wt-open as
+  # a background tmux job and closes before Worktrunk runs. Each fzf line carries
+  # two hidden fields (kind, key) ahead of the displayed columns.
   tmux-wt-switch = pkgs.writeShellScript "tmux-wt-switch" ''
     set -eu
     dev="$HOME/dev"
 
-    repo=$(${pkgs.findutils}/bin/find "$dev" -maxdepth 1 -mindepth 1 -type d \
-        -exec test -e '{}/.git' ';' -print \
-      | sed "s|$dev/||" | sort \
-      | ${lib.getExe pkgs.fzf} --reverse --prompt="repo> ") || exit 0
+    repo=$(${lib.getExe pkgs.zoxide} query -l --base-dir "$dev" --exclude "$dev" \
+      | sed "s|^$dev/||" \
+      | ${lib.getExe pkgs.fzf} --no-sort --reverse --scheme=path --prompt="repo> ") || exit 0
     [ -n "$repo" ] || exit 0
     repodir="$dev/$repo"
 
@@ -79,25 +183,12 @@
     key=$(printf '%s' "$line" | cut -f2)
     [ -n "$key" ] || exit 0
 
-    san=$(printf '%s' "$key" | tr '/.:' '-')
-    case "$kind" in
-      wt)
-        # Prefer an already-running spawned-agent session for this branch.
-        if ${lib.getExe pkgs.tmux} has-session -t "=pi-$san" 2>/dev/null; then
-          ${lib.getExe pkgs.tmux} switch-client -t "pi-$san"; exit 0
-        fi
-        cmd="wt switch $key" ;;
-      pr)
-        cmd="wt switch pr:$key" ;;
-      *) exit 0 ;;
-    esac
+    case "$kind" in wt | pr) ;; *) exit 0 ;; esac
 
-    sess="$(printf '%s' "$repo" | tr './:' '-')-$san"
-    if ! ${lib.getExe pkgs.tmux} has-session -t "=$sess" 2>/dev/null; then
-      ${lib.getExe pkgs.tmux} new-session -d -s "$sess" -c "$repodir"
-      ${lib.getExe pkgs.tmux} send-keys -t "$sess" "$cmd" Enter
-    fi
-    ${lib.getExe pkgs.tmux} switch-client -t "$sess"
+    client_name=$(${lib.getExe pkgs.tmux} display-message -p '#{client_name}')
+    command=$(printf '%q %q %q %q %q' \
+      "${tmux-wt-open}" "$client_name" "$repodir" "$kind" "$key")
+    ${lib.getExe pkgs.tmux} run-shell -b "$command"
   '';
   tmux-wt-create = pkgs.writeShellScript "tmux-wt-create" ''
     set -eu
@@ -127,9 +218,31 @@
       exit 1
     fi
   '';
+  tmux-last-session = pkgs.writeShellScript "tmux-last-session" ''
+    current="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
+
+    # tmux can retain a deleted session as the last-session target. Prefer its
+    # history, then select the most recently attached session that still exists.
+    if ${lib.getExe pkgs.tmux} switch-client -l 2>/dev/null; then
+      exit 0
+    fi
+
+    target=$(
+      ${lib.getExe pkgs.tmux} list-sessions -F '#{?session_last_attached,#{session_last_attached},0} #{session_name}' \
+        | ${pkgs.coreutils}/bin/sort -rn -k1,1 \
+        | while read -r _ candidate; do
+            if [ "$candidate" != "$current" ]; then
+              printf '%s\n' "$candidate"
+              break
+            fi
+          done
+    )
+    [ -n "$target" ] || exit 1
+    ${lib.getExe pkgs.tmux} switch-client -t "=$target"
+  '';
   tmux-kill-session = pkgs.writeShellScript "tmux-kill-session" ''
     target=$1
-    sesh last 2>/dev/null || ${lib.getExe pkgs.tmux} switch-client -n
+    ${tmux-last-session} || exit 0
     ${lib.getExe pkgs.tmux} kill-session -t "$target"
   '';
 in {
@@ -149,9 +262,7 @@ in {
       bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
       bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
-      # Splits and new windows should inherit the active pane's cwd, not the
-      # session start directory (which for `wt switch` sessions is the primary
-      # checkout, not the worktree the shell cd'd into).
+      # Splits and new windows should inherit the active pane's cwd.
       bind '"' split-window -v -c '#{pane_current_path}'
       bind % split-window -h -c '#{pane_current_path}'
       bind c new-window -c '#{pane_current_path}'
@@ -169,7 +280,7 @@ in {
       unbind s
       bind s display-popup -E -w 80% -h 80% "sesh picker -i"
 
-      # Pick a repo, then a worktree or PR, and open/attach a `wt switch` session
+      # Pick a repo, then open a worktree or PR as a repository-session window.
       unbind w
       bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
 
@@ -177,15 +288,15 @@ in {
       # its tmux session through the `wts` fish function.
       bind -N "new tfm worktree" b display-popup -h 80% -w 80% -E "${tmux-wt-create}"
 
-      # Switch windows via fzf picker (only if multiple windows)
-      bind W if -F '#{?#{e|>:#{session_windows},1},1,}' 'display-popup -h 90% -w 90% -E "${tmux-window-picker}"' ""
+      # Pick any window in any session, with a live pane preview.
+      bind W display-popup -h 90% -w 90% -E "${tmux-window-picker}"
 
-      # Jump to the last window, or use the tmux last-session stack when there
-      # is only one window. `l` is taken by pane navigation, so use Tab.
-      bind -N "last-window-or-session" Tab if -F '#{e|>:#{session_windows},1}' 'last-window' 'switch-client -l'
+      # Switch to the last existing session. If tmux's last-session target was
+      # deleted, use the most recently attached session that still exists.
+      bind -N "last session" Tab run-shell "${tmux-last-session}"
 
-      # Always use the same tmux last-session stack as the Tab fallback.
-      bind -N "last-session" a switch-client -l
+      # Remove the old duplicate last-session binding, including after reload.
+      unbind a
 
       # From a worktrunk worktree session (…/repo/.worktrees/branch), jump to the
       # session for the repository itself. `sesh connect --root <path>` resolves
