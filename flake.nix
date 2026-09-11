@@ -2,7 +2,7 @@
   description = "Tom Monaghan's flake for system configuration across machines";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:t-monaghan/nixpkgs/bumps-sesh-2-29";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
@@ -39,9 +39,7 @@
       };
     };
 
-    lib.mkDolomite = {
-      extraModules ? [],
-    }:
+    lib.mkDolomite = {extraModules ? []}:
       mkNixosHost {
         modules = [./nixos/configuration.nix] ++ extraModules;
       };

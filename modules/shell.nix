@@ -129,6 +129,9 @@
       enableAlias = false;
       enableTmuxIntegration = false;
       settings = {
+        # Also filter existing zoxide entries. _ZO_EXCLUDE_DIRS only prevents
+        # zoxide from adding new worktree paths.
+        blacklist = ["(^|/)\\.worktrees?(/|$)"];
         default_session.preview_command = "eza --all --git-ignore --classify=always --color=always --icons=always --tree --level=2 --sort=old --git {}";
         tui = {
           preview = true;

@@ -81,19 +81,11 @@
       };
       wts = {
         wraps = "wt switch";
-        description = "wt switch, but open/attach a tmux session for the worktree (named by branch) instead of cd-ing into it";
+        description = "Resolve or create a worktrunk worktree, then connect to it with sesh";
         body = ''
-          # --no-cd: worktrunk writes no cd directive, so the current shell stays put.
-          # $argv forwards the branch and any flags (e.g. -c/--create, -b/--base) to wt.
-          #
-          # We route through `sh -c` because worktrunk's -x execs its program
-          # directly (no shell) and we need a two-step tmux dance:
-          #   1. `has-session || new-session -d` — idempotent detached create, so
-          #      it's safe whether or not we're already inside tmux.
-          #   2. Use `switch-client` if inside tmux ($TMUX is set), otherwise `attach-session`.
-          # Session name = {{ branch | sanitize }} (/ and \ become -).
-          # Start dir   = {{ worktree_path }} (only applied at creation time).
-          wt switch --no-cd -x sh $argv -- -c 'tmux has-session -t "$1" 2>/dev/null || tmux new-session -d -s "$1" -c "$2"; if [ -n "$TMUX" ]; then exec tmux switch-client -t "$1"; else exec tmux attach-session -t "$1"; fi' _ '{{ branch | sanitize }}' '{{ worktree_path }}'
+          # Worktrunk resolves or creates the worktree and runs its hooks. sesh
+          # then creates or connects to the tmux session for the resolved path.
+          wt switch --no-cd -x sesh $argv -- connect '{{ worktree_path }}'
         '';
       };
       wtclean = {
