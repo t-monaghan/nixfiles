@@ -218,6 +218,23 @@
       exit 1
     fi
   '';
+  tmux-pi-dispatch = pkgs.writeShellScript "tmux-pi-dispatch" ''
+    set -eu
+    root="$HOME/dev/agents"
+    mkdir -p "$root/worktrees" "$root/sessions"
+
+    base="dispatch-$(${pkgs.coreutils}/bin/date +%m%d-%H%M%S)"
+    name="$base"
+    suffix=2
+    while ${lib.getExe pkgs.tmux} has-session -t "=$name" 2>/dev/null; do
+      name="$base-$suffix"
+      suffix=$((suffix + 1))
+    done
+
+    session_id=$(${lib.getExe pkgs.tmux} new-session -d -P -F '#{session_id}' \
+      -s "$name" -c "$root" "${lib.getExe pkgs.pi-coding-agent} --approve --name '$name'")
+    ${lib.getExe pkgs.tmux} switch-client -t "$session_id"
+  '';
   tmux-last-session = pkgs.writeShellScript "tmux-last-session" ''
     current="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
 
@@ -287,6 +304,10 @@ in {
       # Pick a repo, create a tfm/<name> branch and worktree, then open/attach
       # its tmux session through the `wts` fish function.
       bind -N "new tfm worktree" b display-popup -h 80% -w 80% -E "${tmux-wt-create}"
+
+      # Start a unique, repo-less pi dispatcher session. It can run asynchronous
+      # agents in shared worktrees without registering the session with sesh.
+      bind -N "new pi dispatcher" M run-shell "${tmux-pi-dispatch}"
 
       # Pick any window in any session, with a live pane preview.
       bind W display-popup -h 90% -w 90% -E "${tmux-window-picker}"

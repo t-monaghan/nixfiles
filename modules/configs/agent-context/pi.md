@@ -8,6 +8,15 @@ SDK scripts in a Docker container. Use only the Docker backend of sandy, never
 the shuru backend. If Docker fails, OrbStack is probably not running, or the
 IMDS server needs a stop/create cycle — see the skill.
 
+## Dispatch worktree agents
+
+A pi session started in `~/dev/agents` is a repo-less dispatcher session. Use
+`dispatch_worktree_agent` to run single-turn asynchronous agents in named
+repositories under `~/dev`. New worktrees live under
+`~/dev/agents/worktrees/<repo>/`; existing worktrees can be reused. Use
+`/agents` to list jobs. The dispatcher records completed agent results in its
+own history. It does not remove worktrees.
+
 ## spawn_worktree cleanup
 
 Worktrees created via the `spawn_worktree` tool (or `/spawn`) live **inside the
