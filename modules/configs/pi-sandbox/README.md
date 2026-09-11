@@ -6,14 +6,15 @@ Commit: `b9bd5741048c7cbf493d9a89dc767ad107a047ef`
 
 ## Installation
 
-On macOS, Home Manager copies this directory to
-`~/.local/share/pi/extensions/sandbox` and runs `npm ci --include=dev` there.
-The copy is writable so npm can install dependencies and apply the runtime patch.
-Installation repeats when the source or Node package changes. Pi loads this
-copy through its package settings. Dolomite keeps `npm:pi-sandbox`.
+Home Manager copies this directory to
+`~/.local/share/pi/extensions/sandbox` and runs `npm ci --include=dev` there on
+both macOS and Dolomite. The copy is writable so npm can install dependencies
+and apply the runtime patch. Installation repeats when the source or Node
+package changes. Pi loads this copy through its package settings.
 
-Run `./scripts/switch work` or `./scripts/switch personal`, then start a new pi
-process. The first activation needs access to the npm registry.
+Run `./scripts/switch work` or `./scripts/switch personal` on macOS, or rebuild
+Dolomite, then start a new pi process. The first activation needs access to the
+npm registry.
 
 ## Policy
 

@@ -71,6 +71,10 @@ stays consistent.
 - `tmux` — already in `modules/configs/tmux.nix`
 - Optional: `sesh` (already configured) for fuzzy reattachment.
 
+## Related dispatcher workflow
+
+For single-turn asynchronous agents across named repositories, use a repo-less dispatcher session instead. Press `C-b M` and see [`../dispatch/README.md`](../dispatch/README.md). This extension remains the interactive, attachable tmux option.
+
 ## Limitations / future work
 
 - No "foreground subagent" mode. If you want streamed inline output, use the

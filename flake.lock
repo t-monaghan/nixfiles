@@ -177,16 +177,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1787631388,
-        "narHash": "sha256-vMiXptXarfSdJb1Gkc+FYVOAibuBRj7qxGa8z68q1Uw=",
-        "owner": "nixos",
+        "lastModified": 1789004880,
+        "narHash": "sha256-89M1tb/mlrk0x7/8SNr6q0wfCVE/2IccBXP1LOJtd7w=",
+        "owner": "t-monaghan",
         "repo": "nixpkgs",
-        "rev": "ac6b2166e7a9375683b8e98f860f273222337b16",
+        "rev": "eb0b6a39e23a814d98c78f4ff2b25ac3b792aa67",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
+        "owner": "t-monaghan",
+        "ref": "bumps-sesh-2-29",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -273,26 +273,6 @@
         "owner": "t-monaghan",
         "ref": "feat/nix-flake",
         "repo": "sandy",
-        "type": "github"
-      }
-    },
-    "spendable": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788341737,
-        "narHash": "sha256-hv+rb5rl5FODEvPC0WetIbR3eT49YAFJWOgyiockFi4=",
-        "owner": "t-monaghan",
-        "repo": "spendable",
-        "rev": "59f33227c73d91c7cdd09ba630f6b1e4bc55083c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "t-monaghan",
-        "repo": "spendable",
         "type": "github"
       }
     },
