@@ -45,6 +45,7 @@
       "~/.gitconfig",
       "~/.local",
       "~/.nix-profile/**",
+      "~/.nix-defexpr",
       "~/.npm-global",
       "~/.npmrc",
       "~/.pi",
