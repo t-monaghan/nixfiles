@@ -13,8 +13,9 @@
   ...
 }: let
   # List each tmux session as a parent row followed by its window rows. Hidden
-  # stable IDs drive selection and previews. The picker preserves tmux order and
-  # supports filtering by session or window name.
+  # stable IDs drive selection and previews. Window rows include the session
+  # name for filtering. They show an explicit PR or branch window name, or use
+  # the active pane title when tmux controls the window name.
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
     selected=$(
       {
@@ -35,7 +36,8 @@
               connector='├─'
             fi
             pane_id=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" '#{pane_id}')
-            window_label=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" '#{window_index}: #{window_name}')
+            window_label=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" \
+              '#{session_name} / #{window_index}: #{?automatic-rename,#{?pane_title,#{pane_title},#{window_name}},#{window_name}}')
             printf 'window\t%s\t%s\t%s\t  %s %s\n' \
               "$window_id" "$pane_id" "$session_id" "$connector" "$window_label"
           done
