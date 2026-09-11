@@ -86,9 +86,16 @@ in {
     activation.piDispatchDirectories = lib.hm.dag.entryAfter ["writeBoundary"] ''
       mkdir -p ${lib.escapeShellArg agentRoot}/worktrees ${lib.escapeShellArg agentRoot}/sessions
     '';
-    packages = [
-      pkgs.pi-coding-agent
-      pkgs.nodejs
-    ];
+    packages =
+      [
+        pkgs.pi-coding-agent
+        pkgs.nodejs
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        # @anthropic-ai/sandbox-runtime resolves these by executable name at
+        # startup. They are required for filesystem and network isolation.
+        pkgs.bubblewrap
+        pkgs.socat
+      ];
   };
 }
