@@ -177,6 +177,12 @@ in {
         alias = "nixf";
         alias_auto_connect = true;
       }
+      {
+        name = "bifs";
+        path = "~/dev/base-infrastructure-for-services/";
+        alias = "bifs";
+        alias_auto_connect = true;
+      }
     ];
 
     # GUI Programs
