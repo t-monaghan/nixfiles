@@ -71,7 +71,16 @@ function wt --wraps wt --description 'worktrunk: name new worktrees by GitHub PR
         set pr (gh pr list --head $branch --state open --json number --jq '.[0].number // empty' 2>/dev/null)
     end
 
-    if test -n "$pr"
+    # Dispatcher sessions set WT_WORKTREE_ROOT to keep their worktrees in one
+    # shared directory. Normal invocations retain the configured in-repo path.
+    if set -q WT_WORKTREE_ROOT; and test -n "$WT_WORKTREE_ROOT"
+        set -l root (string trim -r -c / -- "$WT_WORKTREE_ROOT")
+        if test -n "$pr"
+            __wt_core --config-set "worktree-path=\"$root/{{ repo }}/pr-$pr\"" $argv
+        else
+            __wt_core --config-set "worktree-path=\"$root/{{ repo }}/{{ branch | sanitize }}\"" $argv
+        end
+    else if test -n "$pr"
         __wt_core --config-set "worktree-path=\"{{ repo_path }}/.worktrees/pr-$pr\"" $argv
     else
         __wt_core $argv

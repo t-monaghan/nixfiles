@@ -7,8 +7,10 @@
 # Variables: repo_path, repo, branch, owner.
 # Filters: sanitize (/ -> -), codename(2), hash_port, dirname, basename.
 #
-# Worktrees live INSIDE the repo (under .worktrees/) rather than as siblings
-# (e.g. ~/dev/myproject.feature-auth). This is deliberate: pi runs in a sandbox
+# Normal worktrees live INSIDE the repo (under .worktrees/) rather than as
+# siblings (e.g. ~/dev/myproject.feature-auth). Dispatcher sessions override
+# this per invocation and use ~/dev/agents/worktrees; see the fish wrapper.
+# The in-repo default is deliberate: pi runs in a sandbox
 # whose only writable tree is the repo it was launched in (".") plus the .git
 # dirs at "../.git", "../../.git", "../../../.git" (relative to the cwd). A
 # sibling worktree would sit in ~/dev, which the sandbox can only read — so pi
