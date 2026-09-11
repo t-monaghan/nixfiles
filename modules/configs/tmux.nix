@@ -4,10 +4,9 @@
 # so this is what makes the pane border readable in both modes:
 #
 #   yellow / cyan / brightblack   base0A / base0C / base03
+#   white                         base05, the default foreground
 #   colour16                      base09, orange (no ANSI equivalent)
 #   colour18                      base01, the lighter background
-#   colour20                      base04, a mid-tone readable in BOTH modes
-#                                 (this replaced a hand-picked hex value)
 {
   pkgs,
   lib,
@@ -275,7 +274,7 @@ in {
       set -g status off
       set -g detach-on-destroy off
       set -g pane-border-status top
-      set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=yellow]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=colour16],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=yellow],#[fg=colour20]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+      set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=yellow]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=colour16],#[fg=white bold]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=yellow],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
       bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
       bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
@@ -312,12 +311,12 @@ in {
       # Pick any window in any session, with a live pane preview.
       bind W display-popup -h 90% -w 90% -E "${tmux-window-picker}"
 
-      # Switch to the last existing session. If tmux's last-session target was
-      # deleted, use the most recently attached session that still exists.
-      bind -N "last session" Tab run-shell "${tmux-last-session}"
+      # Jump to the last window, or use the last existing session when there is
+      # only one window. `l` is taken by pane navigation.
+      bind -N "last-window-or-session" Tab if -F '#{e|>:#{session_windows},1}' 'last-window' 'run-shell "${tmux-last-session}"'
 
-      # Remove the old duplicate last-session binding, including after reload.
-      unbind a
+      # Always use the same last-session behavior as the Tab fallback.
+      bind -N "last-session" a run-shell "${tmux-last-session}"
 
       # From a worktrunk worktree session (…/repo/.worktrees/branch), jump to the
       # session for the repository itself. `sesh connect --root <path>` resolves
