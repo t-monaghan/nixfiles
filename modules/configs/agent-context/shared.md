@@ -20,8 +20,9 @@ Keep responses focused, brief, and concise. Keep disclaimers and caveats short, 
 
 # Shell
 
-For tool calls use bash shell
-The user uses the fish shell, all shell commands suggested to the user should use fish syntax
+For tool calls use bash shell.
+The user uses the fish shell. All shell commands suggested to the user must use fish syntax.
+When you present a shell command that the user is intended to run in their terminal, ask if the user wants you to copy the command to the clipboard. Do not run `pbcopy` before the user confirms. After the user confirms, use `pbcopy` to copy the command to the clipboard.
 
 # Code comments
 
