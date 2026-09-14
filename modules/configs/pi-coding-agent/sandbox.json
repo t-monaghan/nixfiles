@@ -1,6 +1,7 @@
 {
   "enabled": true,
   "mode": "sandbox",
+  "enableWeakerNetworkIsolation": true,
   "network": {
     "allowLocalBinding": true,
     "allowAllUnixSockets": true,
