@@ -161,6 +161,8 @@ in {
         path = "~";
         startup_command = "ssh dolomite";
         preview_command = "echo 'SSH → dolomite (dolomite.lan)'";
+        alias = "dol";
+        alias_auto_connect = true;
       }
       {
         name = "notes";
