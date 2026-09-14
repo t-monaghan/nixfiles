@@ -12,6 +12,150 @@
   lib,
   ...
 }: let
+  # Generate custom prefix bindings and the prefix menu from the same data so
+  # their keys, descriptions, and commands stay consistent. Entries without
+  # `bind = true` document useful default tmux bindings without replacing them.
+  tmuxMenuEntries = [
+    {section = "Sessions";}
+    {
+      key = "s";
+      label = "sesh picker";
+      command = ''display-popup -E -w 80% -h 80% "sesh picker -i"'';
+      bind = true;
+    }
+    {
+      key = "w";
+      label = "worktree / PR picker";
+      command = ''display-popup -h 80% -w 80% -E "${tmux-wt-switch}"'';
+      bind = true;
+    }
+    {
+      key = "b";
+      label = "new tfm worktree";
+      command = ''display-popup -h 80% -w 80% -E "${tmux-wt-create}"'';
+      bind = true;
+    }
+    {
+      key = "m";
+      label = "main worktree window";
+      command = ''run-shell "${tmux-main-window} #{q:pane_id} #{q:pane_current_path}"'';
+      bind = true;
+    }
+    {
+      key = "a";
+      label = "last session";
+      command = ''run-shell "${tmux-last-session}"'';
+      bind = true;
+    }
+    {
+      key = "Tab";
+      menuKey = "";
+      label = "last window or session";
+      command = ''if -F '#{e|>:#{session_windows},1}' 'last-window' 'run-shell "${tmux-last-session}"' '';
+      bind = true;
+    }
+    {
+      key = "X";
+      label = "kill session, go to last";
+      command = ''if -F '#{e|>:#{server_sessions},1}' 'run-shell "${tmux-kill-session} #{q:session_name}"' ""'';
+      bind = true;
+    }
+    {
+      key = "M";
+      label = "new pi dispatcher";
+      command = ''run-shell "${tmux-pi-dispatch}"'';
+      bind = true;
+    }
+    {
+      key = "g";
+      label = "clone GitHub repo";
+      command = ''command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"'';
+      bind = true;
+    }
+
+    {section = "Windows / panes";}
+    {
+      key = "W";
+      label = "window picker (all sessions)";
+      command = ''display-popup -h 90% -w 90% -E "${tmux-window-picker}"'';
+      bind = true;
+    }
+    {
+      key = "c";
+      label = "new window (cwd)";
+      command = ''new-window -c '#{pane_current_path}' '';
+      bind = true;
+    }
+    {
+      key = ''"'';
+      label = "split below (cwd)";
+      command = ''split-window -v -c '#{pane_current_path}' '';
+      bind = true;
+    }
+    {
+      key = "%";
+      label = "split right (cwd)";
+      command = ''split-window -h -c '#{pane_current_path}' '';
+      bind = true;
+    }
+
+    {section = "Useful defaults";}
+    {
+      key = "z";
+      label = "zoom pane";
+      command = "resize-pane -Z";
+    }
+    {
+      key = "[";
+      label = "copy mode";
+      command = "copy-mode";
+    }
+    {
+      key = "d";
+      label = "detach client";
+      command = "detach-client";
+    }
+    {
+      key = ",";
+      label = "rename window";
+      command = ''command-prompt -I "#W" { rename-window "%%" }'';
+    }
+    {
+      key = "$";
+      label = "rename session";
+      command = ''command-prompt -I "#S" { rename-session "%%" }'';
+    }
+    {
+      key = "x";
+      label = "kill pane";
+      command = ''confirm-before -p "kill-pane #P? (y/n)" kill-pane'';
+    }
+    {
+      key = "{";
+      label = "swap pane up";
+      command = "swap-pane -U";
+    }
+    {
+      key = "}";
+      label = "swap pane down";
+      command = "swap-pane -D";
+    }
+  ];
+  tmuxMenuBindings = lib.concatMapStringsSep "\n" (entry:
+    lib.optionalString (entry.bind or false)
+    "bind -N ${lib.escapeShellArg entry.label} ${lib.escapeShellArg entry.key} ${entry.command}")
+  tmuxMenuEntries;
+  tmuxMenuItems = lib.concatMapStringsSep " " (entry:
+    if entry ? section
+    then lib.concatMapStringsSep " " lib.escapeShellArg ["-#[bold]${entry.section}" "" ""]
+    else
+      lib.concatMapStringsSep " " lib.escapeShellArg [
+        "${entry.label}  (${entry.key})"
+        (entry.menuKey or entry.key)
+        entry.command
+      ])
+  tmuxMenuEntries;
+
   # List each tmux session as a parent row followed by its window rows. Hidden
   # stable IDs drive selection and previews. Window rows include the session
   # name for filtering. They show an explicit PR or branch window name, or use
@@ -236,6 +380,40 @@
       -s "$name" -c "$root" "${lib.getExe pkgs.pi-coding-agent} --approve --name '$name'")
     ${lib.getExe pkgs.tmux} switch-client -t "$session_id"
   '';
+  tmux-main-window = pkgs.writeShellScript "tmux-main-window" ''
+    set -eu
+    pane_id=$1
+    pane_path=$2
+    session_id=$(${lib.getExe pkgs.tmux} display-message -p -t "$pane_id" '#{session_id}')
+
+    main_path=$(${lib.getExe pkgs.git} -C "$pane_path" worktree list --porcelain \
+      | ${pkgs.gawk}/bin/awk '/^worktree / { sub(/^worktree /, ""); print; exit }')
+    [ -n "$main_path" ] || exit 0
+
+    window_id=$(
+      ${lib.getExe pkgs.tmux} list-windows -t "$session_id" -F '#{window_id}\t#{pane_current_path}' \
+        | while IFS="$(printf '\t')" read -r candidate path; do
+            worktree=$(${lib.getExe pkgs.git} -C "$path" rev-parse --show-toplevel 2>/dev/null) || continue
+            if [ "$worktree" = "$main_path" ]; then
+              printf '%s\n' "$candidate"
+              break
+            fi
+          done
+    )
+
+    if [ -z "$window_id" ]; then
+      window_name=$(${lib.getExe pkgs.git} -C "$main_path" branch --show-current)
+      [ -n "$window_name" ] || window_name=main
+      window_id=$(${lib.getExe pkgs.tmux} new-window -d -P -F '#{window_id}' \
+        -t "$session_id:" -n "$window_name" -c "$main_path")
+      ${lib.getExe pkgs.tmux} set-option -w -t "$window_id" automatic-rename off
+    fi
+
+    active_window=$(${lib.getExe pkgs.tmux} display-message -p -t "$session_id" '#{window_id}')
+    if [ "$active_window" != "$window_id" ]; then
+      ${lib.getExe pkgs.tmux} select-window -t "$window_id"
+    fi
+  '';
   tmux-last-session = pkgs.writeShellScript "tmux-last-session" ''
     current="$(${lib.getExe pkgs.tmux} display-message -p '#{session_name}')"
 
@@ -280,11 +458,6 @@ in {
       bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
       bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
-      # Splits and new windows should inherit the active pane's cwd.
-      bind '"' split-window -v -c '#{pane_current_path}'
-      bind % split-window -h -c '#{pane_current_path}'
-      bind c new-window -c '#{pane_current_path}'
-
       # Vim-style visual selection in copy mode
       bind -Tcopy-mode-vi v send -X begin-selection
       bind -Tcopy-mode-vi y send -X copy-selection-and-cancel
@@ -294,48 +467,14 @@ in {
       set -g window-active-style 'bg=#{?client_prefix,colour18,default}'
       bind -Troot C-b switch-client -Tprefix
 
-      # Open sesh picker instead of default session tree
+      # Replace selected default bindings and generate the same entries in the
+      # custom prefix menu. Keep the full tmux note list available on `/`.
       unbind s
-      bind s display-popup -E -w 80% -h 80% "sesh picker -i"
-
-      # Pick a repo, then open a worktree or PR as a repository-session window.
       unbind w
-      bind w display-popup -h 80% -w 80% -E "${tmux-wt-switch}"
-
-      # Pick a repo, create a tfm/<name> branch and worktree, then open/attach
-      # its tmux session through the `wts` fish function.
-      bind -N "new tfm worktree" b display-popup -h 80% -w 80% -E "${tmux-wt-create}"
-
-      # Start a unique, repo-less pi dispatcher session. It can run asynchronous
-      # agents in shared worktrees without registering the session with sesh.
-      bind -N "new pi dispatcher" M run-shell "${tmux-pi-dispatch}"
-
-      # Pick any window in any session, with a live pane preview.
-      bind W display-popup -h 90% -w 90% -E "${tmux-window-picker}"
-
-      # Jump to the last window, or use the last existing session when there is
-      # only one window. `l` is taken by pane navigation.
-      bind -N "last-window-or-session" Tab if -F '#{e|>:#{session_windows},1}' 'last-window' 'run-shell "${tmux-last-session}"'
-
-      # Always use the same last-session behavior as the Tab fallback.
-      bind -N "last-session" a run-shell "${tmux-last-session}"
-
-      # From a worktrunk worktree session (…/repo/.worktrees/branch), jump to the
-      # session for the repository itself. `sesh connect --root <path>` resolves
-      # the git worktree/repository root of that path and connects to its
-      # session, creating it when it does not exist. `$(pwd)` is the pane's
-      # directory: `run-shell` runs the command in the pane's working directory.
-      # `m` is tmux's `select-pane -m` (mark pane) by default, which this
-      # replaces.
       unbind m
-      bind -N "root session (via sesh)" m run-shell "sesh connect --root #{q:pane_current_path}"
-
-      # Kill current session and switch to previous. Check the session count in
-      # the tmux server and pass the target name to avoid two tmux client calls.
-      bind X if -F '#{e|>:#{server_sessions},1}' 'run-shell "${tmux-kill-session} #{q:session_name}"' ""
-
-      # Clone GitHub repo and open session
-      bind g command-prompt -p "Clone GitHub repo ([org/]repo [dir]):" "run-shell -b 'tmux display-message \"Cloning %1...\" && fish -c \"ghclone %1\"'"
+      ${tmuxMenuBindings}
+      bind -N "custom key menu" ? display-menu -T "#[align=centre] tmux " -x C -y C -- ${tmuxMenuItems}
+      bind -N "all key bindings" / list-keys -N -T prefix
 
       # Notification bracket cleanup (`[work]` -> `work`) is intentionally NOT
       # tied to window/session switches — the bracket should persist as a
