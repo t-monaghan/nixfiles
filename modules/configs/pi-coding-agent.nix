@@ -41,6 +41,8 @@
     ];
     quietStartup = true;
     warnings.anthropicExtraUsage = false;
+    doubleEscapeAction = "fork";
+    markdown.codeBlockIndent = "";
   };
 in {
   options.nixfiles.pi = {
