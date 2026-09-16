@@ -21,12 +21,15 @@
     };
   };
 
-  boot.loader = {
-    systemd-boot = {
-      enable = true;
-      configurationLimit = 5;
+  boot = {
+    kernelParams = ["usbcore.autosuspend=-1"];
+    loader = {
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 5;
+      };
+      efi.canTouchEfiVariables = true;
     };
-    efi.canTouchEfiVariables = true;
   };
 
   networking = {
