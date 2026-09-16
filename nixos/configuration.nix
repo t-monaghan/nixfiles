@@ -76,6 +76,13 @@
   # just that one derivation rebuilds (no CHIP recompile). Drop once fixed
   # upstream: https://github.com/home-assistant-libs/python-matter-server
   nixpkgs.overlays = [
+    (final: _: let
+      mullvadPackages =
+        inputs.multiverse.multiverse.${final.stdenv.hostPlatform.system}.at "2026-09-10";
+    in {
+      mullvad = mullvadPackages.mullvad;
+      mullvad-vpn = mullvadPackages.mullvad-vpn;
+    })
     (final: prev: {
       python-matter-server = prev.python-matter-server.overridePythonAttrs (old: {
         patches = (old.patches or []) ++ [./modules/matter-server-skip-bad-paa.patch];

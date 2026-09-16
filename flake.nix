@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:t-monaghan/nixpkgs/bumps-sesh-2-30-1";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
@@ -17,6 +18,7 @@
   outputs = {
     self,
     nixpkgs,
+    multiverse,
     home-manager,
     nixvim,
     awtrix-cli,
