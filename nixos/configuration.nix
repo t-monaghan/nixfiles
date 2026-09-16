@@ -65,6 +65,7 @@
 
   environment.systemPackages = with pkgs; [
     git
+    just
   ];
 
   # Work around a matter-server startup crash loop. The DCL occasionally serves
