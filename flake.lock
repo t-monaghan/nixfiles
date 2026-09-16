@@ -177,16 +177,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1789004880,
-        "narHash": "sha256-89M1tb/mlrk0x7/8SNr6q0wfCVE/2IccBXP1LOJtd7w=",
+        "lastModified": 1789532329,
+        "narHash": "sha256-1t8w0m1LV9kblns6GSN7hb8VmLzZ+Uoqcw/XODZvf0Q=",
         "owner": "t-monaghan",
         "repo": "nixpkgs",
-        "rev": "eb0b6a39e23a814d98c78f4ff2b25ac3b792aa67",
+        "rev": "15dc5d74335aeb029ed5aea77591fbc00853dac0",
         "type": "github"
       },
       "original": {
         "owner": "t-monaghan",
-        "ref": "bumps-sesh-2-29",
+        "ref": "bumps-sesh-2-30-1",
         "repo": "nixpkgs",
         "type": "github"
       }
