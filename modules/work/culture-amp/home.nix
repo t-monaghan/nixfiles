@@ -25,10 +25,7 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
     awscli.enable = true;
     # mise.enable = true;
 
-    granted = {
-      enable = true;
-      enableFishIntegration = false;
-    };
+    granted.enable = true;
 
     fish = {
       interactiveShellInit = "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";

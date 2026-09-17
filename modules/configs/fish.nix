@@ -244,39 +244,6 @@
           bk auth login --org culture-amp --token $BUILDKITE_API_KEY
         '';
       };
-      assume = {
-        description = "Select and assume AWS roles using fzf";
-        body = ''
-          # Find the granted assume.fish script
-          set assume_script (readlink -f (which assume) | sed 's|/bin/assume|/share/assume.fish|')
-
-          # Get all profiles from config
-          set all_profiles (grep '^\[profile' ~/.aws/config | sed 's/\[profile \(.*\)\]/\1/' | sort)
-
-          set result (
-            printf '%s\n' $all_profiles \
-            | fzf --prompt="AWS Profile > " \
-                  --preview="grep -A 10 '^\[profile {}\]' ~/.aws/config | grep granted_sso_account_id | head -1 | awk '{print \$NF}'" \
-                  --preview-label="Account ID" \
-                  --preview-window=down:1:wrap \
-                  --bind="ctrl-c:abort" \
-                  --expect="ctrl-o" \
-                  --header="Enter: assume | Ctrl-o: assume + open console" \
-                  --height=40%
-          )
-
-          set key $result[1]
-          set profile $result[2]
-
-          if test -n "$profile"
-            if test "$key" = "ctrl-o"
-              source $assume_script $profile -c
-            else
-              source $assume_script $profile
-            end
-          end
-        '';
-      };
     };
 
     shellAbbrs =
