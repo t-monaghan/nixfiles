@@ -46,9 +46,9 @@ in {
 
       focus = {
         followsMouse = true;
+        followsWindowToMonitor = true;
         lockModifier = "rightCommand";
         crossesMonitorAtEdge = false;
-        followsWindowToMonitor = false;
         moveCrossesMonitorAtEdge = false;
         moveMouseToFocusedWindow = false;
         raiseOnMouseFocus = false;
@@ -297,6 +297,7 @@ in {
           "moveWindowToMonitor.right"
           "moveWindowToMonitor.up"
           "moveWindowToMonitor.down"
+          "toggleColumnTabbed"
         ]
         ++ [
           (hotkey "Option+Return" "toggleFullscreen")
@@ -307,7 +308,6 @@ in {
           (hotkey "Unassigned" "moveColumn.down")
           (hotkey "Control+Option+Home" "moveColumnToFirst")
           (hotkey "Control+Option+End" "moveColumnToLast")
-          (hotkey "Option+T" "toggleColumnTabbed")
           (hotkey "Option+Home" "focusColumnFirst")
           (hotkey "Option+End" "focusColumnLast")
         ]
