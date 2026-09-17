@@ -16,11 +16,12 @@ in {
     # One file per program; each sets its own `programs.<name>` /
     # `services.<name>` block, and takes `pkgs`, `lib`, `config`, `colors` and
     # `fonts` as module arguments (see ./args.nix).
-    ./configs/aerospace.nix
+    # ./configs/aerospace.nix
     ./configs/claude-code.nix
     ./configs/ghostty.nix
     ./configs/neovim
     ./configs/opencode.nix
+    ./configs/omniwm.nix
     ./configs/pi-coding-agent.nix
     ./configs/syncthing.nix
     ./configs/worktrunk.nix
@@ -101,7 +102,7 @@ in {
     };
 
     jankyborders = {
-      enable = true;
+      enable = false;
       settings = {
         active_color = "0xff${builtins.substring 1 6 palette.base0B}"; # green
         hidpi = "on";
