@@ -9,5 +9,4 @@
   nixfiles = {
     work.cultureAmp.enable = true;
   };
-
 }

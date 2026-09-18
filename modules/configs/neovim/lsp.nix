@@ -1,9 +1,9 @@
-# `flakePath` + `homeConfigName` arrive via `_module.args` (see ./default.nix).
+# `flakePath` + `homeUsername` arrive via `_module.args` (see ./default.nix).
 # On the Macs they point nixd at this flake; on the NixOS box they are null
 # and nixd falls back to the channel-based `<nixpkgs>` expressions.
 {
   flakePath,
-  homeConfigName,
+  homeUsername,
   ...
 }: {
   plugins.lsp = {
@@ -32,7 +32,11 @@
             nixpkgs.expr = ''import (builtins.getFlake "${flakePath}").inputs.nixpkgs { }'';
             # Option-aware completion + hover docs for this host's home-manager
             # options (home.*, programs.*, services.*, ...).
-            options.home-manager.expr = ''(builtins.getFlake "${flakePath}").homeConfigurations.${homeConfigName}.options'';
+            options.home-manager.expr = ''
+              (builtins.head (builtins.filter
+                (configuration: configuration.config.home.username == "${homeUsername}")
+                (builtins.attrValues (builtins.getFlake "${flakePath}").homeConfigurations))).options
+            '';
           }
           else {
             # Non-flake: nixd resolves nixpkgs + NixOS options via the channel

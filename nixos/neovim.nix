@@ -12,6 +12,6 @@
   # the NixOS options through the channel instead, which is what null selects.
   _module.args = {
     flakePath = null;
-    homeConfigName = null;
+    homeUsername = null;
   };
 }

@@ -27,16 +27,8 @@
     mkNixosHost = import ./lib/mkNixosHost.nix inputs;
   in {
     homeConfigurations = {
-      work = mkHost {
-        name = "culture-amp";
-        username = "tom.monaghan1";
-        homeConfigName = "work";
-      };
-      personal = mkHost {
-        name = "personal";
-        username = "tmonaghan";
-        homeConfigName = "personal";
-      };
+      "tom.monaghan1" = mkHost "tom.monaghan1";
+      "tmonaghan" = mkHost "tmonaghan";
     };
 
     lib.mkDolomite = {extraModules ? []}:

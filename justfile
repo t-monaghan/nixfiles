@@ -1,11 +1,12 @@
 [working-directory: '.']
-switch host:
+switch:
   #!/usr/bin/env bash
   set -euo pipefail
+  user=$(whoami)
   if command -v home-manager &>/dev/null; then
-    home-manager switch --flake ".#{{host}}"
+    home-manager switch --flake ".#$user"
   else
-    nix shell nixpkgs#home-manager --command home-manager switch --flake ".#{{host}}"
+    nix shell nixpkgs#home-manager --command home-manager switch --flake ".#$user"
   fi
 
 news host:

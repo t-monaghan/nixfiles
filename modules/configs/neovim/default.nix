@@ -6,7 +6,7 @@
 # arguments below come from `_module.args` / `extraSpecialArgs` (see
 # ../../args.nix and ../../../lib/mkHost.nix). Host differences are limited to:
 #
-# - `flakePath` + `homeConfigName`: on the Macs they point nixd at this flake;
+# - `flakePath` + `homeUsername`: on the Macs they point nixd at this flake;
 #   on the NixOS box both are null (set in ../../../nixos/neovim.nix) and nixd
 #   falls back to the channel-based `<nixpkgs>` expressions — see ./lsp.nix.
 # - `pkgs.stdenv.isDarwin`: gates the macOS `defaults read` light/dark probe and
@@ -21,7 +21,7 @@
   lib,
   colors,
   flakePath,
-  homeConfigName,
+  homeUsername,
   ...
 }: let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -58,9 +58,9 @@ in {
     ];
 
     # Make the host parameters available to nixvim submodules
-    # (lsp.nix wires flakePath/homeConfigName into nixd's settings;
+    # (lsp.nix wires flakePath/homeUsername into nixd's settings;
     # obsidian.nix gates on isDarwin).
-    _module.args = {inherit flakePath homeConfigName isDarwin;};
+    _module.args = {inherit flakePath homeUsername isDarwin;};
 
     globals = {
       mapleader = " ";
