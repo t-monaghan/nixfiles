@@ -2,7 +2,7 @@
   description = "Tom Monaghan's flake for system configuration across machines";
 
   inputs = {
-    nixpkgs.url = "github:t-monaghan/nixpkgs/bumps-sesh-2-30-1";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
