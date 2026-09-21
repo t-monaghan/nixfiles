@@ -119,7 +119,7 @@ in {
       overview = {
         zoom = 1.0;
         backdrop = {
-          alpha = 1.0;
+          alpha = 0.3;
           blue = 0.08;
           green = 0.05;
           red = 0.05;
