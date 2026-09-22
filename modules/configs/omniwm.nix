@@ -8,7 +8,18 @@ in {
     enable = true;
 
     settings = {
-      monitorBarOverrides = [];
+      monitorBarOverrides = [
+        {
+          id = "D616BC4C-A3B6-4710-874F-0D8CA9954862";
+          monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230";
+          enabled = true;
+          notchMode = "splitActiveLeft";
+          notchActiveZoneWidth = 90.0;
+          hideEmptyWorkspaces = true;
+          monitorName = "Built-in Retina Display";
+          yOffset = 4;
+        }
+      ];
       monitorDwindleOverrides = [];
       monitorGapOverrides = [];
       monitorNiriOverrides = [];
@@ -70,7 +81,7 @@ in {
         defaultLayoutType = "niri";
         hotkeysEnabled = true;
         hyperKeyModifiers = "Control+Option+Shift+Command";
-        ipcEnabled = false;
+        ipcEnabled = true;
         preventSleepEnabled = false;
         systemHyperTrigger = "None";
         updateChecksEnabled = true;
