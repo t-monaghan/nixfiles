@@ -177,16 +177,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1789724158,
-        "narHash": "sha256-nlKgrm0dsVhOSopKheVBCcOpiIticufPPVLdVOI0euA=",
-        "owner": "nixos",
+        "lastModified": 1790121498,
+        "narHash": "sha256-mRwtZjvyBFJUosIgDKgz/KzH/IhjMjFysbjFdME3Yeg=",
+        "owner": "t-monaghan",
         "repo": "nixpkgs",
-        "rev": "0a3468a402c449992505b6a9fc5b06580141b750",
+        "rev": "fa3cf8b5173a38d235aa6a62ce39a5ae55e728a1",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
+        "owner": "t-monaghan",
+        "ref": "bumps-pi-coding-agent-0-87-1",
         "repo": "nixpkgs",
         "type": "github"
       }
