@@ -29,7 +29,7 @@ in {
       appearance.mode = "automatic";
 
       borders = {
-        enabled = true;
+        enabled = false;
         width = 5.0;
         color = {
           alpha = 1.0;
@@ -270,10 +270,10 @@ in {
           "focusWindowUpOrBottom"
           "focusWindowOrWorkspaceDown"
           "focusWindowOrWorkspaceUp"
-          "centerColumn"
           "centerVisibleColumns"
         ]
         ++ [
+          (hotkey "Option+C" "centerColumn")
           (hotkey "Control+Option+Shift+Up Arrow" "moveWindowToWorkspaceUp")
           (hotkey "Control+Option+Shift+Down Arrow" "moveWindowToWorkspaceDown")
           (hotkey "Control+Option+Shift+Page Up" "moveColumnToWorkspaceUp")
