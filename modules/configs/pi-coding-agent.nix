@@ -55,9 +55,10 @@ in {
       '';
       default = {
         defaultProvider = "github-copilot";
-        defaultModel = "gpt-5.6-sol";
+        defaultModel = "gpt-6-sol";
         enabledModels = [
-          "github-copilot/gpt-5.6-sol"
+          "github-copilot/gpt-6-sol"
+          "github-copilot/gpt-6-astra"
           "github-copilot/kimi-k3"
         ];
       };
