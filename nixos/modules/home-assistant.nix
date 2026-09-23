@@ -13,6 +13,7 @@
       "thread"
       "otbr"
       "wiim"
+      "smlight"
     ];
 
     config = {
