@@ -14,6 +14,8 @@
       "otbr"
       "wiim"
       "smlight"
+      "androidtv_remote"
+      "linkplay"
     ];
 
     config = {
