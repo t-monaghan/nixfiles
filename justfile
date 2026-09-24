@@ -1,16 +1,20 @@
+set unstable
+set lists
+
+homeManPath := which("home-manager")
+user := `whoami`
+switchCmd := if which("home-manager") == "" {
+  "nix shell nixpkgs#home-manager --command home-manager switch --flake .#"
+} else {
+  "home-manager switch --flake .#"
+}
+
 [working-directory: '.']
 switch:
-  #!/usr/bin/env bash
-  set -euo pipefail
-  user=$(whoami)
-  if command -v home-manager &>/dev/null; then
-    home-manager switch --flake ".#$user"
-  else
-    nix shell nixpkgs#home-manager --command home-manager switch --flake ".#$user"
-  fi
+  {{switchCmd + user}}
 
-news host:
-  nix run home-manager -- news --flake .#{{host}}
+news:
+  nix run home-manager -- news --flake .#{{user}}
 
 # Show the revision and date of the nixpkgs pin in flake.lock
 nixpkgs-pin:
