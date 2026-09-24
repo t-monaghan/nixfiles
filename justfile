@@ -1,20 +1,20 @@
 set unstable
 set lists
 
-homeManPath := which("home-manager")
 user := `whoami`
-switchCmd := if which("home-manager") == "" {
-  "nix shell nixpkgs#home-manager --command home-manager switch --flake .#"
+
+homeMan := if which("home-manager") == "" {
+  "nix shell nixpkgs#home-manager --command home-manager"
 } else {
-  "home-manager switch --flake .#"
+  "home-manager"
 }
 
 [working-directory: '.']
 switch:
-  {{switchCmd + user}}
+  {{homeMan + " switch --flake .#" + user}}
 
 news:
-  nix run home-manager -- news --flake .#{{user}}
+  {{homeMan + " news --flake .#" + user}}
 
 # Show the revision and date of the nixpkgs pin in flake.lock
 nixpkgs-pin:
