@@ -22,6 +22,7 @@
       default_config = {};
       # Load automations saved by the Home Assistant UI.
       automation = "!include automations.yaml";
+      scene = "!include scenes.yaml";
 
       homeassistant = {
         name = "Home";
