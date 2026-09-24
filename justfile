@@ -1,3 +1,4 @@
+# if you're on a fresh machine run `nix run nixpkgs#just`
 set unstable
 set lists
 
