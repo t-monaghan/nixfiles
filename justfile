@@ -10,7 +10,6 @@ homeMan := if which("home-manager") == "" {
   "home-manager"
 }
 
-[working-directory: '.']
 switch:
   {{homeMan + " switch --flake .#" + user}}
 
