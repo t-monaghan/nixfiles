@@ -21,5 +21,11 @@
   home.file.".pi/agent/sandbox.json".source =
     ../modules/configs/pi-coding-agent/sandbox.json;
 
+  home.file.".pi/agent/AGENTS.md".text = ''
+    ${builtins.readFile ../modules/configs/agent-context/shared.md}
+
+    ${builtins.readFile ../modules/configs/agent-context/pi.md}
+  '';
+
   programs.home-manager.enable = true;
 }

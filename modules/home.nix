@@ -125,6 +125,8 @@ in {
       ${builtins.readFile ./configs/agent-context/shared.md}
 
       ${builtins.readFile ./configs/agent-context/pi.md}
+
+      ${builtins.readFile ./configs/agent-context/macos.md}
     '';
   };
 

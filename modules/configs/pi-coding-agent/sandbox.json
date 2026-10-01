@@ -5,6 +5,10 @@
   "network": {
     "allowLocalBinding": true,
     "allowAllUnixSockets": true,
+    "allowMachLookup": [
+      "com.apple.pbs",
+      "com.apple.pasteboard.1"
+    ],
     "allowedDomains": [
       "localhost",
       "github.com",
