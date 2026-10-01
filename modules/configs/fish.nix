@@ -89,7 +89,7 @@
         '';
       };
       wtclean = {
-        description = "Remove non-main worktrees + their tmux sessions + their zoxide entries (declutters `sesh list`). `--all` sweeps every repo under ~/dev.";
+        description = "Remove non-main worktrees + their tmux windows + their zoxide entries (declutters `sesh list`). `--all` sweeps every repo under ~/dev.";
         body = ''
           argparse a/all y/yes -- $argv
           or return 1
@@ -141,15 +141,14 @@
             end
           end
 
-          # Kill tmux sessions whose working dir lives inside a worktree we're
-          # about to remove. Catches both `wts` sessions (named by branch) and
-          # spawn_worktree's `pi-<branch>` sessions without guessing at names.
-          for s in (tmux list-sessions -F '#{session_name}	#{session_path}' 2>/dev/null)
-            set -l sp (string split \t -- $s)
+          # Close windows running in worktrees before removing those worktrees.
+          # Do not kill the shared tmux session that contains the caller.
+          for w in (tmux list-windows -a -F '#{window_id}	#{pane_current_path}' 2>/dev/null)
+            set -l wp (string split \t -- $w)
             for p in $path_col
-              if string match -q "$p*" -- $sp[2]
-                tmux kill-session -t $sp[1] 2>/dev/null
-                echo "Killed tmux session: $sp[1]"
+              if test "$wp[2]" = "$p"; or string match -q "$p/*" -- $wp[2]
+                tmux kill-window -t $wp[1] 2>/dev/null
+                echo "Killed tmux window: $wp[1]"
                 break
               end
             end

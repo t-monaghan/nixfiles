@@ -1,93 +1,70 @@
 # spawn-worktree
 
-Pi extension that forks an independent `pi` agent into a fresh git worktree,
-combining [worktrunk](https://worktrunk.dev) (`wt`) for worktree creation with
-tmux for a detached, attachable session.
+Pi extension that starts an independent interactive `pi` agent in a git
+worktree and a new window in the **current tmux session**. Run it from a tmux
+pane.
 
 ## What it does
 
-Given a branch name and a task, the extension:
-
-1. Verifies `wt` and `tmux` are on PATH and validates the branch name.
-2. Looks up the worktree via `wt list --format json`. If the branch already
-   has a worktree it's reused; otherwise it's created via
-   `wt switch -c <branch> -x true` (which creates the worktree and immediately
-   exits — `-x true` replaces the `wt` process with `/bin/true`). Worktrunk's
-   `worktree-path` puts it **inside** the repo at
-   `<repo>/.worktrees/<sanitized-branch>` (see
-   `modules/configs/worktrunk-config.toml`), which is what lets a sandboxed pi
-   later `wt remove` it — a sibling worktree in `~/dev` would be read-only to
-   the sandbox.
-3. Starts a **detached** tmux session named `pi-<sanitized-branch>` rooted at
-   the new worktree path, running `pi <task>` in interactive mode.
-4. Returns the session name and worktree path so you can attach later.
-
-The spawned pi runs in interactive mode, so once it finishes the initial turn
-it sits at the prompt waiting for steering. Your existing `tmux-notify.ts`
-extension brackets the session name when it needs input, so backgrounded
-agents surface in the tmux status line.
+1. Checks for `wt` and `tmux`, validates the branch, and finds the current
+   tmux session from `TMUX_PANE`.
+2. Reuses an existing worktree or creates one with
+   `wt switch -c <branch> -x true`. Worktrunk's `worktree-path` puts it inside
+   the repository at `<repo>/.worktrees/<sanitized-branch>`. This lets a
+   sandboxed pi remove it later.
+3. Starts `pi <task>` in a detached window named `pi-<sanitized-branch>` in
+   the current session. The current window remains selected.
+4. Returns the window ID and worktree path. Select the window to inspect or
+   steer the agent.
 
 ## Surfaces
 
-| Surface              | Caller         | Usage                                                      |
-| -------------------- | -------------- | ---------------------------------------------------------- |
-| `/spawn` command     | you (slash)    | `/spawn feature-foo Implement the X feature in src/foo.ts` |
-| `spawn_worktree` tool | LLM (tool call) | Agent picks it for parallelisable, context-isolated work   |
+| Surface | Caller | Usage |
+| --- | --- | --- |
+| `/spawn` command | you | `/spawn feature-foo Implement the X feature in src/foo.ts` |
+| `spawn_worktree` tool | agent | Independent work in a separate context |
 
-The LLM tool accepts `{ branch, task, baseBranch?, model?, sessionName? }`.
+The tool accepts `{ branch, task, baseBranch?, model?, windowName? }`.
+A window with the same name in the current session causes an error.
 
-## Attaching to a background agent
+## Select and clean up the window
 
-```fish
-sesh connect pi-feature-foo
-# or
-tmux attach -t pi-feature-foo
-```
-
-Detach with the usual tmux prefix + `d`. Kill with
-`tmux kill-session -t pi-feature-foo`.
-
-## Cleaning up a spawned worktree
+From within the same tmux session, select the window by its ID as returned by
+`/spawn` or `spawn_worktree`. Close the window before removing the worktree:
 
 ```fish
-wt remove feature-foo                 # -f if dirty, -D if unmerged; removes .worktrees/feature-foo
-tmux kill-session -t pi-feature-foo   # wt remove won't kill the session; do it if it still exists
+tmux select-window -t '@123'
+tmux kill-window -t '@123'
+wt remove feature-foo # use -f if dirty, -D if unmerged
 ```
 
-Always remove via `wt` (not raw `git worktree remove`) so worktrunk's state
-stays consistent.
+Use `wt remove`, not `git worktree remove`, to keep worktrunk state consistent.
+The `wtclean` fish function also closes windows whose active pane is in a
+worktree it removes.
 
-## Why interactive + tmux (not `pi -p` + `spawn detached`)
-
-- `pi -p` would exit after the first turn — no way to follow up.
-- Bare detached `spawn(..., { detached: true, stdio: 'ignore' })` denies pi
-  a pty, which the TUI needs. tmux supplies the pty and a way back in.
-- tmux session names work as natural handles for `sesh`, `wt list`, and any
-  future "list my background agents" tooling.
+The agent runs in interactive mode, so it waits for input after its first
+turn. tmux supplies the pty that the pi TUI needs. `tmux-notify.ts` brackets
+the **session** name when an agent needs input, even though the agent now runs
+in a window of the current session.
 
 ## Requirements
 
-- `wt` (worktrunk) — already in `modules/configs/worktrunk.nix`
-- `tmux` — already in `modules/configs/tmux.nix`
-- Optional: `sesh` (already configured) for fuzzy reattachment.
+- `wt` (worktrunk) — `modules/configs/worktrunk.nix`
+- `tmux` — `modules/configs/tmux.nix`; run pi from inside tmux
 
 ## Related dispatcher workflow
 
-For single-turn asynchronous agents across named repositories, use a repo-less dispatcher session instead. Press `C-b M` and see [`../dispatch/README.md`](../dispatch/README.md). This extension remains the interactive, attachable tmux option.
+For single-turn asynchronous agents across named repositories, use a repo-less
+dispatcher session instead. Press `C-b M` and see
+[`../dispatch/README.md`](../dispatch/README.md).
 
-## Limitations / future work
+## Limitations
 
-- No "foreground subagent" mode. If you want streamed inline output, use the
-  upstream [`subagent` example](../../../../../../nix/store/.../examples/extensions/subagent/)
-  pattern with `cwd` set to the worktree path.
-- Doesn't pass through `--append-system-prompt`, extra flags, or env tweaks.
-- Doesn't garbage-collect dead tmux sessions; that's `tmux kill-session`'s job.
-- Doesn't currently support `wt switch` shortcuts (`pr:{N}`, `^`, `-`, `@`) —
-  expects a literal branch name.
+- No foreground subagent mode.
+- Does not pass through `--append-system-prompt`, extra flags, or env tweaks.
+- Does not support `wt switch` shortcuts (`pr:{N}`, `^`, `-`, `@`).
 
 ## Wiring
 
-Picked up automatically by pi's extension discovery once the file lives at
-`~/.pi/agent/extensions/spawn-worktree/index.ts`. The
-`home.file.".pi/agent"` recursive copy in `modules/home.nix` already handles
-that — no additional nix changes needed.
+Pi discovers the extension at `~/.pi/agent/extensions/spawn-worktree/index.ts`.
+The recursive `home.file.".pi/agent"` copy in `modules/home.nix` installs it.

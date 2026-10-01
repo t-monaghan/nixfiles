@@ -1,21 +1,17 @@
 /**
  * spawn-worktree — fork a background pi agent into a fresh git worktree.
  *
- * Combines worktrunk (`wt`) for worktree creation with tmux for a detached,
- * attachable session. The spawned `pi` runs in interactive mode inside a
- * detached tmux session at the worktree path, so you can attach later with
- * `sesh connect pi-<branch>` (or `tmux attach -t pi-<branch>`) to inspect,
- * steer, or follow up.
+ * Combines worktrunk (`wt`) for worktree creation with a detached tmux window
+ * in the current session. The spawned `pi` runs interactively in the worktree.
  *
  * Surfaces:
  *   /spawn <branch> <task...>                 (slash command, you type it)
  *   spawn_worktree({ branch, task, ... })     (LLM tool, the agent calls it)
  *
- * Requirements: `wt` and `tmux` on PATH. (tmux-notify.ts will bracket the
- * session name when the background pi is waiting for input.)
+ * Requirements: `wt` and `tmux` on PATH, running inside tmux.
  */
 
-import { spawn, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { Type } from "@mariozechner/pi-ai";
 import {
 	defineTool,
@@ -38,11 +34,12 @@ interface SpawnOptions {
 	task: string;
 	baseBranch?: string;
 	model?: string;
-	sessionName?: string;
+	windowName?: string;
 }
 
 interface SpawnResult {
-	sessionName: string;
+	windowId: string;
+	windowName: string;
 	worktreePath: string;
 	created: boolean;
 }
@@ -55,8 +52,7 @@ function which(cmd: string): boolean {
 }
 
 function sanitizeForTmux(name: string): string {
-	// tmux session names can't contain '.' or ':'. Replace anything that's
-	// not [A-Za-z0-9_-] with '-' and collapse runs.
+	// Keep the generated window name free of tmux target separators.
 	return name.replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
@@ -88,9 +84,25 @@ function listWorktrees(cwd: string): WtWorktree[] {
 	}
 }
 
-function tmuxSessionExists(name: string): boolean {
-	const r = spawnSync("tmux", ["has-session", "-t", `=${name}`], { stdio: "ignore" });
-	return r.status === 0;
+function currentSessionId(): string {
+	if (!process.env.TMUX || !process.env.TMUX_PANE) {
+		throw new Error("Run spawn_worktree inside a tmux pane");
+	}
+	const r = spawnSync("tmux", ["display-message", "-p", "-t", process.env.TMUX_PANE, "#{session_id}"], {
+		encoding: "utf-8",
+	});
+	if (r.status !== 0 || !r.stdout.trim()) {
+		throw new Error(`Could not find the current tmux session: ${r.stderr || r.stdout || `exit ${r.status}`}`);
+	}
+	return r.stdout.trim();
+}
+
+function existingWindow(sessionId: string, name: string): string | undefined {
+	const r = spawnSync("tmux", ["list-windows", "-t", sessionId, "-F", "#{window_id}\t#{window_name}"], {
+		encoding: "utf-8",
+	});
+	if (r.status !== 0) throw new Error(`tmux list-windows failed: ${r.stderr || `exit ${r.status}`}`);
+	return r.stdout.split("\n").find((line) => line.split("\t")[1] === name)?.split("\t")[0];
 }
 
 function createWorktree(cwd: string, branch: string, baseBranch?: string): void {
@@ -105,18 +117,17 @@ function createWorktree(cwd: string, branch: string, baseBranch?: string): void 
 	}
 }
 
-function spawnDetached(sessionName: string, worktreePath: string, task: string, model?: string): void {
-	// Pass pi args separately so tmux exec's them directly (no shell parsing).
-	const piArgs: string[] = [];
-	if (model) piArgs.push("--model", model);
-	piArgs.push(task);
-
-	const child = spawn(
+function spawnWindow(sessionId: string, windowName: string, worktreePath: string, task: string, model?: string): string {
+	const piArgs = model ? ["--model", model, task] : [task];
+	const r = spawnSync(
 		"tmux",
-		["new-session", "-d", "-s", sessionName, "-c", worktreePath, "pi", ...piArgs],
-		{ detached: true, stdio: "ignore", env: process.env },
+		["new-window", "-d", "-P", "-F", "#{window_id}", "-t", `${sessionId}:`, "-n", windowName, "-c", worktreePath, "pi", ...piArgs],
+		{ encoding: "utf-8" },
 	);
-	child.unref();
+	if (r.status !== 0 || !r.stdout.trim()) {
+		throw new Error(`tmux new-window failed: ${r.stderr || r.stdout || `exit ${r.status}`}`);
+	}
+	return r.stdout.trim();
 }
 
 async function spawnWorktree(opts: SpawnOptions, ctx: ExtensionContext): Promise<SpawnResult> {
@@ -125,13 +136,12 @@ async function spawnWorktree(opts: SpawnOptions, ctx: ExtensionContext): Promise
 	if (!isValidBranchName(opts.branch)) throw new Error(`Invalid branch name: ${JSON.stringify(opts.branch)}`);
 	if (!opts.task.trim()) throw new Error("Task is required");
 
-	const sessionName = opts.sessionName ?? `pi-${sanitizeForTmux(opts.branch)}`;
-	if (!sessionName) throw new Error("Could not derive a valid tmux session name");
-	if (tmuxSessionExists(sessionName)) {
-		throw new Error(
-			`tmux session '${sessionName}' already exists; attach with \`sesh connect ${sessionName}\` ` +
-				`or kill with \`tmux kill-session -t ${sessionName}\``,
-		);
+	const sessionId = currentSessionId();
+	const windowName = opts.windowName ?? `pi-${sanitizeForTmux(opts.branch)}`;
+	if (!windowName || /[:\n\r]/.test(windowName)) throw new Error("Invalid tmux window name");
+	const occupied = existingWindow(sessionId, windowName);
+	if (occupied) {
+		throw new Error(`tmux window '${windowName}' already exists (${occupied}); select it with \`tmux select-window -t ${occupied}\``);
 	}
 
 	const existing = listWorktrees(ctx.cwd).find((w) => w.branch === opts.branch);
@@ -149,8 +159,8 @@ async function spawnWorktree(opts: SpawnOptions, ctx: ExtensionContext): Promise
 		worktreePath = after.path;
 	}
 
-	spawnDetached(sessionName, worktreePath, opts.task, opts.model);
-	return { sessionName, worktreePath, created };
+	const windowId = spawnWindow(sessionId, windowName, worktreePath, opts.task, opts.model);
+	return { windowId, windowName, worktreePath, created };
 }
 
 // ─── Extension ──────────────────────────────────────────────────────────────
@@ -168,8 +178,8 @@ const SpawnParams = Type.Object({
 	model: Type.Optional(
 		Type.String({ description: "Pi model pattern (e.g. 'claude-opus-4-7'). Defaults to user setting." }),
 	),
-	sessionName: Type.Optional(
-		Type.String({ description: "Override tmux session name (default: 'pi-<sanitized-branch>')." }),
+	windowName: Type.Optional(
+		Type.String({ description: "Override tmux window name (default: 'pi-<sanitized-branch>')." }),
 	),
 });
 
@@ -177,23 +187,23 @@ const spawnWorktreeTool = defineTool({
 	name: "spawn_worktree",
 	label: "Spawn worktree agent",
 	description: [
-		"Spawn an independent pi agent in a new git worktree, running in a detached tmux session.",
+		"Spawn an independent pi agent in a new git worktree, running in a detached window of the current tmux session.",
 		"Use for parallel/independent work that should NOT share this conversation's context.",
-		"The spawned agent runs in interactive mode and can be attached later via `sesh connect <session>`.",
+		"Requires a tmux pane. Select the returned window ID to inspect or steer the interactive agent.",
 	].join(" "),
-	promptSnippet: "spawn_worktree: fork an independent pi agent into a fresh git worktree (background tmux session).",
+	promptSnippet: "spawn_worktree: fork an independent pi agent into a fresh git worktree (background tmux window in the current session).",
 	parameters: SpawnParams,
 	async execute(_id, params, _signal, _onUpdate, ctx) {
 		try {
 			const r = await spawnWorktree(params, ctx);
 			const lines = [
 				`${r.created ? "Created" : "Reused"} worktree for branch '${params.branch}' at ${r.worktreePath}`,
-				`Spawned background pi in tmux session '${r.sessionName}'.`,
-				`Attach with: sesh connect ${r.sessionName}   (or: tmux attach -t ${r.sessionName})`,
+				`Spawned background pi in tmux window '${r.windowName}' (${r.windowId}).`,
+				`Select with: tmux select-window -t ${r.windowId}`,
 			];
 			return {
 				content: [{ type: "text", text: lines.join("\n") }],
-				details: { sessionName: r.sessionName, worktreePath: r.worktreePath, created: r.created },
+				details: { windowId: r.windowId, windowName: r.windowName, worktreePath: r.worktreePath, created: r.created },
 			};
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : String(err);
@@ -218,7 +228,7 @@ export default function (pi: ExtensionAPI) {
 	pi.registerTool(spawnWorktreeTool);
 
 	pi.registerCommand("spawn", {
-		description: "Spawn a background pi agent in a new worktree (usage: /spawn <branch> <task>)",
+		description: "Spawn a background pi agent in a new tmux window (usage: /spawn <branch> <task>)",
 		handler: async (args: string, ctx: ExtensionCommandContext) => {
 			const { branch, task } = parseSlashArgs(args);
 			if (!branch || !task) {
@@ -228,7 +238,7 @@ export default function (pi: ExtensionAPI) {
 			try {
 				const r = await spawnWorktree({ branch, task }, ctx);
 				ctx.ui.notify(
-					`spawned ${r.sessionName} → ${r.worktreePath} (attach: sesh connect ${r.sessionName})`,
+					`spawned ${r.windowName} (${r.windowId}) → ${r.worktreePath} (select: tmux select-window -t ${r.windowId})`,
 					"info",
 				);
 			} catch (err) {
