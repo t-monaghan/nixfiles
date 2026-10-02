@@ -21,7 +21,7 @@
   "colors": {
     "accent": "green",
     "border": "blue",
-    "borderAccent": "green",
+    "borderAccent": "blue",
     "borderMuted": "bg3",
     "success": "green",
     "error": "red",

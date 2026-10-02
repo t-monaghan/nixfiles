@@ -22,7 +22,7 @@
   "colors": {
     "accent": "blue",
     "border": "blue",
-    "borderAccent": "cyan",
+    "borderAccent": "blue",
     "borderMuted": "base1",
     "success": "green",
     "error": "red",
