@@ -454,7 +454,7 @@ in {
       set -g status off
       set -g detach-on-destroy off
       set -g pane-border-status top
-      set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{?#{m:\[*,#{session_name}},#[fg=yellow]#{session_name}#[default],#{session_name}},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#{?#{m:\[*,#{session_name}},#[fg=colour16],#[fg=white bold]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default],#{?#{m:\[*,#{session_name}},#[fg=yellow],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}}#[default]──,}'
+      set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{session_name},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#[fg=white bold],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}#[default]──,}'
       bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
       bind -Tcopy-mode WheelDownPane send -N 0.25 -X scroll-down
 
@@ -475,15 +475,6 @@ in {
       ${tmuxMenuBindings}
       bind -N "custom key menu" ? display-menu -T "#[align=centre] tmux " -x C -y C -- ${tmuxMenuItems}
       bind -N "all key bindings" / list-keys -N -T prefix
-
-      # Notification bracket cleanup (`[work]` -> `work`) is intentionally NOT
-      # tied to window/session switches — the bracket should persist as a
-      # "needs attention" marker until you actually engage with pi.
-      # `tmux-notify.ts` already unbrackets on `turn_start` (you sent input) and
-      # `session_shutdown` (pi exited), which is the right trigger.
-      # If a session ends up stuck bracketed (e.g. pi crashed), the next
-      # `turn_start` from any pi in that session will clean it up; otherwise rename
-      # by hand with `tmux rename-session work`.
 
       set -g extended-keys on
       set -g extended-keys-format csi-u

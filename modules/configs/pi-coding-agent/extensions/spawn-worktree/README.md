@@ -43,9 +43,7 @@ The `wtclean` fish function also closes windows whose active pane is in a
 worktree it removes.
 
 The agent runs in interactive mode, so it waits for input after its first
-turn. tmux supplies the pty that the pi TUI needs. `tmux-notify.ts` brackets
-the **session** name when an agent needs input, even though the agent now runs
-in a window of the current session.
+turn. tmux supplies the pty that the pi TUI needs.
 
 ## Requirements
 

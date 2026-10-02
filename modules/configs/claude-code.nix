@@ -81,69 +81,16 @@
         "gopls-lsp@claude-plugins-official" = true;
         "typescript-lsp@claude-plugins-official" = true;
       };
-      hooks = {
-        SessionStart = [
-          {
-            hooks = [
-              {
-                type = "command";
-                command = "mkdir -p /tmp/claude/zsh && echo 'export TMPPREFIX=/tmp/claude/zsh' >> \"$CLAUDE_ENV_FILE\"";
-              }
-            ];
-          }
-        ];
-        Notification = [
-          {
-            matcher = "permission_prompt";
-            hooks = [
-              {
-                type = "command";
-                command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) ;; *) tmux set-environment -t "$session" CLAUDE_ORIGINAL_SESSION "$session" && tmux rename-session -t "$session" "[$session]";; esac; fi'';
-              }
-            ];
-          }
-        ];
-        Stop = [
-          {
-            hooks = [
-              {
-                type = "command";
-                command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) ;; *) tmux set-environment -t "$session" CLAUDE_ORIGINAL_SESSION "$session" && tmux rename-session -t "$session" "[$session]";; esac; fi'';
-              }
-            ];
-          }
-        ];
-        UserPromptSubmit = [
-          {
-            hooks = [
-              {
-                type = "command";
-                command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) original=$(tmux show-environment -t "$session" CLAUDE_ORIGINAL_SESSION 2>/dev/null | sed 's/^[^=]*=//'); if [ -n "$original" ]; then tmux set-environment -t "$session" -u CLAUDE_ORIGINAL_SESSION; tmux rename-session -t "$session" "$original"; fi;; esac; fi'';
-              }
-            ];
-          }
-        ];
-        PostToolUse = [
-          {
-            hooks = [
-              {
-                type = "command";
-                command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) original=$(tmux show-environment -t "$session" CLAUDE_ORIGINAL_SESSION 2>/dev/null | sed 's/^[^=]*=//'); if [ -n "$original" ]; then tmux set-environment -t "$session" -u CLAUDE_ORIGINAL_SESSION; tmux rename-session -t "$session" "$original"; fi;; esac; fi'';
-              }
-            ];
-          }
-        ];
-        SessionEnd = [
-          {
-            hooks = [
-              {
-                type = "command";
-                command = ''if [ -n "$TMUX" ]; then session=$(tmux display-message -p '#{session_name}'); case "$session" in \[*) original=$(tmux show-environment -t "$session" CLAUDE_ORIGINAL_SESSION 2>/dev/null | sed 's/^[^=]*=//'); if [ -n "$original" ]; then tmux set-environment -t "$session" -u CLAUDE_ORIGINAL_SESSION; tmux rename-session -t "$session" "$original"; fi;; esac; fi'';
-              }
-            ];
-          }
-        ];
-      };
+      hooks.SessionStart = [
+        {
+          hooks = [
+            {
+              type = "command";
+              command = "mkdir -p /tmp/claude/zsh && echo 'export TMPPREFIX=/tmp/claude/zsh' >> \"$CLAUDE_ENV_FILE\"";
+            }
+          ];
+        }
+      ];
       sandbox = {
         autoAllowBashIfSandboxed = true;
         allowUnsandboxedCommands = false;
