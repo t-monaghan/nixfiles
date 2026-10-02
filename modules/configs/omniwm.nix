@@ -56,7 +56,7 @@ in {
       };
 
       focus = {
-        followsMouse = true;
+        followsMouse = false;
         followsWindowToMonitor = true;
         lockModifier = "rightCommand";
         crossesMonitorAtEdge = false;
