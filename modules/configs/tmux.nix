@@ -391,8 +391,8 @@
     [ -n "$main_path" ] || exit 0
 
     window_id=$(
-      ${lib.getExe pkgs.tmux} list-windows -t "$session_id" -F '#{window_id}\t#{pane_current_path}' \
-        | while IFS="$(printf '\t')" read -r candidate path; do
+      ${lib.getExe pkgs.tmux} list-windows -t "$session_id" -F '#{window_id} #{pane_current_path}' \
+        | while read -r candidate path; do
             worktree=$(${lib.getExe pkgs.git} -C "$path" rev-parse --show-toplevel 2>/dev/null) || continue
             if [ "$worktree" = "$main_path" ]; then
               printf '%s\n' "$candidate"
