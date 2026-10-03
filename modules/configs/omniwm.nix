@@ -190,7 +190,7 @@ in {
         excludedBundleIDs = [];
         height = 24.0;
         hideEmptyWorkspaces = false;
-        hideInNativeFullscreen = false;
+        hideInNativeFullscreen = true;
         notchActiveZoneWidth = 180.0;
         notchMode = "moveBelowMenuBar";
         position = "overlappingMenuBar";
