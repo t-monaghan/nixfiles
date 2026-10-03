@@ -283,6 +283,7 @@
         gsl = "git stash list";
         gfm = "git fetch origin main:main";
         gca = "git commit --amend --no-edit";
+        grp = "git restore -p";
 
         ll = "ls -ltra";
 
