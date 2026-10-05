@@ -35,10 +35,7 @@
     defaultThinkingLevel = "medium";
     skills = ["~/.claude/skills"];
     treeFilterMode = "no-tools";
-    packages = [
-      "npm:pi-mcp-adapter"
-      sandboxDir
-    ];
+    packages = [sandboxDir];
     quietStartup = true;
     warnings.anthropicExtraUsage = false;
     doubleEscapeAction = "fork";
@@ -77,6 +74,14 @@ in {
     '';
     file.".pi/agent/settings.json".text =
       builtins.toJSON (sharedPiSettings // config.nixfiles.pi.providerSettings);
+    file.".pi/agent/mcp.json".text = builtins.toJSON {
+      mcpServers = lib.mapAttrs (name: server:
+        lib.filterAttrs (_: value: value != null && value != [] && value != {})
+        (builtins.removeAttrs server ["auth" "lifecycle"])
+        // lib.optionalAttrs (name == "atlassian") {
+          url = "https://mcp.atlassian.com/v1/mcp";
+        }) config.programs.mcp.servers;
+    };
     file.".pi/agent/dispatch.json".text = builtins.toJSON {
       inherit agentRoot;
       repoRoot = "${config.home.homeDirectory}/dev";

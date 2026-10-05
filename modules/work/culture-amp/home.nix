@@ -61,14 +61,6 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
         args = ["mcp-server"];
         lifecycle = "lazy";
       };
-      harness = {
-        command = "npx";
-        args = ["-y" "harness-mcp-v2"];
-        env = {
-          HARNESS_API_KEY = "\${HARNESS_PLATFORM_API_KEY}";
-        };
-        lifecycle = "lazy";
-      };
       datadog = {
         url = "https://mcp.datadoghq.com/v1/mcp";
       };

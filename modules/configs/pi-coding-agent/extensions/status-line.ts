@@ -70,13 +70,10 @@ export default function (pi: ExtensionAPI) {
 		try {
 			const theme = ctx.ui.theme;
 			ctx.ui.setStatus("status-line", buildStatus(ctx, theme));
-			// Hide verbose status from pi-mcp-adapter.
-			ctx.ui.setStatus("mcp", undefined);
 		} catch {}
 	}
 
 	pi.on("session_start", async (_event, ctx) => {
-		// Delay to ensure package extensions have set their status first
 		setTimeout(() => update(ctx), 2000);
 	});
 	pi.on("turn_start", async (_event, ctx) => update(ctx));
