@@ -132,6 +132,11 @@ in {
 
   xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
 
+  xdg.configFile."raycast-scripts" = {
+    source = ./configs/raycast-scripts;
+    recursive = true;
+  };
+
   xdg.configFile."sandy/config.json".text = builtins.toJSON {
     backend = "docker";
   };
