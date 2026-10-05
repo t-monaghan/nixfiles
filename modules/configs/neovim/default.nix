@@ -355,6 +355,13 @@ in {
         light = ${toLuaTable palettes.light},
       }
 
+      local function set_markdown_heading_colours(palette)
+        local colours = { palette.base0D, palette.base0B, palette.base08, palette.base0A, palette.base06, palette.base0C }
+        for level, fg in ipairs(colours) do
+          vim.api.nvim_set_hl(0, "@markup.heading." .. level .. ".markdown", { fg = fg })
+        end
+      end
+
       -- Floating windows sit one step off the background: base01 of the palette
       -- in use.
       local float_bg = {
@@ -371,6 +378,7 @@ in {
         vim.o.background = mode
         base16.setup(palettes[mode])
         make_transparent()
+        set_markdown_heading_colours(palettes[mode])
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg[mode] })
       end
 
@@ -379,6 +387,7 @@ in {
         group = vim.api.nvim_create_augroup("transparent-bg", { clear = true }),
         callback = function()
           make_transparent()
+          set_markdown_heading_colours(palettes[vim.o.background])
           vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg[vim.o.background] })
         end,
       })
