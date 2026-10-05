@@ -195,7 +195,7 @@
       } | ${lib.getExe pkgs.fzf} --no-sort --reverse --prompt="session/window> " \
         --delimiter='\t' --with-nth=5.. \
         --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t {3}" \
-        --preview-window "right:80%"
+        --preview-window "right:80%,follow"
     ) || exit 0
     [ -n "$selected" ] || exit 0
 

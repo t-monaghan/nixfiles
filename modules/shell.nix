@@ -139,6 +139,7 @@
           show_windows = true;
           preview_min_width = 80;
           preview_border = "line";
+          window_name_format = "#{?#{pane_title},#{pane_title},#{window_name}}";
         };
       };
     };
