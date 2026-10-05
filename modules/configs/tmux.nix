@@ -93,6 +93,12 @@
       bind = true;
     }
     {
+      key = "'";
+      label = "split below 20% (cwd)";
+      command = ''split-window -v -p 20 -c '#{pane_current_path}' '';
+      bind = true;
+    }
+    {
       key = "%";
       label = "split right (cwd)";
       command = ''split-window -h -c '#{pane_current_path}' '';
