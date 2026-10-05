@@ -202,7 +202,7 @@ in {
         systemStatsButton = false;
         windowLevel = "popup";
         xOffset = 0.0;
-        yOffset = 0.0;
+        yOffset = 3.0;
         iconOverrides = {};
       };
 
