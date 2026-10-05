@@ -81,11 +81,35 @@
       };
       wts = {
         wraps = "wt switch";
-        description = "Resolve or create a worktrunk worktree, then connect to it with sesh";
+        description = "Resolve or create a worktrunk worktree, then open it in a tmux window";
         body = ''
-          # Worktrunk resolves or creates the worktree and runs its hooks. sesh
-          # then creates or connects to the tmux session for the resolved path.
-          wt switch --no-cd -x sesh $argv -- connect '{{ worktree_path }}'
+          set -l result (wt switch --no-cd --format json $argv)
+          or return $status
+
+          set -l worktree_path (printf '%s\n' $result | jq -r '.path // empty')
+          if test -z "$worktree_path"
+            echo 'wts: worktrunk returned no worktree path' >&2
+            return 1
+          end
+
+          if not set -q TMUX
+            sesh connect $worktree_path
+            return $status
+          end
+
+          set -l session_id
+          if set -q TMUX_PANE
+            set session_id (tmux display-message -p -t $TMUX_PANE '#{session_id}')
+          else
+            set session_id (tmux display-message -p '#{session_id}')
+          end
+          or return $status
+          set -l branch (git -C $worktree_path branch --show-current)
+          or return $status
+          set -l window_id (tmux new-window -d -P -F '#{window_id}' -t "$session_id:" -n "$branch" -c "$worktree_path")
+          or return $status
+          tmux set-option -w -t $window_id automatic-rename off
+          and tmux select-window -t $window_id
         '';
       };
       wtclean = {
