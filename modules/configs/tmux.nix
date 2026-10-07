@@ -307,7 +307,7 @@
                   else                  "\(($s/604800)| floor)w" end;
                 .[]
                 | select(.kind == "worktree" and (.is_main | not) and .branch)
-                | "wt\t\(.branch)\t\u2442 \(.branch)\t\(.symbols // "")\t\(.commit.timestamp | age)\t\(.commit.message[0:60])"
+                | "wt\t\(.branch)\t\u2442 \(.branch | sub(":refs/pull/[0-9]+/head$"; ""))\t\(.symbols // "")\t\(.commit.timestamp | age)\t\(.commit.message[0:60])"
               '
         ) &
         worktrees_pid=$!
@@ -318,7 +318,7 @@
             --json number,title,updatedAt,author,headRefName 2>/dev/null \
             | ${lib.getExe pkgs.jq} -r '
                 sort_by(.updatedAt) | reverse | .[]
-                | "pr\t\(.number)\t#\(.number)\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"
+                | "pr\t\(.number)\t\(.headRefName | sub(":refs/pull/[0-9]+/head$"; "")) (#\(.number))\t\(.updatedAt[0:10])\t@\(.author.login)\t\(.title)"
               '
         ) &
         prs_pid=$!
