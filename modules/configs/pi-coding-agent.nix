@@ -35,7 +35,7 @@
     defaultThinkingLevel = "medium";
     skills = ["~/.claude/skills"];
     treeFilterMode = "no-tools";
-    packages = [sandboxDir];
+    packages = [sandboxDir] ++ config.nixfiles.pi.packages;
     quietStartup = true;
     warnings.anthropicExtraUsage = false;
     doubleEscapeAction = "fork";
@@ -59,6 +59,17 @@ in {
           "github-copilot/kimi-k3"
         ];
       };
+    };
+    packages = lib.mkOption {
+      type = lib.types.listOf (lib.types.either lib.types.str lib.types.attrs);
+      default = [];
+      example = ["git:github.com/org/skills@main"];
+      description = ''
+        Extra pi package sources (npm, git, or path). Lists from several
+        modules are concatenated, so work profiles can add their own
+        private skill repositories. Git sources are cloned by pi into
+        ~/.pi/agent/git/ and refreshed with `pi update --extensions`.
+      '';
     };
     dispatchModel = lib.mkOption {
       type = lib.types.str;

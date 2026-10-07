@@ -16,6 +16,9 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
       "github-copilot/gpt-6-sol"
     ];
   };
+  nixfiles.pi.packages = [
+    "git:github.com/cultureamp/sre-ai-toolkit@main"
+  ];
 
   home.packages = with pkgs; [
     jira-cli-go
