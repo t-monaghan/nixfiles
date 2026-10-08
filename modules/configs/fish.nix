@@ -42,6 +42,19 @@
           git remote set-url origin https://github.com/$new_url
         '';
       };
+      copy-commit-hash = {
+        description = "Select a commit and copy its full hash to the clipboard";
+        body = ''
+          set -l selection (git log -n 100 --format='%h %s' | gum filter --placeholder 'Select commit')
+          or return $status
+
+          set -l fields (string split -m1 ' ' -- "$selection")
+          set -l hash (git rev-parse --verify "$fields[1]^{commit}")
+          or return $status
+
+          printf '%s' "$hash" | pbcopy
+        '';
+      };
       fish_greeting = {
         body = '''';
       };
@@ -342,6 +355,7 @@
         zed = "open -a 'Zed Preview' . && exit";
         disu = "caffeinate -disu";
         ssh = "ghostty +ssh --";
+        gcy = "copy-commit-hash";
       };
 
     plugins = [
