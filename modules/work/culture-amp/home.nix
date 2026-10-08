@@ -18,6 +18,7 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
   };
   nixfiles.pi.packages = [
     "git:github.com/cultureamp/sre-ai-toolkit@main"
+    "git:github.com/cultureamp/ca-agent-context@main"
   ];
 
   home.packages = with pkgs; [
