@@ -42,14 +42,20 @@
           git remote set-url origin https://github.com/$new_url
         '';
       };
-      copy-commit-hash = {
-        description = "Select a commit and copy its full hash to the clipboard";
+      print-commit-hash = {
+        description = "Select a commit and print its full hash";
         body = ''
           set -l selection (git log -n 100 --format='%h %s' | gum filter --placeholder 'Select commit')
           or return $status
 
           set -l fields (string split -m1 ' ' -- "$selection")
-          set -l hash (git rev-parse --verify "$fields[1]^{commit}")
+          git rev-parse --verify "$fields[1]^{commit}"
+        '';
+      };
+      copy-commit-hash = {
+        description = "Select a commit and copy its full hash to the clipboard";
+        body = ''
+          set -l hash (print-commit-hash)
           or return $status
 
           printf '%s' "$hash" | pbcopy
@@ -308,6 +314,7 @@
         gdc = "git difftool --cached";
         ga = "git add";
         gc = "git commit -m";
+        gcp = "print-commit-hash";
         ghpr = "gh pr checkout";
         gsc = "git stash clear";
         checks = "gh pr checks --required --watch";
