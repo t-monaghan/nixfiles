@@ -33,7 +33,6 @@
   '';
   sharedPiSettings = {
     defaultThinkingLevel = "medium";
-    skills = ["~/.claude/skills"];
     treeFilterMode = "no-tools";
     packages = [sandboxDir] ++ config.nixfiles.pi.packages;
     quietStartup = true;
