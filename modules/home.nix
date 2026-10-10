@@ -95,6 +95,8 @@ in {
     '';
   };
 
+  xdg.configFile."hud/hud.toml".source = (pkgs.formats.toml {}).generate "hud.toml" (import ./configs/hud.nix);
+
   services = {
     home-manager.autoExpire = {
       enable = true;
