@@ -9,6 +9,7 @@
   imports = [
     ../modules/shell.nix
     ../modules/configs/pi-coding-agent.nix
+    ../modules/configs/syncthing.nix
   ];
 
   home = {
