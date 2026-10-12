@@ -95,7 +95,7 @@ in {
     '';
   };
 
-  xdg.configFile."hud/hud.toml".source = (pkgs.formats.toml {}).generate "hud.toml" (import ./configs/hud.nix);
+  xdg.configFile."hud/hud.toml".source = (pkgs.formats.toml {}).generate "hud.toml" (import ./configs/hud.nix {inherit config lib;});
 
   services = {
     home-manager.autoExpire = {
@@ -190,10 +190,11 @@ in {
         alias_auto_connect = true;
       }
       {
-        name = "bifs";
-        path = "~/dev/base-infrastructure-for-services/";
-        alias = "bifs";
+        name = "hud";
+        path = "~/dev";
+        alias = "hud";
         alias_auto_connect = true;
+        startup_command = "hud && exit";
       }
     ];
 

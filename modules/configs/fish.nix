@@ -291,6 +291,7 @@
     shellAbbrs =
       {
         # Mac-only abbrs (`open`, `caffeinate`) are merged in below via optionalAttrs.
+        h = "sesh connect hud";
         s = "sesh picker -i";
         nv = "nvim";
         nd = "sesh connect notes";
