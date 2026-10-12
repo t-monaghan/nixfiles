@@ -4,6 +4,12 @@
 }: {
   recipe =
     {
+      pi-sessions = {
+        command = "pi-hud list";
+        columns = ["state" "repository" "session" "worktree" "updated"];
+        keys.enter = {run = ["pi-hud" "connect" "{{.key}}"];};
+        refresh = 5;
+      };
       pull-requests = {
         command = ''gh search prs --author @me --limit 100 --state open --json repository,number,isDraft,state,title,url | jq 'map(.repository = .repository.name)' '';
         columns = ["repository" "number" "title" "state" "isDraft"];
@@ -51,6 +57,10 @@
       title = "Main";
       sections =
         [
+          {
+            title = "Pi sessions";
+            recipe = "pi-sessions";
+          }
           {
             title = "Windows";
             recipe = "tmux-windows";

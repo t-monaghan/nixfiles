@@ -108,6 +108,10 @@ in {
       [
         pkgs.pi-coding-agent
         pkgs.nodejs
+        (pkgs.writeShellScriptBin "pi-hud" ''
+          export PI_HUD_PI=${pkgs.pi-coding-agent}/bin/pi
+          exec ${pkgs.nodejs}/bin/node ${./pi-hud.mjs} "$@"
+        '')
       ]
       ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         # @anthropic-ai/sandbox-runtime resolves these by executable name at
