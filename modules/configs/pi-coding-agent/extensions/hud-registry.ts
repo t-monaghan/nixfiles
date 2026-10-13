@@ -19,9 +19,11 @@ function pane(): { socket: string; paneId: string; windowId: string; sessionId: 
 
 export default function (pi: ExtensionAPI) {
 	let timer: ReturnType<typeof setInterval> | undefined;
+	let current: ExtensionContext | undefined;
 	let working = false;
 	const tmux = pane();
 	const update = (ctx: ExtensionContext) => {
+		current = ctx;
 		mkdirSync(state, { recursive: true, mode: 0o700 });
 		const temp = `${record}.tmp`;
 		writeFileSync(temp, JSON.stringify({
@@ -40,15 +42,17 @@ export default function (pi: ExtensionAPI) {
 	pi.on("session_start", async (_event, ctx) => {
 		update(ctx);
 		if (timer) clearInterval(timer);
-		timer = setInterval(() => update(ctx), 15000);
+		timer = setInterval(() => { if (current) update(current); }, 15000);
 		timer.unref();
 	});
 	pi.on("session_info_changed", async (_event, ctx) => update(ctx));
-	pi.on("session_before_switch", async () => { rmSync(record, { force: true }); });
+	pi.on("session_before_switch", async () => { current = undefined; rmSync(record, { force: true }); });
+	pi.on("session_switch", async (_event, ctx) => { working = false; update(ctx); });
 	pi.on("agent_start", async (_event, ctx) => { working = true; update(ctx); });
 	pi.on("agent_settled", async (_event, ctx) => { working = false; update(ctx); });
 	pi.on("session_shutdown", async () => {
 		if (timer) clearInterval(timer);
+		current = undefined;
 		rmSync(record, { force: true });
 	});
 }

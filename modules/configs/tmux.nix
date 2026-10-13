@@ -24,6 +24,12 @@
       bind = true;
     }
     {
+      key = "H";
+      label = "HUD session";
+      command = ''run-shell "sesh connect -s hud"'';
+      bind = true;
+    }
+    {
       key = "w";
       label = "worktree / PR picker";
       command = ''display-popup -h 80% -w 80% -E "${tmux-wt-switch}"'';

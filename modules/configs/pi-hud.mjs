@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync, closeSync, unlinkSync } from "node:fs";
+import { existsSync, mkdirSync, openSync, readFileSync, readdirSync, realpathSync, renameSync, statSync, writeFileSync, closeSync, unlinkSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 
@@ -13,6 +13,7 @@ const agentRoot = (() => {
   catch { return join(home, "dev/agents"); }
 })();
 const jobsRoot = join(agentRoot, "sessions");
+const recentSince = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
 function entries(path) {
   try { return readdirSync(path, { withFileTypes: true }); } catch { return []; }
@@ -52,6 +53,14 @@ function firstText(message) {
   return (typeof content === "string" ? content : Array.isArray(content) ? content.find(c => c.type === "text")?.text : "") || "";
 }
 function clean(text) { return String(text || "").replace(/\s+/g, " ").slice(0, 90); }
+function timeSince(timestamp, now) {
+  const elapsed = Math.max(0, Math.floor((now - timestamp) / 1000));
+  if (!Number.isFinite(elapsed)) return "—";
+  if (elapsed < 60) return "now";
+  if (elapsed < 3600) return `${Math.floor(elapsed / 60)}m ago`;
+  if (elapsed < 86400) return `${Math.floor(elapsed / 3600)}h ago`;
+  return `${Math.floor(elapsed / 86400)}d ago`;
+}
 function metadata(file) {
   const lines = readFileSync(file, "utf8").split("\n");
   let header, name, first;
@@ -74,6 +83,7 @@ function index() {
     try {
       const s = statSync(file);
       const cached = old[file];
+      if (s.mtimeMs < recentSince) continue;
       next[file] = cached?.mtimeMs === s.mtimeMs && cached?.size === s.size
         ? cached : { ...metadata(file), mtimeMs: s.mtimeMs, size: s.size };
     } catch { /* A session can disappear during refresh. */ }
@@ -104,23 +114,24 @@ function gitBase(cwd) {
   return cwd;
 }
 function summaryRows() {
-  const saved = index(), live = active(), jobMap = jobs(), rows = [], indexedJobs = new Set();
+  const saved = index(), live = active(), jobMap = jobs(), rows = [], indexedJobs = new Set(), now = Date.now();
   for (const [file, info] of Object.entries(saved)) {
     const running = live.get(file), job = jobMap.get(dirname(file));
     if (job) indexedJobs.add(job.id);
     const cwd = info.cwd || running?.cwd || job?.worktreePath;
     const base = gitBase(cwd);
     const state = job?.state === "running" ? "Background" : running ? running.working ? "Working" : "Idle" : !base ? "Missing directory" : "Saved";
-    rows.push({ key: file, state, repository: job?.repo || (base ? basename(base) : "—"), session: info.name, worktree: cwd && base && resolve(cwd) !== resolve(base) ? basename(cwd) : "main", updated: new Date(info.mtimeMs).toLocaleString(), sort: running ? 2 : 0, time: info.mtimeMs });
+    rows.push({ key: file, state, repository: job?.repo || (base ? basename(base) : "—"), session: info.name, worktree: cwd && base && resolve(cwd) !== resolve(base) ? basename(cwd) : "main", updated: timeSince(info.mtimeMs, now), sort: running ? 2 : 0, time: info.mtimeMs });
   }
   for (const [key, record] of live) {
     if (saved[key]) continue;
     const base = gitBase(record.cwd);
-    rows.push({ key, state: record.working ? "Working" : "Idle", repository: base ? basename(base) : "—", session: clean(record.name || record.id || "Ephemeral pi"), worktree: base && record.cwd !== base ? basename(record.cwd) : "main", updated: "now", sort: 2, time: record.heartbeat });
+    rows.push({ key, state: record.working ? "Working" : "Idle", repository: base ? basename(base) : "—", session: clean(record.name || record.id || "Ephemeral pi"), worktree: base && record.cwd !== base ? basename(record.cwd) : "main", updated: timeSince(record.heartbeat, now), sort: 2, time: record.heartbeat });
   }
   for (const job of jobMap.values()) {
-    if (indexedJobs.has(job.id)) continue;
-    rows.push({ key: `job:${job.id}`, state: job.state === "running" ? "Background" : job.state, repository: job.repo, session: `${job.repo}:${job.branch}`, worktree: basename(job.worktreePath), updated: job.completedAt || job.createdAt, sort: job.state === "running" ? 1 : 0, time: Date.parse(job.completedAt || job.createdAt) || 0 });
+    if (indexedJobs.has(job.id) || (job.state !== "running" && (Date.parse(job.completedAt || job.createdAt) || 0) < recentSince)) continue;
+    const time = Date.parse(job.completedAt || job.createdAt);
+    rows.push({ key: `job:${job.id}`, state: job.state === "running" ? "Background" : job.state, repository: job.repo, session: `${job.repo}:${job.branch}`, worktree: basename(job.worktreePath), updated: timeSince(time, now), sort: job.state === "running" ? 1 : 0, time: time || 0 });
   }
   rows.sort((a, b) => b.sort - a.sort || b.time - a.time);
   return rows.map(({ sort, time, ...row }) => row);
@@ -132,25 +143,32 @@ function showPane(record) {
   try {
     const [currentWindow, currentSession] = tmux(["display-message", "-p", "-t", paneId, "#{window_id}\t#{session_id}"], socket).split("\t");
     if (currentWindow !== windowId || !currentSession?.startsWith("$")) return false;
+    const client = tmux(["display-message", "-p", "#{client_name}"]);
+    if (!client) return false;
     tmux(["select-window", "-t", windowId], socket);
     tmux(["select-pane", "-t", paneId], socket);
-    tmux(["switch-client", "-t", currentSession], socket);
+    tmux(["switch-client", "-c", client, "-t", currentSession], socket);
     return true;
   } catch { return false; }
 }
 function baseSession(base) {
   const sessions = tmux(["list-sessions", "-F", "#{session_id}\t#{session_name}\t#{session_path}"]).split("\n").map(line => line.split("\t"));
-  const existing = sessions.find(parts => parts[2] && resolve(parts[2]) === resolve(base));
+  const existing = sessions.find(parts => {
+    try { return parts[2] && realpathSync(parts[2]) === realpathSync(base); }
+    catch { return false; }
+  });
   if (existing) return existing[0];
   const name = basename(base).replace(/[^\w-]/g, "-");
   const sessionName = sessions.some(parts => parts[1] === name) ? `${name}-${process.pid}` : name;
   return tmux(["new-session", "-d", "-P", "-F", "#{session_id}", "-s", sessionName, "-c", base]);
 }
 function openWindow(base, cwd, command, args, name) {
+  const client = tmux(["display-message", "-p", "#{client_name}"]);
+  if (!client) throw Error("No tmux client is attached to HUD.");
   const sessionId = baseSession(base);
   const windowId = tmux(["new-window", "-d", "-P", "-F", "#{window_id}", "-t", `${sessionId}:`, "-n", name, "-c", cwd, command, ...args]);
   tmux(["select-window", "-t", windowId]);
-  tmux(["switch-client", "-t", sessionId]);
+  tmux(["switch-client", "-c", client, "-t", sessionId]);
 }
 async function connect(key) {
   const live = active();
