@@ -68,6 +68,10 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
       datadog = {
         url = "https://mcp.datadoghq.com/v1/mcp";
       };
+      slack = {
+        url = "https://mcp.slack.com/mcp";
+        auth = "oauth";
+      };
       atlassian = {
         url = "https://mcp.atlassian.com/v1/sse";
         auth = "oauth";
