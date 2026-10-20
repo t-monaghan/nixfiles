@@ -7,6 +7,17 @@
       pi-sessions = {
         command = "pi-hud list";
         columns = ["state" "repository" "session" "worktree" "updated"];
+        colors.state = {
+          Waiting = "yellow";
+          Working = "green";
+          Idle = "cyan";
+          Background = "blue";
+          Saved = "gray";
+          "Missing directory" = "red";
+          completed = "green";
+          failed = "red";
+          canceled = "gray";
+        };
         keys.enter = {run = ["pi-hud" "connect" "{{.key}}"];};
         refresh = 5;
       };
@@ -36,19 +47,28 @@
         command = ''
           bk build list --no-input --no-pager --quiet \
             --creator=019cf524-0afa-49e6-8e3c-52ce91377aa7 \
-            --state=running --no-limit --json |
-            jq '[.[] as $build | $build.jobs[]?
-              | select(.state == "running")
-              | {
-                  pipeline: $build.pipeline.slug,
-                  branch: $build.branch,
-                  build: $build.number,
-                  job: (.name // .label),
-                  url: .web_url
-                }]'
+            --limit 50 --json |
+            jq '[.[] | {
+              "repo/project": (.pipeline.slug // "—"),
+              status: .state,
+              branch: .branch,
+              "commit message": ((.message // "") | split("\n")[0]),
+              url: .web_url
+            }]'
         '';
-        columns = ["pipeline" "branch" "build" "job"];
-        refresh = 10;
+        columns = ["repo/project" "status" "branch" "commit message"];
+        colors.status = {
+          passed = "green";
+          running = "blue";
+          scheduled = "yellow";
+          blocked = "yellow";
+          canceling = "yellow";
+          failed = "red";
+          canceled = "gray";
+          skipped = "gray";
+          not_run = "gray";
+        };
+        refresh = 30;
         keys.enter = {run = ["open" "{{.url}}"];};
       };
     };
@@ -72,7 +92,7 @@
         ]
         ++ lib.optionals config.nixfiles.work.cultureAmp.enable [
           {
-            title = "Running jobs";
+            title = "Buildkite builds";
             recipe = "builds";
           }
         ];

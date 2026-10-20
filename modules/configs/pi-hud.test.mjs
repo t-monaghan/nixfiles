@@ -48,6 +48,11 @@ test("lists saved sessions and resumes worktree sessions in the base tmux sessio
     mkdirSync(registry, { recursive: true });
     writeFileSync(join(registry, `${process.pid}.json`), JSON.stringify({ pid: process.pid, file, cwd: worktree, working: true, heartbeat: Date.now(), tmux: { socket: join(dir, "socket"), paneId: "%9", windowId: "@9" } }));
     assert.equal(JSON.parse(exec(process.execPath, [helper, "list"], { env }))[0].state, "Working");
+    writeFileSync(join(registry, `${process.pid}.json`), JSON.stringify({ pid: process.pid, file, cwd: worktree, working: true, waiting: true, heartbeat: Date.now() }));
+    assert.equal(JSON.parse(exec(process.execPath, [helper, "list"], { env }))[0].state, "Waiting");
+    writeFileSync(join(registry, `${process.pid}.json`), JSON.stringify({ pid: process.pid, cwd: worktree, working: false, waiting: true, heartbeat: Date.now() }));
+    assert.equal(JSON.parse(exec(process.execPath, [helper, "list"], { env })).find(row => row.key === `live:${process.pid}`)?.state, "Waiting");
+    writeFileSync(join(registry, `${process.pid}.json`), JSON.stringify({ pid: process.pid, file, cwd: worktree, working: true, heartbeat: Date.now(), tmux: { socket: join(dir, "socket"), paneId: "%9", windowId: "@9" } }));
     writeFileSync(log, "");
     exec(process.execPath, [helper, "connect", file], { env });
     assert.ok(readFileSync(log, "utf8").includes(`-S ${join(dir, "socket")} switch-client -c /dev/ttys000 -t $2`));

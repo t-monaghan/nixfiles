@@ -265,15 +265,18 @@ export default function (pi: ExtensionAPI) {
 	const grantLabel = (o: (typeof GRANT_OPTIONS)[number]) => `${o.label} [${o.key}]`;
 	let promptSeq = 0;
 
-	async function promptGrant(ctx: ExtensionContext, title: string): Promise<Grant> {
-		// Let alerting extensions know a human is being blocked on (see alerter.ts).
+	async function withAttention<T>(title: string, ask: () => Promise<T>): Promise<T> {
 		const attentionKey = `sandbox:${++promptSeq}`;
 		pi.events.emit("attention:request", { key: attentionKey, message: title });
 		try {
-			return await askGrant(ctx, title);
+			return await ask();
 		} finally {
 			pi.events.emit("attention:resolve", { key: attentionKey });
 		}
+	}
+
+	async function promptGrant(ctx: ExtensionContext, title: string): Promise<Grant> {
+		return withAttention(title, () => askGrant(ctx, title));
 	}
 
 	async function askGrant(ctx: ExtensionContext, title: string): Promise<Grant> {
@@ -456,14 +459,14 @@ export default function (pi: ExtensionAPI) {
 
 	async function confirmOnce(ctx: ExtensionContext, verb: string, target: string): Promise<{ block: true; reason: string } | undefined> {
 		if (!ctx.hasUI) return { block: true, reason: `Sandbox (prompt mode): no UI to approve ${verb}` };
-		const ok = await ctx.ui.confirm(`Allow ${verb}?`, target);
+		const ok = await withAttention(`Allow ${verb}?`, () => ctx.ui.confirm(`Allow ${verb}?`, target));
 		return ok ? undefined : { block: true, reason: `Denied ${verb}: ${target}` };
 	}
 
 	// ── user_bash (! commands) ──────────────────────────────────────────────────
 	pi.on("user_bash", async (event, ctx) => {
 		if (mode === "prompt") {
-			if (ctx.hasUI && !(await ctx.ui.confirm("Allow run?", event.command))) {
+			if (ctx.hasUI && !(await withAttention("Allow run?", () => ctx.ui.confirm("Allow run?", event.command)))) {
 				return { result: { output: "Denied by sandbox (prompt mode).", exitCode: 1, cancelled: false, truncated: false } };
 			}
 			return;

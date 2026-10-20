@@ -113,6 +113,7 @@ function gitBase(cwd) {
   } catch { /* Non-git directories use their own tmux session. */ }
   return cwd;
 }
+function liveState(record) { return record.waiting ? "Waiting" : record.working ? "Working" : "Idle"; }
 function summaryRows() {
   const saved = index(), live = active(), jobMap = jobs(), rows = [], indexedJobs = new Set(), now = Date.now();
   for (const [file, info] of Object.entries(saved)) {
@@ -120,13 +121,13 @@ function summaryRows() {
     if (job) indexedJobs.add(job.id);
     const cwd = info.cwd || running?.cwd || job?.worktreePath;
     const base = gitBase(cwd);
-    const state = job?.state === "running" ? "Background" : running ? running.working ? "Working" : "Idle" : !base ? "Missing directory" : "Saved";
+    const state = running?.waiting ? "Waiting" : job?.state === "running" ? "Background" : running ? liveState(running) : !base ? "Missing directory" : "Saved";
     rows.push({ key: file, state, repository: job?.repo || (base ? basename(base) : "—"), session: info.name, worktree: cwd && base && resolve(cwd) !== resolve(base) ? basename(cwd) : "main", updated: timeSince(info.mtimeMs, now), sort: running ? 2 : 0, time: info.mtimeMs });
   }
   for (const [key, record] of live) {
     if (saved[key]) continue;
     const base = gitBase(record.cwd);
-    rows.push({ key, state: record.working ? "Working" : "Idle", repository: base ? basename(base) : "—", session: clean(record.name || record.id || "Ephemeral pi"), worktree: base && record.cwd !== base ? basename(record.cwd) : "main", updated: timeSince(record.heartbeat, now), sort: 2, time: record.heartbeat });
+    rows.push({ key, state: liveState(record), repository: base ? basename(base) : "—", session: clean(record.name || record.id || "Ephemeral pi"), worktree: base && record.cwd !== base ? basename(record.cwd) : "main", updated: timeSince(record.heartbeat, now), sort: 2, time: record.heartbeat });
   }
   for (const job of jobMap.values()) {
     if (indexedJobs.has(job.id) || (job.state !== "running" && (Date.parse(job.completedAt || job.createdAt) || 0) < recentSince)) continue;
