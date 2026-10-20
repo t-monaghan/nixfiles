@@ -332,7 +332,7 @@
 
         ll = "ls -ltra";
 
-        dr = "devbox run";
+        dr = "direnv reload";
         drs = "devbox run setup";
         drp = "devbox run populate";
         dsu = "devbox services up --pcflags '--keep-project'";
