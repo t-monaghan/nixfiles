@@ -21,7 +21,7 @@ test("buildkite lists builds, not jobs, and colors build and pi session states",
     };
   }`;
   const hud = JSON.parse(run("nix-instantiate", ["--eval", "--strict", "--json", "--expr", expression]));
-  assert.deepEqual(hud.recipe.builds.columns, ["repo/project", "status", "branch", "commit message"]);
+  assert.deepEqual(hud.recipe.builds.columns, ["pipeline", "build", "status", "branch", "commit message"]);
   assert.equal(hud.recipe.builds.colors.status.passed, "green");
   assert.equal(hud.recipe.builds.colors.status.failed, "red");
   assert.equal(hud.recipe["pi-sessions"].colors.state.Waiting, "yellow");
@@ -30,15 +30,17 @@ test("buildkite lists builds, not jobs, and colors build and pi session states",
   const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "hud-test-"));
   try {
     const bin = join(dir, "bk"), log = join(dir, "bk-args");
-    writeFileSync(bin, `#!/bin/sh\nprintf '%s\\n' "$*" > "$HUD_BK_ARGS"\nprintf '%s\\n' '[{"pipeline":{"slug":"example"},"state":"running","branch":"feature","message":"First line\\nSecond line","web_url":"https://example.test/1","jobs":[{"name":"job a"},{"name":"job b"}]},{"pipeline":{"slug":"example"},"state":"passed","branch":"main","message":"Release","web_url":"https://example.test/2","jobs":[{"name":"job c"}]}]'\n`, { mode: 0o755 });
+    writeFileSync(bin, `#!/bin/sh\nprintf '%s\\n' "$*" > "$HUD_BK_ARGS"\nprintf '%s\\n' '[{"pipeline":{"slug":"example"},"number":2,"state":"running","branch":"feature","message":"First line\\nSecond line","web_url":"https://example.test/2","jobs":[{"name":"job a"},{"name":"job b"}]},{"pipeline":{"slug":"other"},"number":3,"state":"failed","branch":"main","message":"Deploy","web_url":"https://other.test/3","jobs":[{"name":"job c"}]},{"pipeline":{"slug":"example"},"number":1,"state":"passed","branch":"main","message":"Release","web_url":"https://example.test/1","jobs":[{"name":"job d"}]},{"pipeline":{"slug":""},"number":4,"state":"passed","branch":"main","message":"CI","web_url":"https://buildkite.com/culture-amp/ci-buildkite/builds/4","jobs":[{"name":"job e"}]}]'\n`, { mode: 0o755 });
     const rows = JSON.parse(run("sh", ["-c", hud.recipe.builds.command], {
       env: { ...process.env, PATH: `${dir}:${process.env.PATH}`, HUD_BK_ARGS: log },
     }));
     assert.deepEqual(rows, [
-      { "repo/project": "example", status: "running", branch: "feature", "commit message": "First line", url: "https://example.test/1" },
-      { "repo/project": "example", status: "passed", branch: "main", "commit message": "Release", url: "https://example.test/2" },
+      { pipeline: "ci-buildkite", build: 4, status: "passed", branch: "main", "commit message": "CI", url: "https://buildkite.com/culture-amp/ci-buildkite/builds/4" },
+      { pipeline: "example", build: 2, status: "running", branch: "feature", "commit message": "First line", url: "https://example.test/2" },
+      { pipeline: "example", build: 1, status: "passed", branch: "main", "commit message": "Release", url: "https://example.test/1" },
+      { pipeline: "other", build: 3, status: "failed", branch: "main", "commit message": "Deploy", url: "https://other.test/3" },
     ]);
     assert.match(readFileSync(log, "utf8"), /--limit 50 --json/);
-    assert.doesNotMatch(readFileSync(log, "utf8"), /--state=running|--no-limit/);
+    assert.doesNotMatch(readFileSync(log, "utf8"), /--state=running|--no-limit|--summary/);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });

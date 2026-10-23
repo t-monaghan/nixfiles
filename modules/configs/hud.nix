@@ -49,14 +49,15 @@
             --creator=019cf524-0afa-49e6-8e3c-52ce91377aa7 \
             --limit 50 --json |
             jq '[.[] | {
-              "repo/project": (.pipeline.slug // "—"),
+              pipeline: ([.pipeline.slug, .pipeline.name, (try (.web_url | capture("^https?://[^/]+/[^/]+/(?<slug>[^/]+)/builds/[0-9]+").slug) catch null)] | map(select(. != null and . != "")) | .[0] // "—"),
+              build: .number,
               status: .state,
               branch: .branch,
               "commit message": ((.message // "") | split("\n")[0]),
               url: .web_url
-            }]'
+            }] | group_by(.pipeline) | map(sort_by(.build) | reverse) | add // []'
         '';
-        columns = ["repo/project" "status" "branch" "commit message"];
+        columns = ["pipeline" "build" "status" "branch" "commit message"];
         colors.status = {
           passed = "green";
           running = "blue";
