@@ -61,6 +61,38 @@
           printf '%s' "$hash" | pbcopy
         '';
       };
+      copy-changed-file-path = {
+        description = "Select a changed or untracked file and copy its path to the clipboard";
+        body = ''
+          git rev-parse --is-inside-work-tree >/dev/null 2>&1
+          or return $status
+
+          set -l entries (git status --porcelain=v1 -z --untracked-files=all | string split0)
+          set -l paths
+          set -l i 1
+          while test $i -le (count $entries)
+            set -l entry $entries[$i]
+            set -a paths (string sub -s 4 -- "$entry")
+            set -l state (string sub -s 1 -l 2 -- "$entry")
+            if string match -rq '[RC]' -- "$state"
+              set i (math $i + 1)
+            end
+            set i (math $i + 1)
+          end
+
+          if test (count $paths) -eq 0
+            echo 'No changed files.' >&2
+            return 1
+          end
+
+          set -l selection (printf '%s\n' $paths | gum filter --placeholder 'Select changed file')
+          or return $status
+          test -n "$selection"
+          or return 1
+
+          printf '%s' "$selection" | pbcopy
+        '';
+      };
       fish_greeting = {
         body = '''';
       };
@@ -364,6 +396,7 @@
         disu = "caffeinate -disu";
         ssh = "ghostty +ssh --";
         gcy = "copy-commit-hash";
+        gfy = "copy-changed-file-path";
       };
 
     plugins = [
