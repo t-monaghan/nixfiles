@@ -100,7 +100,7 @@ in {
           }) config.programs.mcp.servers)
         // {
           home-assistant = {
-            url = "http://hass.dolomite.lan/api/mcp";
+            url = "https://hass.dolomite.lan/api/mcp";
             oauth = {
               clientId = "http://127.0.0.1:8765/";
               callbackPort = 8765;
