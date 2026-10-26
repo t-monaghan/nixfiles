@@ -85,12 +85,22 @@ in {
     file.".pi/agent/settings.json".text =
       builtins.toJSON (sharedPiSettings // config.nixfiles.pi.providerSettings);
     file.".pi/agent/mcp.json".text = builtins.toJSON {
-      mcpServers = lib.mapAttrs (name: server:
-        lib.filterAttrs (_: value: value != null && value != [] && value != {})
-        (builtins.removeAttrs server ["auth" "lifecycle"])
-        // lib.optionalAttrs (name == "atlassian") {
-          url = "https://mcp.atlassian.com/v1/mcp";
-        }) config.programs.mcp.servers;
+      mcpServers =
+        (lib.mapAttrs (name: server:
+          lib.filterAttrs (_: value: value != null && value != [] && value != {})
+          (builtins.removeAttrs server ["auth" "lifecycle"])
+          // lib.optionalAttrs (name == "atlassian") {
+            url = "https://mcp.atlassian.com/v1/mcp";
+          }) config.programs.mcp.servers)
+        // {
+          home-assistant = {
+            url = "http://hass.dolomite.lan/api/mcp";
+            oauth = {
+              clientId = "http://127.0.0.1:8765/";
+              callbackPort = 8765;
+            };
+          };
+        };
     };
     file.".pi/agent/dispatch.json".text = builtins.toJSON {
       inherit agentRoot;
