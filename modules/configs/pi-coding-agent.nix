@@ -36,12 +36,18 @@
     treeFilterMode = "no-tools";
     packages = [sandboxDir] ++ config.nixfiles.pi.packages;
     quietStartup = true;
+    fullscreenCopyOnSelect = config.nixfiles.pi.fullscreenCopyOnSelect;
     warnings.anthropicExtraUsage = false;
     doubleEscapeAction = "fork";
     markdown.codeBlockIndent = "";
   };
 in {
   options.nixfiles.pi = {
+    fullscreenCopyOnSelect = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Copy selected text automatically in pi fullscreen mode.";
+    };
     providerSettings = lib.mkOption {
       type = lib.types.attrs;
       description = ''

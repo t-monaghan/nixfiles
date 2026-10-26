@@ -19,6 +19,8 @@
     stateVersion = "23.11";
   };
 
+  nixfiles.pi.fullscreenCopyOnSelect = false;
+
   home.file.".pi/agent/sandbox.json".source =
     ../modules/configs/pi-coding-agent/sandbox.json;
 
