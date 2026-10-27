@@ -30,6 +30,41 @@
         time_zone = "Australia/Melbourne";
       };
       rest = import ./home-assistant/rest.nix;
+      template = [
+        {
+          switch = [
+            {
+              name = "Lounge and Kitchen";
+              unique_id = "lounge_and_kitchen";
+              state = ''
+                {{ is_state('light.dome', 'on')
+                   or is_state('light.paper_lamp', 'on')
+                   or is_state('switch.power_plug', 'on') }}
+              '';
+              turn_on = [
+                {
+                  action = "homeassistant.turn_on";
+                  target.entity_id = [
+                    "light.dome"
+                    "light.paper_lamp"
+                    "switch.power_plug"
+                  ];
+                }
+              ];
+              turn_off = [
+                {
+                  action = "homeassistant.turn_off";
+                  target.entity_id = [
+                    "light.dome"
+                    "light.paper_lamp"
+                    "switch.power_plug"
+                  ];
+                }
+              ];
+            }
+          ];
+        }
+      ];
     };
     # extraPackages = python3Packages: with python3Packages; [ ];
     # HACS-style extras, managed declaratively from nixpkgs:
