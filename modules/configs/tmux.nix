@@ -82,7 +82,7 @@
     {section = "Windows / panes";}
     {
       key = "W";
-      label = "window picker (all sessions)";
+      label = "window picker (current session)";
       command = ''display-popup -h 90% -w 90% -E "${tmux-window-picker}"'';
       bind = true;
     }
@@ -168,50 +168,20 @@
       ])
   tmuxMenuEntries;
 
-  # List each tmux session as a parent row followed by its window rows. Hidden
-  # stable IDs drive selection and previews. Window rows include the session
-  # name for filtering. They show an explicit PR or branch window name, or use
-  # the active pane title when tmux controls the window name.
   tmux-window-picker = pkgs.writeShellScript "tmux-window-picker" ''
+    session_id=$(${lib.getExe pkgs.tmux} display-message -p '#{session_id}')
     selected=$(
-      {
-        for session_id in $(${lib.getExe pkgs.tmux} list-sessions -F '#{session_id}'); do
-          session_name=$(${lib.getExe pkgs.tmux} display-message -p -t "$session_id" '#{session_name}')
-          session_pane=$(${lib.getExe pkgs.tmux} display-message -p -t "$session_id" '#{pane_id}')
-          printf 'session\t%s\t%s\t%s\t%s\n' \
-            "$session_id" "$session_pane" "$session_id" "$session_name"
-
-          window_ids=$(${lib.getExe pkgs.tmux} list-windows -t "$session_id" -F '#{window_id}')
-          window_count=$(printf '%s\n' "$window_ids" | ${pkgs.coreutils}/bin/wc -l | tr -d ' ')
-          window_number=0
-          for window_id in $window_ids; do
-            window_number=$((window_number + 1))
-            if [ "$window_number" -eq "$window_count" ]; then
-              connector='└─'
-            else
-              connector='├─'
-            fi
-            pane_id=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" '#{pane_id}')
-            window_label=$(${lib.getExe pkgs.tmux} display-message -p -t "$window_id" \
-              '#{session_name} / #{window_index}: #{?automatic-rename,#{?pane_title,#{pane_title},#{window_name}},#{window_name}}')
-            printf 'window\t%s\t%s\t%s\t  %s %s\n' \
-              "$window_id" "$pane_id" "$session_id" "$connector" "$window_label"
-          done
-        done
-      } | ${lib.getExe pkgs.fzf} --no-sort --reverse --prompt="session/window> " \
-        --delimiter='\t' --with-nth=5.. \
-        --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t {3}" \
-        --preview-window "right:80%,follow"
+      ${lib.getExe pkgs.tmux} list-windows -t "$session_id" \
+        -F '#{window_id}	#{pane_id}	#{window_index}: #{?automatic-rename,#{?pane_title,#{pane_title},#{window_name}},#{window_name}}' |
+        ${lib.getExe pkgs.fzf} --no-sort --reverse --prompt="window> " \
+          --delimiter='\t' --with-nth=3.. \
+          --preview "${lib.getExe pkgs.tmux} capture-pane -e -p -t {2}" \
+          --preview-window "right:80%,follow"
     ) || exit 0
     [ -n "$selected" ] || exit 0
 
-    kind=$(printf '%s' "$selected" | cut -f1)
-    target_id=$(printf '%s' "$selected" | cut -f2)
-    session_id=$(printf '%s' "$selected" | cut -f4)
-    if [ "$kind" = window ]; then
-      ${lib.getExe pkgs.tmux} select-window -t "$target_id"
-    fi
-    ${lib.getExe pkgs.tmux} switch-client -t "$session_id"
+    target_id=$(printf '%s' "$selected" | cut -f1)
+    ${lib.getExe pkgs.tmux} select-window -t "$target_id"
   '';
   # Resolve or create a worktree outside the picker popup, then open it in the
   # repository session and switch the client that started the operation.
