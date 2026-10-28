@@ -76,6 +76,7 @@ in {
         ~/.pi/agent/git/ and refreshed with `pi update --extensions`.
       '';
     };
+    homeAssistantMcp = lib.mkEnableOption "the Home Assistant MCP server";
     dispatchModel = lib.mkOption {
       type = lib.types.str;
       default = "github-copilot/kimi-k3";
@@ -98,7 +99,7 @@ in {
           // lib.optionalAttrs (name == "atlassian") {
             url = "https://mcp.atlassian.com/v1/mcp";
           }) config.programs.mcp.servers)
-        // {
+        // lib.optionalAttrs config.nixfiles.pi.homeAssistantMcp {
           home-assistant = {
             url = "https://hass.dolomite.lan/api/mcp";
             oauth = {

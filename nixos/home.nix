@@ -20,6 +20,7 @@
   };
 
   nixfiles.pi.fullscreenCopyOnSelect = false;
+  nixfiles.pi.homeAssistantMcp = true;
 
   home.file.".pi/agent/sandbox.json".source =
     ../modules/configs/pi-coding-agent/sandbox.json;
