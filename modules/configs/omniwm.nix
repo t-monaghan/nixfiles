@@ -103,7 +103,18 @@ in {
 
       hiddenBar = {
         enabled = true;
-        hiddenBundleIDs = [];
+        hiddenBundleIDs = [
+          "com.anthropic.claudefordesktop"
+          "com.1password.1password"
+          "com.displaylink.DisplayLinkUserAgent"
+          "com.pais.handy"
+          "app.monitorcontrol.MonitorControl"
+          "com.caldis.Mos"
+          "com.netskope.client.Netskope-Client"
+          "com.okta.mobile"
+          "dev.kdrag0n.MacVirt"
+          "com.raycast.macos"
+        ];
         rehideIntervalSeconds = 5.0;
       };
 
