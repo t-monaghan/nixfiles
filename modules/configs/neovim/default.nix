@@ -362,6 +362,12 @@ in {
         end
       end
 
+      local function set_markdown_strikethrough(palette)
+        local highlight = { fg = palette.base08, strikethrough = true }
+        vim.api.nvim_set_hl(0, "@markup.strikethrough", highlight)
+        vim.api.nvim_set_hl(0, "markdownStrike", highlight)
+      end
+
       -- Floating windows sit one step off the background: base01 of the palette
       -- in use.
       local float_bg = {
@@ -379,6 +385,7 @@ in {
         base16.setup(palettes[mode])
         make_transparent()
         set_markdown_heading_colours(palettes[mode])
+        set_markdown_strikethrough(palettes[mode])
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg[mode] })
       end
 
@@ -388,6 +395,7 @@ in {
         callback = function()
           make_transparent()
           set_markdown_heading_colours(palettes[vim.o.background])
+          set_markdown_strikethrough(palettes[vim.o.background])
           vim.api.nvim_set_hl(0, "NormalFloat", { bg = float_bg[vim.o.background] })
         end,
       })
