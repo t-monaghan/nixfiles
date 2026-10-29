@@ -5,6 +5,8 @@
   colors,
   ...
 }: let
+  ctx = config.nixfiles.context;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   palette = colors.palettes.dark;
 in {
   imports = [
@@ -14,9 +16,10 @@ in {
     ./tools/alacritty.nix
     ./tools/claude-code.nix
     ./tools/ghostty.nix
+    ./tools/hud.nix
     ./tools/neovim
-    ./tools/opencode.nix
     ./tools/omniwm.nix
+    ./tools/opencode.nix
     ./tools/pi-coding-agent.nix
     ./tools/ssh.nix
     ./tools/syncthing.nix
@@ -24,75 +27,63 @@ in {
     ./tools/zed.nix
   ];
 
-  nix.package = pkgs.nix;
-  nix.extraOptions = ''
-    !include ${config.home.homeDirectory}/.config/secrets/access-tokens.conf
-  '';
+  home.stateVersion = "23.11";
+  programs.home-manager.enable = true;
 
-  nixpkgs = {
-    config.allowUnfree = true;
-  };
-
-  nix.gc.automatic = true;
-
-  home = {
-    stateVersion = "23.11";
-
-    packages = with pkgs; [
-      wakeonlan
-      # GUI apps
-      gum
-      mos
-      betterdisplay
-      (callPackage ./tools/notunes-package.nix {})
-      obsidian
-
-      # Development tools
-      devbox
-      just
-      pnpm
-      nodejs
-      uv
-      sandy
-      imds-broker
-      jetbrains-mono
-      nerd-fonts.jetbrains-mono
-
-      # Linters
-      golangci-lint
-      golangci-lint-langserver
-      shellcheck
-
-      # Formatters
-      stylua
-      nixpkgs-fmt
-      alejandra
-      ruff
-      prettierd
-      python313
-      python313Packages.python-lsp-ruff
-      python313Packages.pyls-isort
-      python313Packages.black
-    ];
-
-    activation.mosDefaults = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      /usr/bin/defaults write com.caldis.Mos showPreference 0
-      /usr/bin/defaults write com.caldis.Mos SUEnableAutomaticChecks 0
-      /usr/bin/defaults write com.caldis.Mos smoothMouse 1
-      /usr/bin/defaults write com.caldis.Mos smooth 1
-      /usr/bin/defaults write com.caldis.Mos reverse 1
-      /usr/bin/defaults write com.caldis.Mos speed 2.50
-      /usr/bin/defaults write com.caldis.Mos step 35.00
-      /usr/bin/defaults write com.caldis.Mos stepX 10.00
-      /usr/bin/defaults write com.caldis.Mos stepY 10.00
-      /usr/bin/defaults write com.caldis.Mos duration 3.00
-      /usr/bin/defaults write com.caldis.Mos durationTransition 0.30
+  nix = lib.mkIf ctx.role.desktop {
+    package = pkgs.nix;
+    extraOptions = ''
+      !include ${config.home.homeDirectory}/.config/secrets/access-tokens.conf
     '';
+    gc.automatic = true;
   };
 
-  xdg.configFile."hud/hud.toml".source = (pkgs.formats.toml {}).generate "hud.toml" (import ./tools/hud.nix {inherit config lib;});
+  home.packages = lib.mkIf ctx.role.desktop (with pkgs; [
+    wakeonlan
+    # GUI apps
+    gum
+    mos
+    betterdisplay
+    (callPackage ./tools/notunes-package.nix {})
+    obsidian
 
-  services = {
+    # Development tools
+    devbox
+    just
+    pnpm
+    nodejs
+    sandy
+    imds-broker
+    jetbrains-mono
+    nerd-fonts.jetbrains-mono
+
+    # Linters
+    golangci-lint
+    golangci-lint-langserver
+    shellcheck
+
+    # Python LSP tools (formatters are provided via neovim extraPackages)
+    python313
+    python313Packages.python-lsp-ruff
+    python313Packages.pyls-isort
+    python313Packages.black
+  ]);
+
+  home.activation.mosDefaults = lib.mkIf isDarwin (lib.hm.dag.entryAfter ["writeBoundary"] ''
+    /usr/bin/defaults write com.caldis.Mos showPreference 0
+    /usr/bin/defaults write com.caldis.Mos SUEnableAutomaticChecks 0
+    /usr/bin/defaults write com.caldis.Mos smoothMouse 1
+    /usr/bin/defaults write com.caldis.Mos smooth 1
+    /usr/bin/defaults write com.caldis.Mos reverse 1
+    /usr/bin/defaults write com.caldis.Mos speed 2.50
+    /usr/bin/defaults write com.caldis.Mos step 35.00
+    /usr/bin/defaults write com.caldis.Mos stepX 10.00
+    /usr/bin/defaults write com.caldis.Mos stepY 10.00
+    /usr/bin/defaults write com.caldis.Mos duration 3.00
+    /usr/bin/defaults write com.caldis.Mos durationTransition 0.30
+  '');
+
+  services = lib.mkIf ctx.role.desktop {
     home-manager.autoExpire = {
       enable = true;
       store.cleanup = true;
@@ -108,21 +99,19 @@ in {
     };
   };
 
-  xdg.configFile."raycast-scripts" = {
-    source = ./tools/raycast-scripts;
-    recursive = true;
-  };
-
-  xdg.configFile."sandy/config.json".text = builtins.toJSON {
-    backend = "docker";
-  };
-
-  programs = {
-    home-manager.enable = true;
-    antigravity-cli.enable = true;
-    awtrix-cli = {
-      enable = true;
-      host = "192.18.1.97";
+  xdg.configFile = lib.mkIf ctx.role.desktop {
+    "raycast-scripts" = {
+      source = ./tools/raycast-scripts;
+      recursive = true;
     };
+    "sandy/config.json".text = builtins.toJSON {
+      backend = "docker";
+    };
+  };
+
+  programs.antigravity-cli.enable = lib.mkIf ctx.role.desktop true;
+  programs.awtrix-cli = lib.mkIf isDarwin {
+    enable = true;
+    host = "192.168.1.97";
   };
 }

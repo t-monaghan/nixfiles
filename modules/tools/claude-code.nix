@@ -1,4 +1,9 @@
-{...}: {
+{
+  config,
+  lib,
+  ...
+}:
+lib.mkIf config.nixfiles.context.role.desktop {
   programs.claude-code = {
     enable = true;
     skills = {

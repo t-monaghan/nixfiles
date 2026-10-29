@@ -1,8 +1,9 @@
 {
-  pkgs,
+  config,
   lib,
   ...
-}: {
+}:
+lib.mkIf config.nixfiles.context.role.desktop {
   programs.opencode = {
     enable = true;
     settings = {

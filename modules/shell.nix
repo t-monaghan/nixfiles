@@ -90,7 +90,7 @@ in {
       enableFishIntegration = true;
     };
 
-    uv.enable = lib.mkIf ctx.role.work true;
+    uv.enable = lib.mkIf (ctx.role.desktop || ctx.role.work) true;
     awscli.enable = lib.mkIf ctx.role.work true;
     granted.enable = lib.mkIf ctx.role.work true;
   };

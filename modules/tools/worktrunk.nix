@@ -1,8 +1,10 @@
 {
+  config,
   pkgs,
   lib,
   ...
-}: {
+}:
+lib.mkIf config.nixfiles.context.role.desktop {
   # Worktrunk (`wt`) — git worktree manager for parallel agent workflows.
   # https://worktrunk.dev
   #
