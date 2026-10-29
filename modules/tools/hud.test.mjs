@@ -13,13 +13,20 @@ function run(command, args, options = {}) {
 }
 
 test("buildkite lists builds, not jobs, and colors build and pi session states", () => {
-  const expression = `import ${JSON.stringify(config)} {
-    config.nixfiles.work.cultureAmp.enable = true;
+  const expression = `(import ${JSON.stringify(config)} {
+    config = {
+      nixfiles.context.role = { desktop = true; work = true; };
+      nixfiles.hud.settings = {};
+    };
+    pkgs.formats.toml = _: { generate = _: v: v; };
     lib = {
+      mkOption = opts: opts.default;
+      mkIf = _: v: v;
+      types.attrs = null;
       optionalAttrs = condition: value: if condition then value else {};
       optionals = condition: value: if condition then value else [];
     };
-  }`;
+  }).options.nixfiles.hud.settings`;
   const hud = JSON.parse(run("nix-instantiate", ["--eval", "--strict", "--json", "--expr", expression]));
   assert.deepEqual(hud.recipe.builds.columns, ["pipeline", "build", "status", "branch", "commit message"]);
   assert.equal(hud.recipe.builds.colors.status.passed, "green");
