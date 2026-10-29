@@ -11,9 +11,7 @@ inputs @ {
   nixpkgs,
   home-manager,
   ...
-}: {
-  modules,
-}:
+}: {modules}:
 nixpkgs.lib.nixosSystem {
   specialArgs = {inherit inputs;};
   modules =

@@ -1,30 +1,18 @@
 # Shared nixvim configuration — used by ALL three machines.
 #
 # Imported as a module by both the Mac home-manager configs (../../home.nix) and
-# the NixOS box (../../../nixos/neovim.nix); `programs.nixvim` is declared by
-# nixvim's home-manager and NixOS modules alike, so one file serves both. The
-# arguments below come from `_module.args` / `extraSpecialArgs` (see
-# ../../args.nix and ../../../lib/mkHost.nix). Host differences are limited to:
-#
-# - `flakePath` + `homeUsername`: on the Macs they point nixd at this flake;
-#   on the NixOS box both are null (set in ../../../nixos/neovim.nix) and nixd
-#   falls back to the channel-based `<nixpkgs>` expressions — see ./lsp.nix.
-# - `pkgs.stdenv.isDarwin`: gates the macOS `defaults read` light/dark probe and
-#   the Obsidian plugin.
-#
-# Colours come from the two palettes in ../colours.nix, handed to base16-nvim as
-# hex slots. No colorscheme is named here: `colorschemes.base16.colorscheme`
-# takes the slots directly, and auto-dark-mode swaps palettes at runtime by
-# calling `setup` again.
+# the NixOS box (../../../hosts/dolomite/neovim.nix); `programs.nixvim` is declared by
+# nixvim's home-manager and NixOS modules alike, so one file serves both.
 {
+  config,
   pkgs,
   lib,
   colors,
-  flakePath,
-  homeUsername,
   ...
 }: let
-  isDarwin = pkgs.stdenv.isDarwin;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  flakePath = config.nixfiles.context.flakePath or null;
+  homeUsername = config.home.username or null;
 
   inherit (colors) palettes;
   # base16-nvim's `setup` takes the 16 slots as a Lua table. The palettes hold

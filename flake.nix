@@ -14,18 +14,21 @@
     sandy.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = {
+  outputs = inputs @ {
     self,
     nixpkgs,
-    home-manager,
-    nixvim,
-    awtrix-cli,
-    imds-broker,
-    sandy,
-  } @ inputs: let
+    ...
+  }: let
     mkHost = import ./lib/mkHost.nix inputs;
     mkNixosHost = import ./lib/mkNixosHost.nix inputs;
+    darwinPkgs = nixpkgs.legacyPackages.aarch64-darwin;
+    linuxPkgs = nixpkgs.legacyPackages.x86_64-linux;
   in {
+    formatter = {
+      aarch64-darwin = darwinPkgs.alejandra;
+      x86_64-linux = linuxPkgs.alejandra;
+    };
+
     homeConfigurations = {
       "tom.monaghan1" = mkHost "tom.monaghan1";
       "tmonaghan" = mkHost "tmonaghan";
@@ -33,7 +36,7 @@
 
     lib.mkDolomite = {extraModules ? []}:
       mkNixosHost {
-        modules = [./nixos/configuration.nix] ++ extraModules;
+        modules = [./hosts/dolomite/configuration.nix] ++ extraModules;
       };
 
     nixosConfigurations.dolomite = self.lib.mkDolomite {};

@@ -1,7 +1,11 @@
 {
   config,
   lib,
-}: {
+}: let
+  workEnabled =
+    (config.nixfiles.context.role.work or false)
+    || (config.nixfiles.work.cultureAmp.enable or false);
+in {
   recipe =
     {
       pi-sessions = {
@@ -42,7 +46,7 @@
         refresh = 3;
       };
     }
-    // lib.optionalAttrs config.nixfiles.work.cultureAmp.enable {
+    // lib.optionalAttrs workEnabled {
       builds = {
         command = ''
           bk build list --no-input --no-pager --quiet \
@@ -91,7 +95,7 @@
             recipe = "pull-requests";
           }
         ]
-        ++ lib.optionals config.nixfiles.work.cultureAmp.enable [
+        ++ lib.optionals workEnabled [
           {
             title = "Buildkite builds";
             recipe = "builds";

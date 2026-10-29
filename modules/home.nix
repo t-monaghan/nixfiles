@@ -3,29 +3,25 @@
   config,
   lib,
   colors,
-  fonts,
   ...
 }: let
-  # Alacritty and jankyborders have no system-appearance hook, so they cannot
-  # follow light/dark the way Ghostty, Neovim, bat and Zed do. Both take the
-  # dark palette (see ./configs/colours.nix).
   palette = colors.palettes.dark;
 in {
   imports = [
     ./shell.nix
-    # One file per program; each sets its own `programs.<name>` /
-    # `services.<name>` block, and takes `pkgs`, `lib`, `config`, `colors` and
-    # `fonts` as module arguments (see ./args.nix).
-    # ./configs/aerospace.nix
-    ./configs/claude-code.nix
-    ./configs/ghostty.nix
-    ./configs/neovim
-    ./configs/opencode.nix
-    ./configs/omniwm.nix
-    ./configs/pi-coding-agent.nix
-    ./configs/syncthing.nix
-    ./configs/worktrunk.nix
-    ./configs/zed.nix
+    # One file per program under ./tools/
+    # ./tools/aerospace.nix
+    ./tools/alacritty.nix
+    ./tools/claude-code.nix
+    ./tools/ghostty.nix
+    ./tools/neovim
+    ./tools/opencode.nix
+    ./tools/omniwm.nix
+    ./tools/pi-coding-agent.nix
+    ./tools/ssh.nix
+    ./tools/syncthing.nix
+    ./tools/worktrunk.nix
+    ./tools/zed.nix
   ];
 
   nix.package = pkgs.nix;
@@ -41,7 +37,6 @@ in {
 
   home = {
     stateVersion = "23.11";
-    shell.enableFishIntegration = true;
 
     packages = with pkgs; [
       wakeonlan
@@ -49,7 +44,7 @@ in {
       gum
       mos
       betterdisplay
-      (callPackage ./configs/notunes-package.nix {})
+      (callPackage ./tools/notunes-package.nix {})
       obsidian
 
       # Development tools
@@ -95,7 +90,7 @@ in {
     '';
   };
 
-  xdg.configFile."hud/hud.toml".source = (pkgs.formats.toml {}).generate "hud.toml" (import ./configs/hud.nix {inherit config lib;});
+  xdg.configFile."hud/hud.toml".source = (pkgs.formats.toml {}).generate "hud.toml" (import ./tools/hud.nix {inherit config lib;});
 
   services = {
     home-manager.autoExpire = {
@@ -113,29 +108,8 @@ in {
     };
   };
 
-  home.sessionVariables = {
-    PI_SKIP_VERSION_CHECK = "1";
-  };
-
-  home.file.".pi/agent" = {
-    source = ./configs/pi-coding-agent;
-    recursive = true;
-  };
-
-  home.file.".pi/agent/AGENTS.md" = {
-    text = ''
-      ${builtins.readFile ./configs/agent-context/shared.md}
-
-      ${builtins.readFile ./configs/agent-context/pi.md}
-
-      ${builtins.readFile ./configs/agent-context/macos.md}
-    '';
-  };
-
-  xdg.configFile."fish/completions/nix.fish".source = "${pkgs.nix}/share/fish/vendor_completions.d/nix.fish";
-
   xdg.configFile."raycast-scripts" = {
-    source = ./configs/raycast-scripts;
+    source = ./tools/raycast-scripts;
     recursive = true;
   };
 
@@ -145,120 +119,10 @@ in {
 
   programs = {
     home-manager.enable = true;
-
     antigravity-cli.enable = true;
-
-    ssh = {
-      enable = true;
-      # Opt out of the deprecated implicit `Host *` defaults; declare our own blocks.
-      enableDefaultConfig = false;
-      # Emitted as an `Include` at the top of ~/.ssh/config, ahead of our
-      # match blocks. OrbStack manages this file for its VMs/containers.
-      includes = ["~/.orbstack/ssh/config"];
-      settings = {
-        dolomite = {
-          hostname = "ssh.dolomite.lan";
-          user = "tom";
-        };
-      };
-    };
-
-    # sesh base config is shared (./shell.nix); the Mac adds an SSH session to
-    # the dolomite box (which the box itself doesn't need).
-    sesh.settings.session = [
-      {
-        name = "dolomite";
-        path = "~";
-        startup_command = "ssh dolomite";
-        preview_command = "echo 'SSH → dolomite (dolomite.lan)'";
-        alias = "dol";
-        alias_auto_connect = true;
-      }
-      {
-        name = "notes";
-        path = "~/notes";
-        startup_command = "nvim ~/notes/notes.md && exit";
-        preview_command = "bat ~/notes/notes.md";
-        alias = "nd";
-        alias_auto_connect = true;
-      }
-      {
-        name = "nixfiles";
-        path = "~/dev/nixfiles/";
-        preview_command = "git status";
-        alias = "nixf";
-        alias_auto_connect = true;
-      }
-      {
-        name = "hud";
-        path = "~/dev";
-        alias = "hud";
-        alias_auto_connect = true;
-        startup_command = "hud && exit";
-      }
-    ];
-
-    # GUI Programs
-    alacritty = {
-      enable = true;
-      settings = {
-        selection.save_to_clipboard = true;
-        window = {
-          opacity = 0.95;
-          blur = true;
-          decorations = "buttonless";
-          dimensions = {
-            columns = 100;
-            lines = 50;
-          };
-        };
-        font = {
-          normal.family = fonts.mono;
-          size = fonts.size;
-        };
-        colors = {
-          primary = {
-            background = palette.base00;
-            foreground = palette.base05;
-          };
-          normal = {
-            black = palette.base00;
-            red = palette.base08;
-            green = palette.base0B;
-            yellow = palette.base0A;
-            blue = palette.base0D;
-            magenta = palette.base0E;
-            cyan = palette.base0C;
-            white = palette.base06;
-          };
-          bright = {
-            black = palette.base03;
-            red = palette.base08;
-            green = palette.base0B;
-            yellow = palette.base0A;
-            blue = palette.base0D;
-            magenta = palette.base0E;
-            cyan = palette.base0C;
-            white = palette.base07;
-          };
-        };
-        mouse.hide_when_typing = true;
-        scrolling.multiplier = 2;
-      };
-    };
-
     awtrix-cli = {
       enable = true;
       host = "192.18.1.97";
-    };
-
-    mcp = {
-      enable = true;
-      servers = {
-        context7 = {
-          url = "https://mcp.context7.com/mcp";
-        };
-      };
     };
   };
 }

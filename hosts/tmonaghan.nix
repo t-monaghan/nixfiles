@@ -1,6 +1,6 @@
 {
-  pkgs,
   username,
+  flakePath,
   ...
 }: {
   imports = [../modules];
@@ -8,10 +8,13 @@
   home = {
     username = username;
     homeDirectory = "/Users/${username}";
-    packages = with pkgs; [
-      devbox
-    ];
   };
 
-  nixfiles = {};
+  nixfiles.context = {
+    host = "tmonaghan";
+    inherit flakePath;
+    role = {
+      desktop = true;
+    };
+  };
 }

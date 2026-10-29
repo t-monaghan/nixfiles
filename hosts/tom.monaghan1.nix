@@ -1,4 +1,8 @@
-{username, ...}: {
+{
+  username,
+  flakePath,
+  ...
+}: {
   imports = [../modules];
 
   home = {
@@ -6,7 +10,12 @@
     homeDirectory = "/Users/${username}";
   };
 
-  nixfiles = {
-    work.cultureAmp.enable = true;
+  nixfiles.context = {
+    host = "tom.monaghan1";
+    inherit flakePath;
+    role = {
+      desktop = true;
+      work = true;
+    };
   };
 }
