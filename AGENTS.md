@@ -4,7 +4,7 @@ This is the user's NixOS/Home Manager configuration repository. It manages most 
 
 ## Organization
 
-- `hosts/`: Host entry points (`tom.monaghan1.nix`, `tmonaghan.nix`, `dolomite/`). Each host sets `nixfiles.context` (`host`, `platform`, `role.{desktop,work,homelab}`, `flakePath`).
+- `hosts/`: Host entry points (`tom.monaghan1.nix`, `tmonaghan.nix`, `dolomite/`). Each host sets `nixfiles.context` (`host`, `role.{desktop,work,homelab}`, `flakePath`).
 - `modules/context.nix`: Schema for `nixfiles.context`.
 - `modules/theme/`: Shared base16 palettes (`colours.nix`) and font settings (`fonts.nix`).
 - `modules/tools/`: Self-contained per-tool modules. Every configuration key for a given tool across all environments lives in its `modules/tools/<tool>` module.

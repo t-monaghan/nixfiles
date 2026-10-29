@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document records Pi tool calls that failed because of sandbox restrictions. The evidence comes from Agentsview session transcripts. The recommendations refer to `modules/configs/pi-coding-agent/sandbox.json`.
+This document records Pi tool calls that failed because of sandbox restrictions. The evidence comes from Agentsview session transcripts. The recommendations refer to `modules/tools/pi-coding-agent/sandbox.json`.
 
 ## Summary
 
@@ -46,7 +46,7 @@ This change permits zoxide to create its temporary database file. Do not make al
 
 ### Keep the session temporary-directory solution
 
-`modules/configs/pi-coding-agent/extensions/session-temp.ts` puts session temporary files under `/tmp/claude`. This location is writable inside the sandbox.
+`modules/tools/pi-coding-agent/extensions/session-temp.ts` puts session temporary files under `/tmp/claude`. This location is writable inside the sandbox.
 
 Because this solution is active, test whether the broad `"/var"` write entry is still necessary. Remove it if the sandbox works without it. The broad entry did not prevent the observed `/var/folders/...` failures.
 

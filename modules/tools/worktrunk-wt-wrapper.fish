@@ -1,7 +1,7 @@
 # Worktrunk `wt` wrapper — name NEW worktrees by their GitHub PR number when one
 # exists, falling back to the branch name.
 #
-# Managed by nix (modules/configs/worktrunk.nix). The activation script installs
+# Managed by nix (modules/tools/worktrunk.nix). The activation script installs
 # worktrunk's own shell integration under the name `__wt_core` and drops this
 # file in as `functions/wt.fish`, so `wt` calls this wrapper and this wrapper
 # delegates to `__wt_core` (which keeps worktrunk's cd/exec directive handling).

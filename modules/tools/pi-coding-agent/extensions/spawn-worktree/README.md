@@ -47,8 +47,8 @@ turn. tmux supplies the pty that the pi TUI needs.
 
 ## Requirements
 
-- `wt` (worktrunk) — `modules/configs/worktrunk.nix`
-- `tmux` — `modules/configs/tmux.nix`; run pi from inside tmux
+- `wt` (worktrunk) — `modules/tools/worktrunk.nix`
+- `tmux` — `modules/tools/tmux.nix`; run pi from inside tmux
 
 ## Related dispatcher workflow
 
@@ -65,4 +65,4 @@ dispatcher session instead. Press `C-b M` and see
 ## Wiring
 
 Pi discovers the extension at `~/.pi/agent/extensions/spawn-worktree/index.ts`.
-The recursive `home.file.".pi/agent"` copy in `modules/home.nix` installs it.
+The recursive `home.file.".pi/agent"` copy in `modules/tools/pi-coding-agent.nix` installs it.

@@ -3,7 +3,7 @@
  *
  * Rotates the working message through a curated list of verbs on every
  * agent turn, matching the Claude Code `spinnerVerbs` config. Source list
- * lives in `modules/configs/spinner-verbs.json` and is shared with the
+ * lives in `modules/tools/pi-coding-agent/spinner-verbs.json` and is shared with the
  * Claude Code config.
  */
 

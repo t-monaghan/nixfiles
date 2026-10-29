@@ -1,6 +1,6 @@
 # Pi sessions in HUD
 
-The **Pi sessions** section in `modules/configs/hud.nix` uses `pi-hud`. It lists
+The **Pi sessions** section in `modules/tools/hud.nix` uses `pi-hud`. It lists
 saved pi sessions from `~/.pi/agent/sessions` and dispatcher job session
 folders under `~/dev/agents/sessions`. Set `PI_HUD_SESSION_DIRS` to a
 colon-separated list for other session directories. It also reads live records written by

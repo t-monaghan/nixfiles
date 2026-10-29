@@ -12,14 +12,13 @@ both macOS and Dolomite. The copy is writable so npm can install dependencies
 and apply the runtime patch. Installation repeats when the source or Node
 package changes. Pi loads this copy through its package settings.
 
-Run `./scripts/switch work` or `./scripts/switch personal` on macOS, or rebuild
-Dolomite, then start a new pi process. The first activation needs access to the
-npm registry.
+Run `just switch` on macOS, or rebuild Dolomite, then start a new pi process.
+The first activation needs access to the npm registry.
 
 ## Policy
 
 The global policy remains in
-`modules/configs/pi-coding-agent/sandbox.json`. Project overrides still load from
+`modules/tools/pi-coding-agent/sandbox.json`. Project overrides still load from
 `.pi/sandbox.json`.
 
 The upstream runtime patch removes hardcoded write restrictions. The configured
