@@ -60,20 +60,18 @@ in {
         if ctx.role.work
         then {
           defaultProvider = "github-copilot";
-          defaultModel = "gpt-6-sol";
+          defaultModel = "gemini-4-argon";
           enabledModels = [
+            "github-copilot/gpt-6.1-sol"
             "anthropic/claude-fable-5-1"
-            "anthropic/claude-opus-5-5"
             "github-copilot/gpt-6-astra"
             "github-copilot/kimi-k3"
-            "github-copilot/gpt-6-sol"
           ];
         }
         else {
           defaultProvider = "github-copilot";
-          defaultModel = "gpt-6-sol";
+          defaultModel = "gpt-6.1-sol";
           enabledModels = [
-            "github-copilot/gpt-6-sol"
             "github-copilot/gpt-6-astra"
             "github-copilot/kimi-k3"
           ];
