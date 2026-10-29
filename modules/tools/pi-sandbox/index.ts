@@ -81,7 +81,8 @@ const DEFAULT_CONFIG: SandboxConfig = {
 function readJson(path: string): Partial<SandboxConfig> {
 	if (!existsSync(path)) return {};
 	try {
-		return JSON.parse(readFileSync(path, "utf-8"));
+		const content = readFileSync(path, "utf-8");
+		return content.trim() ? JSON.parse(content) : {};
 	} catch (e) {
 		console.error(`sandbox: could not parse ${path}: ${e}`);
 		return {};
@@ -175,29 +176,33 @@ function sandboxedBashOps(shellPath?: string): BashOperations {
 			// CLIs (e.g. mcporter MCP calls) get EPERM. Opt them into the proxy here.
 			const childEnv = { ...(env ?? process.env) };
 			if (childEnv.NODE_USE_ENV_PROXY === undefined) childEnv.NODE_USE_ENV_PROXY = "1";
-			return new Promise((resolvePromise, reject) => {
-				const child = spawn(shell, [...args, wrapped], { cwd, env: childEnv, detached: true, stdio: ["ignore", "pipe", "pipe"] });
-				let timedOut = false;
-				let th: NodeJS.Timeout | undefined;
-				if (timeout && timeout > 0) {
-					th = setTimeout(() => {
-						timedOut = true;
-						if (child.pid) try { process.kill(-child.pid, "SIGKILL"); } catch { child.kill("SIGKILL"); }
-					}, timeout * 1000);
-				}
-				child.stdout?.on("data", onData);
-				child.stderr?.on("data", onData);
-				child.on("error", (e) => { if (th) clearTimeout(th); reject(e); });
-				const onAbort = () => { if (child.pid) try { process.kill(-child.pid, "SIGKILL"); } catch { child.kill("SIGKILL"); } };
-				signal?.addEventListener("abort", onAbort, { once: true });
-				child.on("close", (code) => {
-					if (th) clearTimeout(th);
-					signal?.removeEventListener("abort", onAbort);
-					if (signal?.aborted) reject(new Error("aborted"));
-					else if (timedOut) reject(new Error(`timeout:${timeout}`));
-					else resolvePromise({ exitCode: code });
+			try {
+				return await new Promise((resolvePromise, reject) => {
+					const child = spawn(shell, [...args, wrapped], { cwd, env: childEnv, detached: true, stdio: ["ignore", "pipe", "pipe"] });
+					let timedOut = false;
+					let th: NodeJS.Timeout | undefined;
+					if (timeout && timeout > 0) {
+						th = setTimeout(() => {
+							timedOut = true;
+							if (child.pid) try { process.kill(-child.pid, "SIGKILL"); } catch { child.kill("SIGKILL"); }
+						}, timeout * 1000);
+					}
+					child.stdout?.on("data", onData);
+					child.stderr?.on("data", onData);
+					child.on("error", (e) => { if (th) clearTimeout(th); reject(e); });
+					const onAbort = () => { if (child.pid) try { process.kill(-child.pid, "SIGKILL"); } catch { child.kill("SIGKILL"); } };
+					signal?.addEventListener("abort", onAbort, { once: true });
+					child.on("close", (code) => {
+						if (th) clearTimeout(th);
+						signal?.removeEventListener("abort", onAbort);
+						if (signal?.aborted) reject(new Error("aborted"));
+						else if (timedOut) reject(new Error(`timeout:${timeout}`));
+						else resolvePromise({ exitCode: code });
+					});
 				});
-			});
+			} finally {
+				SandboxManager.cleanupAfterCommand();
+			}
 		},
 	};
 }
