@@ -61,6 +61,16 @@ export default function (pi: ExtensionAPI) {
 	pi.on("session_before_switch", async () => { current = undefined; attention.clear(); rmSync(record, { force: true }); });
 	pi.on("session_switch", async (_event, ctx) => { working = false; attention.clear(); update(ctx); });
 	pi.on("agent_start", async (_event, ctx) => { working = true; update(ctx); });
+	pi.on("tool_execution_start", async (event, ctx) => {
+		if (event.toolName !== "question") return;
+		attention.add(`question:${event.toolCallId}`);
+		update(ctx);
+	});
+	pi.on("tool_execution_end", async (event, ctx) => {
+		if (event.toolName !== "question") return;
+		attention.delete(`question:${event.toolCallId}`);
+		update(ctx);
+	});
 	pi.on("agent_settled", async (_event, ctx) => { working = false; update(ctx); });
 	pi.on("session_shutdown", async () => {
 		if (timer) clearInterval(timer);

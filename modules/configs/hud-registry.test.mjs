@@ -6,7 +6,7 @@ import { join, resolve } from "node:path";
 
 const extension = resolve(import.meta.dirname, "pi-coding-agent/extensions/hud-registry.ts");
 
-test("registry tracks concurrent permission prompts and clears them on session switch", () => {
+test("registry tracks permission prompts and questions and clears them on session switch", () => {
   const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "hud-registry-test-"));
   try {
     const script = `
@@ -31,6 +31,17 @@ test("registry tracks concurrent permission prompts and clears them on session s
       if (!snapshot().waiting) throw Error('resolved one of two prompts');
       events.get('attention:resolve')({ key: 'two' });
       if (snapshot().waiting) throw Error('prompt did not resolve');
+      await handlers.get('tool_execution_start')({ toolName: 'question', toolCallId: 'q1' }, context('old.jsonl'));
+      if (!snapshot().waiting || !snapshot().working) throw Error('question should wait while agent is active');
+      await handlers.get('tool_execution_start')({ toolName: 'bash', toolCallId: 'b1' }, context('old.jsonl'));
+      await handlers.get('tool_execution_start')({ toolName: 'question', toolCallId: 'q2' }, context('old.jsonl'));
+      await handlers.get('tool_execution_end')({ toolName: 'question', toolCallId: 'q1' }, context('old.jsonl'));
+      if (!snapshot().waiting) throw Error('another question remains active');
+      await handlers.get('tool_execution_end')({ toolName: 'bash', toolCallId: 'b1' }, context('old.jsonl'));
+      if (!snapshot().waiting) throw Error('unrelated tool cleared question');
+      await handlers.get('tool_execution_end')({ toolName: 'question', toolCallId: 'q2', isError: true }, context('old.jsonl'));
+      if (snapshot().waiting || !snapshot().working) throw Error('question did not resolve');
+      await handlers.get('tool_execution_start')({ toolName: 'question', toolCallId: 'q3' }, context('old.jsonl'));
       events.get('attention:request')({ key: 'three' });
       await handlers.get('session_before_switch')();
       await handlers.get('session_switch')(null, context('new.jsonl'));
