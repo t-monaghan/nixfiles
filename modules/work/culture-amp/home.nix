@@ -91,6 +91,14 @@ lib.mkIf config.nixfiles.work.cultureAmp.enable {
       aws-research = {
         url = "https://knowledge-mcp.global.api.aws";
       };
+      slack = {
+        description = "Slack hosted MCP — search, read, and send Slack messages";
+        url = "https://mcp.slack.com/mcp";
+        oauth = {
+          clientId = "1601185624273.8899143856786";
+          callbackUrl = "http://localhost:3118/callback";
+        };
+      };
     };
   };
 }
