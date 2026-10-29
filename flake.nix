@@ -29,6 +29,16 @@
       x86_64-linux = linuxPkgs.alejandra;
     };
 
+    checks = {
+      aarch64-darwin = {
+        "tom.monaghan1" = self.homeConfigurations."tom.monaghan1".activationPackage;
+        tmonaghan = self.homeConfigurations.tmonaghan.activationPackage;
+      };
+      x86_64-linux = {
+        dolomite = self.nixosConfigurations.dolomite.config.system.build.toplevel;
+      };
+    };
+
     homeConfigurations = {
       "tom.monaghan1" = mkHost "tom.monaghan1";
       "tmonaghan" = mkHost "tmonaghan";

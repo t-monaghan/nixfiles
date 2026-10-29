@@ -1,8 +1,4 @@
-# Shared nixvim configuration — used by ALL three machines.
-#
-# Imported as a module by both the Mac home-manager configs (../../home.nix) and
-# the NixOS box (../../../hosts/dolomite/neovim.nix); `programs.nixvim` is declared by
-# nixvim's home-manager and NixOS modules alike, so one file serves both.
+# Shared nixvim configuration — used by ALL three machines via `modules/home.nix`.
 {
   config,
   pkgs,
@@ -12,7 +8,8 @@
 }: let
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   flakePath = config.nixfiles.context.flakePath or null;
-  homeUsername = config.home.username or null;
+  host = config.nixfiles.context.host;
+  homeUsername = config.home.username;
 
   inherit (colors) palettes;
   # base16-nvim's `setup` takes the 16 slots as a Lua table. The palettes hold
@@ -46,9 +43,9 @@ in {
     ];
 
     # Make the host parameters available to nixvim submodules
-    # (lsp.nix wires flakePath/homeUsername into nixd's settings;
+    # (lsp.nix wires flakePath/host/homeUsername into nixd's settings;
     # obsidian.nix gates on isDarwin).
-    _module.args = {inherit flakePath homeUsername isDarwin;};
+    _module.args = {inherit flakePath host homeUsername isDarwin;};
 
     globals = {
       mapleader = " ";

@@ -1,8 +1,7 @@
-# `flakePath` + `homeUsername` arrive via `_module.args` (see ./default.nix).
-# On the Macs they point nixd at this flake; on the NixOS box they are null
-# and nixd falls back to the channel-based `<nixpkgs>` expressions.
+# `flakePath`, `host`, and `homeUsername` arrive via `_module.args` (see ./default.nix).
 {
   flakePath,
+  host,
   homeUsername,
   ...
 }: {
@@ -23,21 +22,30 @@
         # intentionally left unset in both branches.
         settings =
           if flakePath != null
-          then {
-            # `builtins.getFlake "${flakePath}"` resolves this flake's store
-            # source (self.outPath) — stable and identical on every host, so no
-            # path or username guessing. Reflects the option schema as of the
-            # last rebuild.
-            # Package-name completion + eval-based hover from this flake's nixpkgs.
-            nixpkgs.expr = ''import (builtins.getFlake "${flakePath}").inputs.nixpkgs { }'';
-            # Option-aware completion + hover docs for this host's home-manager
-            # options (home.*, programs.*, services.*, ...).
-            options.home-manager.expr = ''
-              (builtins.head (builtins.filter
-                (configuration: configuration.config.home.username == "${homeUsername}")
-                (builtins.attrValues (builtins.getFlake "${flakePath}").homeConfigurations))).options
-            '';
-          }
+          then
+            {
+              # `builtins.getFlake "${flakePath}"` resolves this flake's store
+              # source (self.outPath) — stable and identical on every host, so no
+              # path or username guessing. Reflects the option schema as of the
+              # last rebuild.
+              # Package-name completion + eval-based hover from this flake's nixpkgs.
+              nixpkgs.expr = ''import (builtins.getFlake "${flakePath}").inputs.nixpkgs { }'';
+            }
+            // (
+              if host == "dolomite"
+              then {
+                options.nixos.expr = ''(builtins.getFlake "${flakePath}").nixosConfigurations.dolomite.options'';
+              }
+              else {
+                # Option-aware completion + hover docs for this host's home-manager
+                # options (home.*, programs.*, services.*, ...).
+                options.home-manager.expr = ''
+                  (builtins.head (builtins.filter
+                    (configuration: configuration.config.home.username == "${homeUsername}")
+                    (builtins.attrValues (builtins.getFlake "${flakePath}").homeConfigurations))).options
+                '';
+              }
+            )
           else {
             # Non-flake: nixd resolves nixpkgs + NixOS options via the channel
             # (<nixpkgs> comes from NIX_PATH, which channel-based nixos-rebuild sets).
