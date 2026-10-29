@@ -1,8 +1,15 @@
 {
   config,
   lib,
+  pkgs,
   ...
-}: {
+}: let
+  hud-session = pkgs.writeShellApplication {
+    name = "hud-session";
+    runtimeInputs = [pkgs.tmux];
+    text = builtins.readFile ./hud-session.sh;
+  };
+in {
   # Keep worktrunk worktrees (…/repo/.worktrees/branch) out of the zoxide
   # database so `sesh list` / the tmux session picker aren't cluttered with
   # long worktree paths. Active worktrees still show up in the picker via
@@ -59,7 +66,7 @@
           path = "~/dev";
           alias = "hud";
           alias_auto_connect = true;
-          startup_command = "hud && exit";
+          startup_command = "${lib.getExe hud-session} && exit";
         }
       ];
     };
