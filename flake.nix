@@ -6,7 +6,7 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
-    awtrix-cli.url = "git+https://github.com/t-monaghan/awtrix-cli";
+    awtrix-cli.url = "github:t-monaghan/awtrix-cli";
     awtrix-cli.inputs.nixpkgs.follows = "nixpkgs";
     imds-broker.url = "github:t-monaghan/imds-broker/feat/nix-flake";
     imds-broker.inputs.nixpkgs.follows = "nixpkgs";

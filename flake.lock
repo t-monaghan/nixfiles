@@ -10,15 +10,15 @@
       "locked": {
         "lastModified": 1777335481,
         "narHash": "sha256-f8Wt9yQ+KpwSgUB0A7wxt6bCQq61XJZ6kGUG/YaZ58o=",
-        "ref": "refs/heads/main",
+        "owner": "t-monaghan",
+        "repo": "awtrix-cli",
         "rev": "d8e6cddf4c3c5c0dde8e0f88c5d9fec2a92942f8",
-        "revCount": 13,
-        "type": "git",
-        "url": "https://github.com/t-monaghan/awtrix-cli"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://github.com/t-monaghan/awtrix-cli"
+        "owner": "t-monaghan",
+        "repo": "awtrix-cli",
+        "type": "github"
       }
     },
     "flake-parts": {
