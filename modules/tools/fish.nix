@@ -17,8 +17,6 @@ in {
   programs.fish = {
     enable = true;
 
-    interactiveShellInit = lib.mkIf ctx.role.work "set -gx _ZO_EXCLUDE_DIRS $HOME/hotel";
-
     loginShellInit = ''
       ${lib.optionalString isDarwin "fish_add_path $HOME/.rd/bin"}
       fish_add_path $HOME/.npm-global/bin

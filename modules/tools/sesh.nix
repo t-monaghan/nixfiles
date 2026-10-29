@@ -8,7 +8,10 @@
   # long worktree paths. Active worktrees still show up in the picker via
   # their tmux session name (e.g. `pi-<branch>`), which is the short handle
   # we actually want. Colon-separated globs; `**` crosses `/`.
-  home.sessionVariables._ZO_EXCLUDE_DIRS = "${config.home.homeDirectory}/**/.worktrees/**";
+  home.sessionVariables._ZO_EXCLUDE_DIRS = lib.concatStringsSep ":" (
+    ["${config.home.homeDirectory}/**/.worktrees/**"]
+    ++ lib.optional config.nixfiles.context.role.work "${config.home.homeDirectory}/hotel"
+  );
 
   programs.sesh = {
     enable = true;
