@@ -71,10 +71,12 @@ in {
         else {
           defaultProvider = "github-copilot";
           defaultModel = "gpt-6.1-sol";
-          enabledModels = [
-            "github-copilot/gpt-6-astra"
-            "github-copilot/kimi-k3"
-          ];
+          enabledModels =
+            lib.optional (ctx.host == "dolomite") "github-copilot/gpt-6.1-sol"
+            ++ [
+              "github-copilot/gpt-6-astra"
+              "github-copilot/kimi-k3"
+            ];
         };
     };
     packages = lib.mkOption {
