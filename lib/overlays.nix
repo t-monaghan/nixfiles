@@ -3,6 +3,7 @@
   imds-broker,
   ...
 }: [
+  (import ../modules/tools/pi-coding-agent/overlay.nix)
   (final: prev: {
     sandy = sandy.packages.${final.stdenv.hostPlatform.system}.default;
     imds-broker = imds-broker.packages.${final.stdenv.hostPlatform.system}.default;

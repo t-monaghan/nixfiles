@@ -1,0 +1,226 @@
+diff --git a/packages/coding-agent/docs/tui.md b/packages/coding-agent/docs/tui.md
+index 704a786..ac37e03 100644
+--- a/packages/coding-agent/docs/tui.md
++++ b/packages/coding-agent/docs/tui.md
+@@ -65,6 +65,8 @@ Regular mode leaves mouse input to the terminal because the terminal owns scroll
+ 
+ `ctx.ui.custom()` temporarily gives one component control of the interactive area and resolves when that component calls the supplied completion callback.
+ 
++For a component that waits for user input, pass `blocked: { kind: "question", message: "Choose a target" }` in the options. Pi reports `state=blocked` through OSC 7501 until the component closes, then restores the current program status. This also works with overlays. Omit `blocked` for loaders and other custom UI that does not wait for user input. The message is sent to the terminal; do not include secrets.
++
+ ### Build a minimal custom screen
+ 
+ This complete extension shows the custom-component lifecycle: render within the supplied width, use injected keybindings, invalidate cached output after state changes, request a render, and finish through `done()`.
+diff --git a/packages/coding-agent/src/core/extensions/types.ts b/packages/coding-agent/src/core/extensions/types.ts
+index 60388c0..2de80f3 100644
+--- a/packages/coding-agent/src/core/extensions/types.ts
++++ b/packages/coding-agent/src/core/extensions/types.ts
+@@ -52,6 +52,7 @@ import type {
+ 	KeyId,
+ 	OverlayHandle,
+ 	OverlayOptions,
++	ProgramStatus,
+ 	TUI,
+ } from "@earendil-works/pi-tui";
+ import type { Static, TSchema } from "typebox";
+@@ -219,6 +220,8 @@ export interface ExtensionUIContext {
+ 			done: (result: T) => void,
+ 		) => (Component & { dispose?(): void }) | Promise<Component & { dispose?(): void }>,
+ 		options?: {
++			/** Report blocked while this component waits for input. Omit for non-blocking custom UI. */
++			blocked?: { kind: NonNullable<ProgramStatus["kind"]>; message: string };
+ 			overlay?: boolean;
+ 			/** Overlay positioning/sizing options. Can be static or a function for dynamic updates. */
+ 			overlayOptions?: OverlayOptions | (() => OverlayOptions);
+diff --git a/packages/coding-agent/src/modes/interactive/interactive-mode.ts b/packages/coding-agent/src/modes/interactive/interactive-mode.ts
+index e24d150..2885d08 100644
+--- a/packages/coding-agent/src/modes/interactive/interactive-mode.ts
++++ b/packages/coding-agent/src/modes/interactive/interactive-mode.ts
+@@ -2932,6 +2932,7 @@ export class InteractiveMode {
+ 			done: (result: T) => void,
+ 		) => (Component & { dispose?(): void }) | Promise<Component & { dispose?(): void }>,
+ 		options?: {
++			blocked?: BlockedStatus;
+ 			overlay?: boolean;
+ 			overlayOptions?: OverlayOptions | (() => OverlayOptions);
+ 			onHandle?: (handle: OverlayHandle) => void;
+@@ -2939,6 +2940,7 @@ export class InteractiveMode {
+ 	): Promise<T> {
+ 		const savedText = this.editor.getText();
+ 		const isOverlay = options?.overlay ?? false;
++		const blockedSource = isOverlay && options?.blocked ? `extension-custom-${crypto.randomUUID()}` : undefined;
+ 
+ 		return new Promise((resolve, reject) => {
+ 			let component: ExtensionDialogComponent | undefined;
+@@ -2951,12 +2953,17 @@ export class InteractiveMode {
+ 				this.ui.requestRender();
+ 			};
+ 
+-			const close = (result: T) => {
+-				if (closed) return;
+-				closed = true;
++			const restore = () => {
+ 				// Remove this overlay, not the topmost one: another overlay may have opened above it.
+ 				if (isOverlay) overlayHandle?.hide();
+ 				else restoreEditor();
++				if (blockedSource) this.programStatus.setBlocked(blockedSource, undefined);
++			};
++
++			const close = (result: T) => {
++				if (closed) return;
++				closed = true;
++				restore();
+ 				// Note: both branches above already call requestRender
+ 				resolve(result);
+ 				try {
+@@ -2985,15 +2992,17 @@ export class InteractiveMode {
+ 							return w ? { width: w } : undefined;
+ 						};
+ 						overlayHandle = this.ui.showOverlay(c, resolveOptions());
++						if (blockedSource) this.programStatus.setBlocked(blockedSource, options?.blocked);
+ 						// Expose handle to caller for visibility control
+ 						options?.onHandle?.(overlayHandle);
+ 					} else {
+-						this.pushExtensionDialog(c);
++						this.pushExtensionDialog(c, options?.blocked);
+ 					}
+ 				})
+ 				.catch((err) => {
+ 					if (closed) return;
+-					if (!isOverlay) restoreEditor();
++					closed = true;
++					restore();
+ 					reject(err);
+ 				});
+ 		});
+diff --git a/packages/coding-agent/test/interactive-mode-custom-program-status.test.ts b/packages/coding-agent/test/interactive-mode-custom-program-status.test.ts
+new file mode 100644
+index 0000000..75ee991
+--- /dev/null
++++ b/packages/coding-agent/test/interactive-mode-custom-program-status.test.ts
+@@ -0,0 +1,125 @@
++import { Container, type ProgramStatus, type Terminal, Text } from "@earendil-works/pi-tui";
++import { beforeAll, describe, expect, it, vi } from "vitest";
++import type { ExtensionUIContext } from "../src/core/extensions/types.ts";
++import { InteractiveMode } from "../src/modes/interactive/interactive-mode.ts";
++import { ProgramStatusReporter } from "../src/modes/interactive/program-status-reporter.ts";
++import { initTheme } from "../src/modes/interactive/theme/theme.ts";
++
++function setup() {
++	const reports: ProgramStatus[] = [];
++	const reporter = new ProgramStatusReporter(
++		() => ({ setProgramStatus: (status: ProgramStatus) => reports.push(status) }) as unknown as Terminal,
++		() => "Session",
++	);
++	reporter.handleEvent({ type: "agent_start" });
++	const hide = vi.fn();
++	const context = new Proxy({
++		extensionDialogs: [],
++		editorContainer: new Container(),
++		editor: Object.assign(new Text("editor"), { getText: () => "", setText: vi.fn() }),
++		ui: { setFocus: vi.fn(), requestRender: vi.fn(), showOverlay: vi.fn(() => ({ hide })) },
++		programStatus: reporter,
++		disposeActiveSelector: vi.fn(),
++	}, {
++		get(target, key, receiver) {
++			if (key in target) return Reflect.get(target, key, receiver);
++			const value = Reflect.get(InteractiveMode.prototype, key);
++			return typeof value === "function" ? value.bind(receiver) : value;
++		},
++	});
++	const custom = Reflect.get(context, "showExtensionCustom") as ExtensionUIContext["custom"];
++	const open = (options?: Parameters<ExtensionUIContext["custom"]>[1]) => {
++		let done!: (result: string | null) => void;
++		const promise = custom<string | null>((_tui, _theme, _kb, finish) => {
++			done = finish;
++			return new Text("Question");
++		}, options);
++		return { promise, done: (result: string | null) => done(result) };
++	};
++	return { reporter, reports, custom, open, hide, last: () => reports.at(-1) };
++}
++
++const blocked = { kind: "question" as const, message: "Choose a target" };
++const working = { state: "working", app: "pi", message: "Session" };
++
++describe("custom UI program status", () => {
++	beforeAll(() => initTheme("dark"));
++
++	it.each([false, true])("does not block by default (overlay=%s)", async (overlay) => {
++		const { open, reports, last } = setup();
++		const dialog = open({ overlay });
++		await Promise.resolve();
++		expect(last()).toEqual(working);
++		dialog.done("done");
++		await dialog.promise;
++		expect(reports).toEqual([working]);
++	});
++
++	it.each([
++		{ overlay: false, answer: "target" },
++		{ overlay: false, answer: null },
++		{ overlay: true, answer: "target" },
++		{ overlay: true, answer: null },
++	])("restores working after $answer (overlay=$overlay)", async ({ overlay, answer }) => {
++		const { open, last } = setup();
++		const dialog = open({ overlay, blocked });
++		await Promise.resolve();
++		expect(last()).toEqual({ state: "blocked", app: "pi", ...blocked });
++		dialog.done(answer);
++		await expect(dialog.promise).resolves.toBe(answer);
++		expect(last()).toEqual(working);
++	});
++
++	it.each([false, true])("restores the remaining question when another closes (overlay=%s)", async (overlay) => {
++		const { open, last } = setup();
++		const first = open({ overlay, blocked });
++		const second = open({ overlay, blocked: { ...blocked, message: "Second question" } });
++		await Promise.resolve();
++		expect(last()?.message).toBe("Second question");
++		first.done(null);
++		await first.promise;
++		expect(last()?.message).toBe("Second question");
++		second.done("target");
++		await second.promise;
++		expect(last()).toEqual(working);
++	});
++
++	it("restores done if the agent settles while the question is open", async () => {
++		const { open, reporter, last } = setup();
++		const dialog = open({ blocked });
++		await Promise.resolve();
++		reporter.handleEvent({ type: "agent_settled", aborted: false });
++		expect(last()?.state).toBe("blocked");
++		dialog.done(null);
++		await dialog.promise;
++		expect(last()).toEqual({ state: "done", app: "pi", message: "Session" });
++	});
++
++	it.each([false, true])("does not block if the factory finishes synchronously (overlay=%s)", async (overlay) => {
++		const { custom, reports } = setup();
++		await custom((_tui, _theme, _kb, done) => {
++			done(null);
++			return new Text("already cancelled");
++		}, { overlay, blocked });
++		expect(reports).toEqual([working]);
++	});
++
++	it.each([false, true])("does not block if the factory rejects (overlay=%s)", async (overlay) => {
++		const { custom, reports } = setup();
++		await expect(custom(async () => {
++			throw new Error("factory failed");
++		}, { overlay, blocked })).rejects.toThrow("factory failed");
++		expect(reports).toEqual([working]);
++	});
++
++	it("clears an overlay status if onHandle throws", async () => {
++		const { custom, last, hide } = setup();
++		await expect(custom(() => new Text("Question"), {
++			overlay: true,
++			blocked,
++			onHandle: () => { throw new Error("onHandle failed"); },
++		})).rejects.toThrow("onHandle failed");
++		expect(hide).toHaveBeenCalledOnce();
++		expect(last()).toEqual(working);
++	});
++});

@@ -1,0 +1,11 @@
+--- a/index.ts
++++ b/index.ts
+@@ -228,7 +228,7 @@
+           handleInput,
+           dispose: () => signal?.removeEventListener('abort', onAbort),
+         };
+-      });
++      }, { blocked: { kind: 'question', message: params.question } });
+ 
+       const simpleOptions = params.options.map((o) => o.label);
+ 

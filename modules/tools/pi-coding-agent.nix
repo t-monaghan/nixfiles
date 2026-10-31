@@ -35,7 +35,7 @@
   sharedPiSettings = {
     defaultThinkingLevel = "medium";
     treeFilterMode = "no-tools";
-    packages = [sandboxDir "npm:@ravshansbox/pi-question"] ++ config.nixfiles.pi.packages;
+    packages = [sandboxDir "${pkgs.pi-question}"] ++ config.nixfiles.pi.packages;
     quietStartup = true;
     fullscreenCopyOnSelect = config.nixfiles.pi.fullscreenCopyOnSelect;
     warnings.anthropicExtraUsage = false;
