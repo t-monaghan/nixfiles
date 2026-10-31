@@ -43,6 +43,7 @@
       "/nix",
       "/tmp",
       "/var",
+      "~/.agents/skills/rex",
       "~/.cache",
       "~/.claude",
       "~/.claude.json",

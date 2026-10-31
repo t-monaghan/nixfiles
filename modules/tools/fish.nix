@@ -17,6 +17,12 @@ in {
   programs.fish = {
     enable = true;
 
+    interactiveShellInit = ''
+      if test -n "$REX_BIN_DIR"
+        set -gx PATH "$REX_BIN_DIR" $PATH
+      end
+    '';
+
     loginShellInit = ''
       ${lib.optionalString isDarwin "fish_add_path $HOME/.rd/bin"}
       fish_add_path $HOME/.npm-global/bin
