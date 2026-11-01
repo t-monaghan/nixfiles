@@ -35,7 +35,7 @@ index 185a9bd..55c5209 100644
      // Build iglob args for all patterns in one ripgrep call
      const iglobArgs = [];
      for (const fileName of DANGEROUS_FILES) {
-@@ -211,12 +195,6 @@ async function linuxGetMandatoryDenyPaths(ripgrepConfig = { command: 'rg' }, max
+@@ -211,12 +195,9 @@ async function linuxGetMandatoryDenyPaths(ripgrepConfig = { command: 'rg' }, max
      for (const dirName of dangerousDirectories) {
          iglobArgs.push('--iglob', `**/${dirName}/**`);
      }
@@ -45,10 +45,13 @@ index 185a9bd..55c5209 100644
 -    if (!allowGitConfig) {
 -        iglobArgs.push('--iglob', '**/.git/config');
 -    }
++    // Without include patterns, ripgrep would return every file as a deny path.
++    if (iglobArgs.length === 0)
++        return [...new Set(denyPaths)];
      // Single ripgrep call to find all dangerous paths in subdirectories
      // Limit depth for performance - deeply nested dangerous files are rare
      // and the security benefit doesn't justify the traversal cost
-@@ -240,24 +218,12 @@ async function linuxGetMandatoryDenyPaths(ripgrepConfig = { command: 'rg' }, max
+@@ -240,24 +221,12 @@ async function linuxGetMandatoryDenyPaths(ripgrepConfig = { command: 'rg' }, max
          const absolutePath = path.resolve(cwd, match);
          // File inside a dangerous directory -> add the directory path
          let foundDir = false;

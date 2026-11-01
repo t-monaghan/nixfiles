@@ -35,6 +35,9 @@ and asks before each covered operation. `/sandbox enable` returns to sandbox mod
 
 ## Local changes
 
+- The Linux runtime skips the mandatory deny scan when no mandatory deny
+  patterns exist. Without this check, ripgrep returns every file and the runtime
+  makes those files read-only, including the Git index and commit message.
 - Permission prompts offer session allow, session deny, and deny once only.
 - Removed config writers and project/global grant options. Home Manager owns the
   global policy file. Add permanent permissions to the policy in this repository.
@@ -43,6 +46,20 @@ Grants and denials do not survive a new session or extension reload. Other
 extension behavior, including its initialization failure handling, is unchanged
 from upstream. If initialization fails, upstream reports an error but can run
 commands without the OS sandbox; check the runtime status before use.
+
+## Verification
+
+On Linux, install the dependencies and run the runtime test:
+
+```fish
+cd modules/tools/pi-sandbox
+npm ci --include=dev --ignore-scripts=false --no-audit --no-fund
+node --test runtime.test.mjs
+```
+
+The test creates temporary repositories. It checks repeated commits, an
+in-repository worktree commit, and write protection for `.env` and
+`.pi/sandbox.json`. It requires `git`, `bash`, `rg`, `bubblewrap`, and `socat`.
 
 ## Updates
 
