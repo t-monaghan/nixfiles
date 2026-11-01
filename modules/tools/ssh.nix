@@ -13,7 +13,7 @@ lib.mkIf config.nixfiles.context.role.desktop {
     includes = ["~/.orbstack/ssh/config"];
     settings = {
       dolomite = {
-        hostname = "ssh.dolomite.lan";
+        hostname = "ssh.arkose.cc";
         user = "tom";
       };
     };

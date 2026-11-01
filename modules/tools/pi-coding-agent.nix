@@ -127,7 +127,7 @@ in {
             config.programs.mcp.servers)
             // lib.optionalAttrs config.nixfiles.pi.homeAssistantMcp {
               home-assistant = {
-                url = "https://hass.dolomite.lan/api/mcp";
+                url = "https://hass.arkose.cc/api/mcp";
                 oauth = {
                   clientId = "http://127.0.0.1:8765/";
                   callbackPort = 8765;

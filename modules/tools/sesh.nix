@@ -42,7 +42,7 @@ in {
           name = "dolomite";
           path = "~";
           startup_command = "ssh dolomite";
-          preview_command = "echo 'SSH → dolomite (dolomite.lan)'";
+          preview_command = "echo 'SSH → dolomite (ssh.arkose.cc)'";
           alias = "dol";
           alias_auto_connect = true;
         }
