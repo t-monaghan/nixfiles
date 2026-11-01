@@ -7,6 +7,76 @@ import test from "node:test";
 const rex = process.env.REX_BIN_DIR ? join(process.env.REX_BIN_DIR, "rex") : null;
 const skip = !rex || !existsSync(rex) || !process.env.PI_SESSION_TEMP;
 
+test("Rex dolomite session script", { skip }, () => {
+  const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "rex-dolomite-test-"));
+  try {
+    const script = join(dir, "test.lua");
+    writeFileSync(script, `
+local file = assert(io.open(${JSON.stringify(resolve("modules/tools/rex/dolomite.lua"))}, "r"))
+local code = file:read("*a")
+file:close()
+local calls, queued, request = 0, 0, nil
+local failure = { create = false, select = false }
+local args = {}
+local mock = {
+  args = args,
+  server = function(label)
+    assert(label == "dolomite")
+    return { call = function(method, params)
+      assert(method == "session.create")
+      calls = calls + 1
+      request = params
+      if failure.create then return nil, "connection failed" end
+      return { session_id = "session:new-" .. calls }
+    end }
+  end,
+  client = { queue = function(action, params)
+    if failure.select then error("no client") end
+    queued = queued + 1
+    assert(action == "session.select")
+    assert(params.session_id == "session:new-" .. calls)
+  end },
+}
+local env = setmetatable({ rex = mock }, { __index = _G })
+local function run()
+  return setfenv(assert(loadstring(code)), env)()
+end
+assert(run().session_id == "session:new-1")
+assert(queued == 1 and request.label == nil)
+assert(#request.initial_windows == 1)
+local split = request.initial_windows[1].layout.split
+assert(split.direction == "horizontal" and split.ratio == 0.5)
+assert(split.before.block.flavor == "com.superlogical.terminal.shell")
+assert(split.after.block.flavor == "com.superlogical.terminal.shell")
+assert(split.before.block.label == "nixfiles" and split.after.block.label == "nxp")
+assert(split.before.block.options.cwd == "/home/tom/nixfiles")
+assert(split.after.block.options.cwd == "/home/tom/nxp")
+assert(run().session_id == "session:new-2", "Each run must create a new session")
+args.name, args.nixfiles, args.nxp = "work", "/projects/nix files", "/projects/nxp"
+args.select = false
+run()
+assert(queued == 2 and request.label == "work")
+split = request.initial_windows[1].layout.split
+assert(split.before.block.options.cwd == args.nixfiles)
+assert(split.after.block.options.cwd == args.nxp)
+args.select = true
+failure.create = true
+local ok, err = pcall(run)
+assert(not ok and tostring(err):find("connection failed", 1, true))
+assert(queued == 2)
+failure.create, failure.select = false, true
+ok, err = pcall(run)
+assert(not ok and tostring(err):find("Created session:new-5 on dolomite", 1, true), tostring(err))
+return { ok = true }
+`);
+    const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(JSON.parse(result.stdout), { ok: true });
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
 test("Rex direct shortcuts and recent-session history", { skip }, () => {
   const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "rex-test-"));
   const source = resolve("modules/tools/rex");

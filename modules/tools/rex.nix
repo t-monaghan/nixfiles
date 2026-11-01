@@ -19,6 +19,7 @@ in {
   xdg.configFile = {
     "rex/init.lua".source = ./rex/init.lua;
     "rex/history.lua".source = ./rex/history.lua;
+    "rex/dolomite.lua".source = ./rex/dolomite.lua;
   };
 
   launchd.agents.rex-session-history = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.nixfiles.context.role.desktop) {

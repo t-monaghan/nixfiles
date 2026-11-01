@@ -1,6 +1,6 @@
 # Rex shortcuts
 
-Home Manager installs `init.lua` and `history.lua` in `~/.config/rex/`. Rex must be installed separately.
+Home Manager installs `init.lua`, `history.lua`, and `dolomite.lua` in `~/.config/rex/`. Rex must be installed separately.
 
 All shortcuts are direct: hold **Cmd-Shift** and press the key in the table. No prefix is required.
 
@@ -23,6 +23,26 @@ All shortcuts are direct: hold **Cmd-Shift** and press the key in the table. No 
 | `r` | Reload Rex configuration |
 
 These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
+
+## Dolomite session
+
+Run this after Home Manager activation:
+
+```fish
+rex do ~/.config/rex/dolomite.lua
+```
+
+The script uses the Rex host named `dolomite`. Each run creates a new session with one tab and two equal-width panes: `/home/tom/nixfiles` on the left and `/home/tom/nxp` on the right. Rex assigns a unique session name. The script then asks the Rex app to select the session.
+
+Override the session name or directories when needed:
+
+```fish
+rex do ~/.config/rex/dolomite.lua name=work nixfiles=/home/tom/dev/nixfiles nxp=/home/tom/dev/nxp
+```
+
+Use `-C CLIENT` before `do` if multiple Rex apps are connected. Add `select=false` after the script path to create the session without selecting it. The script returns the new session and pane IDs. If selection fails, the error includes the created session ID; do not rerun the script unless you want another session.
+
+The directories must exist on dolomite. Rex starts in the account's home directory if a supplied directory does not exist.
 
 ## Recent-session history
 
