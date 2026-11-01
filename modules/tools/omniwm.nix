@@ -29,7 +29,7 @@ in
         monitorGapOverrides = [];
         monitorNiriOverrides = [];
         monitorOrientationOverrides = [];
-        schemaVersion = 3;
+        schemaVersion = 4;
 
         appearance.mode = "automatic";
 
@@ -277,6 +277,8 @@ in
             (hotkey "Option+L" "focus.right")
           ]
           ++ unassigned [
+            "setWindowMark"
+            "removeWindowMark"
             "focusPrevious"
             "focusDownOrLeft"
             "focusUpOrRight"
