@@ -83,7 +83,7 @@ in {
       type = lib.types.listOf (lib.types.either lib.types.str lib.types.attrs);
       default = lib.optionals ctx.role.work [
         "git:github.com/cultureamp/sre-health-triage@tfm/end-to-end"
-        "git:github.com/cultureamp/sre-ai-toolkit@fix/aws-health-event-author-triage"
+        "git:github.com/cultureamp/sre-ai-toolkit@main"
         "git:github.com/cultureamp/ca-agent-context@main"
       ];
       example = ["git:github.com/org/skills@main"];
