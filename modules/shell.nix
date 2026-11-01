@@ -17,6 +17,7 @@ in {
     ./tools/fish.nix
     ./tools/git.nix
     ./tools/mcp.nix
+    ./tools/rex.nix
     ./tools/sesh.nix
     ./tools/starship.nix
     ./tools/television.nix

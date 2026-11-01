@@ -12,19 +12,15 @@ in {
   imports = [
     ./shell.nix
     # One file per program under ./tools/
-    # ./tools/aerospace.nix
-    ./tools/alacritty.nix
     ./tools/claude-code.nix
     ./tools/ghostty.nix
     ./tools/hud.nix
     ./tools/neovim
     ./tools/omniwm.nix
-    ./tools/opencode.nix
     ./tools/pi-coding-agent.nix
     ./tools/ssh.nix
     ./tools/syncthing.nix
     ./tools/worktrunk.nix
-    ./tools/zed.nix
   ];
 
   home.stateVersion = "23.11";
