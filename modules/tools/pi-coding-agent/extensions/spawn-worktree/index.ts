@@ -176,7 +176,7 @@ const SpawnParams = Type.Object({
 		Type.String({ description: "Base branch for `wt switch -c -b <base>`. Defaults to repo default branch." }),
 	),
 	model: Type.Optional(
-		Type.String({ description: "Pi model pattern (e.g. 'claude-opus-4-7'). Defaults to user setting." }),
+		Type.String({ description: "Model override. Set only when the user explicitly requests a specific model; otherwise omit to use the configured default model." }),
 	),
 	windowName: Type.Optional(
 		Type.String({ description: "Override tmux window name (default: 'pi-<sanitized-branch>')." }),
@@ -190,6 +190,7 @@ const spawnWorktreeTool = defineTool({
 		"Spawn an independent pi agent in a new git worktree, running in a detached window of the current tmux session.",
 		"Use for parallel/independent work that should NOT share this conversation's context.",
 		"Requires a tmux pane. Select the returned window ID to inspect or steer the interactive agent.",
+		"Omit model to use the configured default model. Only override model when the user explicitly requests a specific model.",
 	].join(" "),
 	promptSnippet: "spawn_worktree: fork an independent pi agent into a fresh git worktree (background tmux window in the current session).",
 	parameters: SpawnParams,

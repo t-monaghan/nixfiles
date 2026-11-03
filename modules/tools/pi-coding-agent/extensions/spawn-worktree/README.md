@@ -25,6 +25,8 @@ pane.
 | `spawn_worktree` tool | agent | Independent work in a separate context |
 
 The tool accepts `{ branch, task, baseBranch?, model?, windowName? }`.
+Both interfaces use the configured default model. The tool must omit `model`
+unless the user explicitly requests a specific model.
 A window with the same name in the current session causes an error.
 
 ## Select and clean up the window
