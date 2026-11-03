@@ -119,6 +119,11 @@ in
             "com.okta.mobile"
             "dev.kdrag0n.MacVirt"
             "com.raycast.macos"
+            "com.jamf.selfserviceplus"
+            "com.barut.OmniWM"
+            "com.tinyspeck.slackmacgap"
+            "io.tailscale.ipn.macsys"
+            "org.openvpn.client.app"
           ];
           rehideIntervalSeconds = 5.0;
         };
