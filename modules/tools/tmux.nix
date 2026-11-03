@@ -435,6 +435,8 @@ in {
     extraConfig = ''
       set -g status off
       set -g detach-on-destroy off
+      set -g popup-style 'bg=default,fg=default'
+      set -g popup-border-style 'bg=default,fg=default'
       set -g pane-border-status top
       set -g pane-border-format ' #{?#{==:#{pane_current_command},fish},#{session_name},#{pane_title}} #{?window_zoomed_flag, #[fg=cyan bold][ZOOMED]#[default],}#{?#{==:#{pane_index},0},#[align=right]#{S:#[default]─ #{?session_attached,#[fg=white bold],#[fg=brightblack]}#{session_name}#{?#{>:#{session_windows},1}, #{e|+:#{active_window_index},1}|#{session_windows},} #[default]}#[default]──,}'
       bind -Tcopy-mode WheelUpPane send -N 0.25 -X scroll-up
