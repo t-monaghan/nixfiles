@@ -202,11 +202,11 @@ in {
             end
 
             # Gather non-main, non-current worktrees across the selected repos.
-            # kind == "worktree" skips bare-branch entries; is_main keeps the
-            # primary checkout; is_current keeps the worktree you're standing in.
+            # Branch-only entries have no worktree; keep the primary checkout
+            # and the worktree you're standing in.
             set -l repo_col; set -l branch_col; set -l path_col
             for repo in $repos
-              for row in (wt -C $repo list --format json 2>/dev/null | jq -r '.[] | select(.is_main == false and .is_current == false and .kind == "worktree") | [.branch, .path] | @tsv')
+              for row in (wt -C $repo list --format json 2>/dev/null | jq -r '.items[] | select(.worktree and .worktree.main == false and .worktree.current == false and .branch) | [.branch, .worktree.path] | @tsv')
                 set -l parts (string split \t -- $row)
                 set -a repo_col $repo
                 set -a branch_col $parts[1]

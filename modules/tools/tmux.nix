@@ -281,9 +281,9 @@
                   elif $s < 86400  then "\(($s/3600)  | floor)h"
                   elif $s < 604800 then "\(($s/86400) | floor)d"
                   else                  "\(($s/604800)| floor)w" end;
-                .[]
-                | select(.kind == "worktree" and (.is_main | not) and .branch)
-                | "wt\t\(.branch)\t\u2442 \(.branch | sub(":refs/pull/[0-9]+/head$"; ""))\t\(.symbols // "")\t\(.commit.timestamp | age)\t\(.commit.message[0:60])"
+                .items[]
+                | select(.worktree and (.worktree.main | not) and .branch)
+                | "wt\t\(.branch)\t\u2442 \(.branch | sub(":refs/pull/[0-9]+/head$"; ""))\t\(.display.symbols // "")\t\(.head.committed_at | fromdateiso8601 | age)\t\(.head.subject[0:60])"
               '
         ) &
         worktrees_pid=$!
