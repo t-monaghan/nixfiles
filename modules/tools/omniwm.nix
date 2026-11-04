@@ -208,7 +208,7 @@ in
           backgroundOpacity = 0.1;
           deduplicateAppIcons = false;
           enabled = true;
-          excludedBundleIDs = [];
+          excludedBundleIDs = ["dev.kdrag0n.MacVirt"];
           height = 24.0;
           hideEmptyWorkspaces = true;
           hideInNativeFullscreen = true;
