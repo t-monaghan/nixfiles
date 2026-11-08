@@ -1,6 +1,6 @@
 # Rex shortcuts
 
-Home Manager installs `init.lua`, `history.lua`, and `dolomite.lua` in `~/.config/rex/`. Rex must be installed separately.
+On both macOS laptops, Home Manager uses the Rex snapshot input to install the Rex CLI, terminfo entries, and SSH guard. Home Manager installs `init.lua`, `history.lua`, and `dolomite.lua` in `~/.config/rex/`. Install the Rex app separately; the Rex app runs the macOS server. The Home Manager Rex server service stays disabled.
 
 All shortcuts are direct: hold **Cmd-Shift** and press the key in the table. No prefix is required.
 
@@ -46,7 +46,7 @@ The directories must exist on dolomite. Rex starts in the account's home directo
 
 ## Recent-session history
 
-On desktop macOS hosts, Home Manager starts the `rex-session-history` LaunchAgent. It runs `track-sessions.lua` with the Rex Server CLI bundled with Rex Beta. It retries when Rex is not running; it does not start or restart Rex Server.
+On desktop macOS hosts, Home Manager starts the `rex-session-history` LaunchAgent. It runs `track-sessions.lua` with the Rex CLI from the pinned flake input. It retries when Rex is not running; it does not start or restart Rex Server.
 
 The process records session attachments for each Rex app client in `$XDG_STATE_HOME/rex/session-history.json`, or `~/.local/state/rex/session-history.json`. Normal session changes, including picker and mouse selection, attach the app to the selected session. The `last_session` action selects the most recent recorded session other than the current session. Closed sessions are skipped. History survives configuration reloads and process restarts.
 

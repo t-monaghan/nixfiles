@@ -4,6 +4,7 @@
   nixpkgs,
   nixvim,
   awtrix-cli,
+  rex,
   ...
 } @ inputs: username:
 home-manager.lib.homeManagerConfiguration {
@@ -15,6 +16,7 @@ home-manager.lib.homeManagerConfiguration {
   modules = [
     nixvim.homeModules.nixvim
     awtrix-cli.homeManagerModules.default
+    rex.homeManagerModules.default
     # `self.outPath` is this flake's source in the store: a stable, immutable,
     # host-independent path that `builtins.getFlake` can resolve regardless of
     # username or where the repo is checked out. Used by nixd (see
