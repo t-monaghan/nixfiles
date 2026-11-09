@@ -231,17 +231,17 @@ in
           {
             bundleId = "com.cron.electron";
             appNameSubstring = "Calendar";
-            assignToWorkspace = "5";
+            assignToWorkspace = "4";
           }
           {
             bundleId = "com.tinyspeck.slackmacgap";
-            assignToWorkspace = "6";
+            assignToWorkspace = "3";
           }
           {
             bundleId = "com.tinyspeck.slackmacgap";
             titleRegex = "^(?!(Activity|Later|Threads|Unread Messages|Huddles|Drafts & sent) -)[^()]+ - Culture Amp - Slack$";
             layout = "float";
-            assignToWorkspace = "6";
+            assignToWorkspace = "3";
           }
         ];
 

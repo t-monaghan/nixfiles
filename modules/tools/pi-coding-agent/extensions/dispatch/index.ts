@@ -1,4 +1,5 @@
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
+import { parseWorktrees, type WtWorktree } from "../worktrunk/output.ts";
 import {
 	closeSync,
 	createReadStream,
@@ -65,11 +66,6 @@ interface DispatchJob {
 	summary?: string;
 }
 
-interface WtWorktree {
-	branch?: string;
-	path?: string;
-}
-
 const DEFAULT_CONFIG: DispatchConfig = {
 	agentRoot: join(homedir(), "dev", "agents"),
 	repoRoot: join(homedir(), "dev"),
@@ -132,8 +128,7 @@ function tryCommand(commandName: string, args: string[], cwd?: string): string |
 
 function listWorktrees(repoPath: string): WtWorktree[] {
 	const output = command("wt", ["-C", repoPath, "list", "--format", "json"]);
-	const parsed = JSON.parse(output) as unknown;
-	return Array.isArray(parsed) ? (parsed as WtWorktree[]) : [];
+	return parseWorktrees(output);
 }
 
 function validateBranch(branch: string): void {

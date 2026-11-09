@@ -12,6 +12,7 @@
  */
 
 import { spawnSync } from "node:child_process";
+import { parseWorktrees, type WtWorktree } from "../worktrunk/output.ts";
 import { Type } from "@mariozechner/pi-ai";
 import {
 	defineTool,
@@ -21,13 +22,6 @@ import {
 } from "@mariozechner/pi-coding-agent";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
-
-interface WtWorktree {
-	branch: string;
-	path: string;
-	kind: string;
-	is_main?: boolean;
-}
 
 interface SpawnOptions {
 	branch: string;
@@ -72,15 +66,9 @@ function listWorktrees(cwd: string): WtWorktree[] {
 		throw new Error(`wt list failed: ${r.stderr || r.stdout || `exit ${r.status}`}`);
 	}
 	try {
-		const parsed = JSON.parse(r.stdout) as unknown;
-		if (!Array.isArray(parsed)) return [];
-		return parsed.filter((w): w is WtWorktree => {
-			return typeof w === "object" && w !== null
-				&& typeof (w as WtWorktree).branch === "string"
-				&& typeof (w as WtWorktree).path === "string";
-		});
+		return parseWorktrees(r.stdout);
 	} catch (err) {
-		throw new Error(`wt list returned non-JSON: ${(err as Error).message}`);
+		throw new Error(`wt list returned invalid JSON output: ${(err as Error).message}`);
 	}
 }
 
