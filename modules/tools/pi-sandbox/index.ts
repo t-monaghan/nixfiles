@@ -322,7 +322,7 @@ export default function (pi: ExtensionAPI) {
 					tui.requestRender();
 				},
 			};
-		});
+		}, { blocked: { kind: "permission", message: title } });
 	}
 
 	async function applyGrant(kind: "domain" | "read" | "write", value: string, grant: Grant): Promise<void> {
