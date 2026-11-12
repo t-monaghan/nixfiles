@@ -1,40 +1,52 @@
 # spawn-worktree
 
-Pi extension that starts an independent interactive `pi` agent in a git
-worktree and a new window in the **current tmux session**. Run it from a tmux
-pane.
+Pi extension that opens a git worktree in the **current Rex pane**. It ends the
+current pi session and starts a fresh pi session in the worktree. It does not
+create a Rex session, window, or split.
 
 ## What it does
 
-1. Checks for `wt` and `tmux`, validates the branch, and finds the current
-   tmux session from `TMUX_PANE`.
+1. Requires interactive pi inside Rex, `wt`, `rex`, `pi`, and Node with
+   `process.execve` support. Checks the current pane using `REX_SESSION` and
+   `REX_BLOCK`. It does not use the pane that happens to have app focus.
 2. Reuses an existing worktree or creates one with
-   `wt switch -c <branch> -x true`. Worktrunk's `worktree-path` puts it inside
-   the repository at `<repo>/.worktrees/<sanitized-branch>`. This lets a
-   sandboxed pi remove it later.
-3. Starts `pi <task>` in a detached window named `pi-<sanitized-branch>` in
-   the current session. The current window remains selected.
-4. Returns the window ID and worktree path. Select the window to inspect or
-   steer the agent.
+   `wt switch -c <branch> -x true`. Worktrunk's `worktree-path` puts new
+   worktrees inside the repository at `<repo>/.worktrees/<sanitized-branch>`.
+3. Renames the current Rex pane to a short change-related name. The default is
+   the last branch component, limited to 40 characters. For example,
+   `feature/rex-worktree` becomes `rex-worktree`.
+4. Requests normal pi shutdown. After pi saves the session, runs extension
+   cleanup, and restores the terminal, it replaces its process with `pi <task>`
+   in the worktree. The Rex pane and process ID stay the same. A failed shutdown
+   does not start the replacement.
 
-## Surfaces
+The original pi session remains saved and can be resumed later. The new pi
+session does not receive the original conversation. It receives the task and
+worktree-agent guidance below.
 
-| Surface | Caller | Usage |
+## Interfaces
+
+| Interface | Caller | Usage |
 | --- | --- | --- |
-| `/spawn` command | you | `/spawn feature-foo Implement the X feature in src/foo.ts` |
-| `spawn_worktree` tool | agent | Independent work in a separate context |
+| `/spawn` command | you | `/spawn feature/rex-worktree Update the worktree extension` |
+| `spawn_worktree` tool | agent | Switch the current pane to a worktree with a fresh pi session |
 
-The tool accepts `{ branch, task, baseBranch?, model?, windowName? }`.
-Both interfaces use the configured default model. The tool must omit `model`
-unless the user explicitly requests a specific model.
-A window with the same name in the current session causes an error.
+The tool accepts `{ branch, task, baseBranch?, model?, paneName? }`.
+Set `paneName` to a short name relevant to the change, at most 40 characters.
+The old `sessionName` and `windowName` parameters remain aliases for `paneName`;
+`paneName` takes precedence. These aliases do not rename a Rex session or window.
+Both interfaces use the configured default model. Omit `model` unless the user
+explicitly requests a specific model.
+
+Use the tool only when the user wants to replace the current pi session. It no
+longer starts a parallel agent. The tool ends the current agent turn before
+shutdown. `/spawn` waits for the current agent turn to finish before proceeding.
 
 ## Agent guidance
 
-The agent session is likely unmonitored. Use repository conventions and record
-reasonable assumptions. Ask only when missing information or approval is critical
-to safe, correct work. If input is unavailable, report the blocker instead of
-guessing.
+Use repository conventions and record reasonable assumptions. Ask only when
+missing information or approval is critical to safe, correct work. If input is
+unavailable, report the blocker instead of guessing.
 
 For implementation tasks, the default result is verified changes, a commit, a
 pushed branch, and a draft PR. Create or update the draft PR and report its URL;
@@ -43,43 +55,43 @@ result. In personal repositories that rarely use PRs, follow the repository
 workflow instead. Report verification results and explain why no PR was created
 when this default does not apply or cannot be completed.
 
-This guidance is included in the agent's initial prompt for both `/spawn` and
+This guidance is included in the initial prompt for both `/spawn` and
 `spawn_worktree`.
 
-## Select and clean up the window
+## Cleanup
 
-From within the same tmux session, select the window by its ID as returned by
-`/spawn` or `spawn_worktree`. Close the window before removing the worktree:
+Exit the worktree's pi session and leave the worktree directory before removing
+the worktree. Use `wt remove <branch>` (use `-f` if dirty, `-D` if unmerged), not
+`git worktree remove`, to keep worktrunk state consistent.
 
-```fish
-tmux select-window -t '@123'
-tmux kill-window -t '@123'
-wt remove feature-foo # use -f if dirty, -D if unmerged
-```
-
-Use `wt remove`, not `git worktree remove`, to keep worktrunk state consistent.
-The `wtclean` fish function also closes windows whose active pane is in a
-worktree it removes.
-
-The agent runs in interactive mode, so it waits for input after its first
-turn. tmux supplies the pty that the pi TUI needs.
+No separate Rex session was created. Do not kill the shared Rex session as part
+of worktree cleanup. The pane keeps its short name until renamed again.
 
 ## Requirements
 
 - `wt` (worktrunk) — `modules/tools/worktrunk.nix`
-- `tmux` — `modules/tools/tmux.nix`; run pi from inside tmux
+- `rex` and a running Rex server — `modules/tools/rex.nix`
+- Interactive pi inside a Rex pane, on a platform with Node `process.execve`
 
 ## Related dispatcher workflow
 
 For single-turn asynchronous agents across named repositories, use a repo-less
-dispatcher session instead. Press `C-b M` and see
-[`../dispatch/README.md`](../dispatch/README.md).
+dispatcher session instead. See [`../dispatch/README.md`](../dispatch/README.md).
 
 ## Limitations
 
-- No foreground subagent mode.
+- Not available in print, JSON, or RPC mode.
 - Does not pass through `--append-system-prompt`, extra flags, or env tweaks.
 - Does not support `wt switch` shortcuts (`pr:{N}`, `^`, `-`, `@`).
+- Failures during worktree creation or pane renaming keep the current pi session
+  running. A created worktree is not automatically removed on failure.
+
+## Verification
+
+Run `node --test modules/tools/pi-coding-agent/extensions/spawn-worktree/spawn.test.ts`.
+The tests require `PI_SESSION_TEMP`. They mock worktrunk and Rex commands and
+check process replacement in a child process with a temporary `pi` executable.
+They do not replace the test runner or create real worktrees or Rex sessions.
 
 ## Wiring
 

@@ -21,16 +21,16 @@ own history. It does not remove worktrees.
 
 Worktrees created via the `spawn_worktree` tool (or `/spawn`) live **inside the
 repo** at `{{ repo_path }}/.worktrees/<sanitized-branch>` (worktrunk's
-`worktree-path`, see above) plus a detached tmux window named
-`pi-<sanitized-branch>` in the current session. The in-repo location lets pi
-clean them up: the sandbox only grants write to the repo it launched in (`.`) and that repo's
-`.git` dir, so a sibling worktree in `~/dev` would be unremovable.
+`worktree-path`, see above). The tool opens the worktree in the current Rex
+pane, gives the pane a short change-related name, and replaces the current pi
+session with a fresh pi session. It does not create a Rex session or a parallel
+agent. Use it only when the user wants to switch the current pane to a worktree.
+The in-repo location lets a sandboxed pi remove the worktree later.
 
 To clean one up:
 
-- **Kill the tmux window if it still exists.** Use the window ID returned by
-  `spawn_worktree` with `tmux kill-window -t <window-id>`. Do not kill the
-  shared session.
+- **Exit the worktree's pi session and leave its directory.** No separate Rex
+  session was created. Do not kill the shared Rex session.
 - **Remove the worktree with worktrunk**, not raw git — `wt remove <branch>`
   (add `-f` for a dirty worktree, `-D` if the branch is unmerged). This keeps
   worktrunk's state consistent and deletes the `.worktrees/<branch>` dir.
