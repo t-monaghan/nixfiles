@@ -23,7 +23,9 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 
 | Shortcut | Action |
 | --- | --- |
-| **Cmd-Shift-p** | Rex's native command palette (default binding) |
+| **Ctrl-Tab** | Toggle between the two most recently visited sessions |
+| **Cmd-k** | Rex's native command palette |
+| **Cmd-Shift-p** | Existing Rex session picker |
 | **Cmd-r** | Rename session |
 | **Cmd-w** | Close the Rex app window, not the selected tab |
 | **Alt-Shift-/** (**Alt-?**) | Show configured Rex bindings in a searchable popup; **Esc** closes it |
@@ -34,13 +36,13 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 
 **Alt-Shift-r** is reserved for OmniWM's `raiseAllFloatingWindows` action. OmniWM's `toggleOverview` shortcut is unassigned so Rex can use **Alt-Shift-o**.
 
-These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
+These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Ctrl-Tab for the most recently visited session, Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
 
 The shortcuts popup reads the current server configuration with `rex keymap`. It lists configured bindings and their arguments, not Rex defaults or shortcuts set in the app. It does not execute bindings. Press **Esc** to close the popup and return to the terminal.
 
 ## Configured sessions
 
-Use **Cmd-Shift-s** to navigate with Rex's native session picker. **Alt-Shift-o** creates any missing configured sessions, then opens the same picker. Existing sessions keep their terminals and running programs.
+Use **Cmd-Shift-p** (or **Cmd-Shift-s**) to navigate with Rex's native session picker. **Alt-Shift-o** creates any missing configured sessions, then opens the same picker. Existing sessions keep their terminals and running programs.
 
 Home Manager generates `session-settings.lua` from `programs.sesh.settings.session` in `modules/tools/sesh.nix`. `modules/tools/rex.nix` excludes `dolomite` and sets the Rex session order:
 
