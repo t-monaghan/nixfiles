@@ -356,7 +356,11 @@ function startAgent(job: DispatchJob): ChildProcess {
 	const stderr = openSync(job.stderrFile, "a");
 	const prompt = [
 		"You are an asynchronous worktree agent. Complete the task in the current repository.",
-		"Do not ask for follow-up input. Make the changes, run appropriate verification, and report the result.",
+		"This session is unmonitored. Use repository conventions and record reasonable assumptions instead of asking routine follow-up questions.",
+		"If missing information or approval is critical to safe, correct work, report the blocker rather than guessing; follow-up input is not available.",
+		"For implementation tasks, make the changes, run appropriate verification, commit, push the branch, and create or update a draft PR unless the task says otherwise. Do not merge it.",
+		"In personal repositories that rarely use PRs, follow the repository workflow instead; do not create a PR just to satisfy this default.",
+		"Report verification results and the draft PR URL, or explain why no PR was created.",
 		"Do not remove the worktree.",
 		"",
 		job.task,

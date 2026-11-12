@@ -26,6 +26,23 @@ dispatch_worktree_agent({ repo, branch, task, base?, model? })
 
 The default model and paths are in `~/.pi/agent/dispatch.json` and are managed by `pi-coding-agent.nix`.
 
+## Agent guidance
+
+The agent session is likely unmonitored. Use repository conventions and record
+reasonable assumptions. Ask only when missing information or approval is critical
+to safe, correct work. If input is unavailable, report the blocker instead of
+guessing.
+
+For implementation tasks, the default result is verified changes, a commit, a
+pushed branch, and a draft PR. Create or update the draft PR and report its URL;
+do not merge it. Follow explicit task instructions when they specify a different
+result. In personal repositories that rarely use PRs, follow the repository
+workflow instead. Report verification results and explain why no PR was created
+when this default does not apply or cannot be completed.
+
+This guidance is included in the agent's initial prompt. Dispatcher agents cannot
+receive follow-up input, so they report critical blockers in their result.
+
 ## Inspect jobs
 
 ```text

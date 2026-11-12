@@ -106,7 +106,16 @@ function createWorktree(cwd: string, branch: string, baseBranch?: string): void 
 }
 
 function spawnWindow(sessionId: string, windowName: string, worktreePath: string, task: string, model?: string): string {
-	const piArgs = model ? ["--model", model, task] : [task];
+	const prompt = [
+		"You are a worktree agent. This session is likely unmonitored. Complete the task without routine follow-up questions.",
+		"Use repository conventions and record reasonable assumptions. Ask only when missing information or approval is critical to safe, correct work.",
+		"For implementation tasks, make the changes, run appropriate verification, commit, push the branch, and create or update a draft PR unless the task says otherwise. Do not merge it.",
+		"In personal repositories that rarely use PRs, follow the repository workflow instead; do not create a PR just to satisfy this default.",
+		"Report verification results and the draft PR URL, or explain why no PR was created. If blocked, report the blocker rather than guessing.",
+		"",
+		task,
+	].join("\n");
+	const piArgs = model ? ["--model", model, prompt] : [prompt];
 	const r = spawnSync(
 		"tmux",
 		["new-window", "-d", "-P", "-F", "#{window_id}", "-t", `${sessionId}:`, "-n", windowName, "-c", worktreePath, "pi", ...piArgs],

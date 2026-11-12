@@ -29,6 +29,23 @@ Both interfaces use the configured default model. The tool must omit `model`
 unless the user explicitly requests a specific model.
 A window with the same name in the current session causes an error.
 
+## Agent guidance
+
+The agent session is likely unmonitored. Use repository conventions and record
+reasonable assumptions. Ask only when missing information or approval is critical
+to safe, correct work. If input is unavailable, report the blocker instead of
+guessing.
+
+For implementation tasks, the default result is verified changes, a commit, a
+pushed branch, and a draft PR. Create or update the draft PR and report its URL;
+do not merge it. Follow explicit task instructions when they specify a different
+result. In personal repositories that rarely use PRs, follow the repository
+workflow instead. Report verification results and explain why no PR was created
+when this default does not apply or cannot be completed.
+
+This guidance is included in the agent's initial prompt for both `/spawn` and
+`spawn_worktree`.
+
 ## Select and clean up the window
 
 From within the same tmux session, select the window by its ID as returned by
