@@ -1,14 +1,42 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
+  huddleTitleRegex = "^(?!(Activity|Later|Threads|Unread Messages|Huddles|Drafts & sent) -)[^()]+ - Culture Amp - Slack$";
+  followHuddle = pkgs.writeShellApplication {
+    name = "omniwm-follow-huddle";
+    runtimeInputs = [config.programs.omniwm.package pkgs.jq];
+    text = ''
+      export HUDDLE_TITLE_REGEX=${lib.escapeShellArg huddleTitleRegex}
+      ${builtins.readFile ./omniwm/follow-huddle.sh}
+    '';
+  };
   hotkey = binding: id: {inherit binding id;};
   unassigned = map (hotkey "Unassigned");
   numberedHotkeys = count: makeHotkeys:
     builtins.concatMap makeHotkeys (lib.range 1 count);
 in
   lib.mkIf config.nixfiles.context.role.desktop {
+    launchd.agents.omniwm-follow-huddle = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+      enable = true;
+      config = {
+        ProgramArguments = [
+          "${config.programs.omniwm.package}/bin/omniwmctl"
+          "watch"
+          "active-workspace,focused-monitor,windows-changed"
+          "--reconnect"
+          "--exec"
+          (lib.getExe followHuddle)
+        ];
+        RunAtLoad = true;
+        KeepAlive = true;
+        ThrottleInterval = 10;
+        ProcessType = "Background";
+      };
+    };
+
     programs.omniwm = {
       enable = true;
 
@@ -239,7 +267,7 @@ in
           }
           {
             bundleId = "com.tinyspeck.slackmacgap";
-            titleRegex = "^(?!(Activity|Later|Threads|Unread Messages|Huddles|Drafts & sent) -)[^()]+ - Culture Amp - Slack$";
+            titleRegex = huddleTitleRegex;
             layout = "float";
             assignToWorkspace = "3";
           }
