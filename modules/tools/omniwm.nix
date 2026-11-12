@@ -426,7 +426,7 @@ in
             (hotkey "Unassigned" "toggleHiddenBarPanel")
             (hotkey "Option+Grave" "toggleQuakeTerminal")
             (hotkey "Option+Shift+W" "toggleWorkspaceLayout")
-            (hotkey "Option+Shift+O" "toggleOverview")
+            (hotkey "Unassigned" "toggleOverview")
             (hotkey "Unassigned" "toggleSystemStats")
           ];
 

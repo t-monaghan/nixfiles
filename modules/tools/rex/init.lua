@@ -1,4 +1,5 @@
 local history = require("history")
+require("configured-sessions")
 
 rex.action{
   name = "last_session",
@@ -34,18 +35,24 @@ bind("ctrl+d", "pane.split", { direction = "down" })
 bind("z", "pane.zoom")
 bind("x", "pane.close")
 
+rex.bind("cmd+w", "client.window.close")
+rex.bind("alt+shift+[Slash]", "show_shortcuts")
+
 bind("c", "client.tab.new")
 bind("n", "client.tab.next")
-bind("p", "client.tab.previous")
 bind(",", "client.tab.rename")
 for index = 1, 9 do
   bind(tostring(index), "client.tab.goto", { index = index })
 end
 
 bind("s", "session.switch")
+rex.bind("alt+shift+o", "configured_sessions")
+rex.bind("alt+shift+p", "worktree_picker")
 bind("a", "last_session")
 bind("[BracketRight]", "session.next")
 bind("[BracketLeft]", "session.previous")
 bind("ctrl+n", "session.new")
-bind("ctrl+s", "session.rename")
+rex.bind("cmd+r", "session.rename")
+rex.bind("alt+shift+ctrl+w", "close_pr_session")
+rex.bind("alt+shift+c", "reload_sessions")
 bind("r", "client.config.reload")

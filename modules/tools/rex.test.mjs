@@ -7,6 +7,12 @@ import test from "node:test";
 const rex = process.env.REX_BIN_DIR ? join(process.env.REX_BIN_DIR, "rex") : null;
 const skip = !rex || !existsSync(rex) || !process.env.PI_SESSION_TEMP;
 
+test("Rex keeps the native command palette shortcut", () => {
+  const source = readFileSync("modules/tools/rex/init.lua", "utf8");
+  assert.doesNotMatch(source, /bind\("p",/);
+  assert.doesNotMatch(source, /rex\.(?:bind|unbind)\("cmd\+shift\+p"/);
+});
+
 test("Rex dolomite session script", { skip }, () => {
   const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "rex-dolomite-test-"));
   try {
@@ -119,7 +125,10 @@ local function load(path)
   return setfenv(assert(loadstring(code, "@" .. path)), env)()
 end
 local history = load(${JSON.stringify(join(source, "history.lua"))})
-env.require = function(name) assert(name == "history"); return history end
+env.require = function(name)
+  if name == "configured-sessions" then return true end
+  assert(name == "history"); return history
+end
 local path = ${JSON.stringify(join(dir, "history.json"))}
 history.path = function() return path end
 assert(next(history.read(path)) == nil)
@@ -141,13 +150,24 @@ history.write(path, clients)
 assert(history.read(path).app[1] == "a")
 
 load(${JSON.stringify(join(source, "init.lua"))})
+assert(bindings["cmd+r"].action == "session.rename")
+assert(bindings["cmd+w"].action == "client.window.close")
+assert(bindings["alt+shift+[Slash]"].action == "show_shortcuts")
+assert(bindings["cmd+shift+[Slash]"] == nil)
 assert(bindings["cmd+shift+a"].action == "last_session")
+assert(bindings["alt+shift+o"].action == "configured_sessions")
+assert(bindings["alt+shift+p"].action == "worktree_picker")
+assert(bindings["cmd+shift+o"] == nil and bindings["cmd+shift+w"] == nil)
 assert(bindings["cmd+shift+ctrl+j"].action == "pane.resize")
 assert(bindings["cmd+shift+j"].args.direction == "down")
 assert(bindings["cmd+shift+ctrl+d"].args.direction == "down")
 assert(bindings["cmd+shift+ctrl+n"].action == "session.new")
+assert(bindings["alt+shift+c"].action == "reload_sessions")
+assert(bindings["cmd+shift+r"].action == "client.config.reload")
 for key in pairs(bindings) do
-  assert(key:find("cmd+shift+", 1, true) == 1 and not key:find(">", 1, true))
+  assert((key == "cmd+r" or key == "cmd+w" or key == "alt+shift+c" or key == "alt+shift+o" or key == "alt+shift+p"
+    or key == "alt+shift+[Slash]" or key == "alt+shift+ctrl+w"
+    or key:find("cmd+shift+", 1, true) == 1) and not key:find(">", 1, true))
 end
 local ok = pcall(actions.last_session, { client_id = "app", session_id = "a" })
 assert(not ok, "A missing previous session must not switch to an arbitrary session")
@@ -179,7 +199,7 @@ return { bindings = bindings }
     const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     const { bindings } = JSON.parse(result.stdout);
-    assert.equal(Object.keys(bindings).length, 32);
+    assert.equal(Object.keys(bindings).length, 37);
 
     const normalise = key => key.toLowerCase().split("+")
       .map(part => ({ command: "cmd", option: "alt", control: "ctrl" })[part] ?? part)

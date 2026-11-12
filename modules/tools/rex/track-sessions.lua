@@ -1,3 +1,6 @@
+local ready, err = rex.invoke("ensure_sessions", { include_remote = false })
+if not ready then error(err, 0) end
+
 local history = require("history")
 local path = history.path()
 local clients = history.read(path)

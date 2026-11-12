@@ -1,6 +1,6 @@
 #!/bin/bash
 
 # @raycast.schemaVersion 1
-# @raycast.title Open Ghostty
+# @raycast.title Open Rex
 # @raycast.mode silent
-open -na Ghostty
+open -a "Rex Beta"
