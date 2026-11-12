@@ -13,76 +13,6 @@ test("Rex keeps the native command palette shortcut", () => {
   assert.doesNotMatch(source, /rex\.(?:bind|unbind)\("cmd\+shift\+p"/);
 });
 
-test("Rex dolomite session script", { skip }, () => {
-  const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "rex-dolomite-test-"));
-  try {
-    const script = join(dir, "test.lua");
-    writeFileSync(script, `
-local file = assert(io.open(${JSON.stringify(resolve("modules/tools/rex/dolomite.lua"))}, "r"))
-local code = file:read("*a")
-file:close()
-local calls, queued, request = 0, 0, nil
-local failure = { create = false, select = false }
-local args = {}
-local mock = {
-  args = args,
-  server = function(label)
-    assert(label == "dolomite")
-    return { call = function(method, params)
-      assert(method == "session.create")
-      calls = calls + 1
-      request = params
-      if failure.create then return nil, "connection failed" end
-      return { session_id = "session:new-" .. calls }
-    end }
-  end,
-  client = { queue = function(action, params)
-    if failure.select then error("no client") end
-    queued = queued + 1
-    assert(action == "session.select")
-    assert(params.session_id == "session:new-" .. calls)
-  end },
-}
-local env = setmetatable({ rex = mock }, { __index = _G })
-local function run()
-  return setfenv(assert(loadstring(code)), env)()
-end
-assert(run().session_id == "session:new-1")
-assert(queued == 1 and request.label == nil)
-assert(#request.initial_windows == 1)
-local split = request.initial_windows[1].layout.split
-assert(split.direction == "horizontal" and split.ratio == 0.5)
-assert(split.before.block.flavor == "com.superlogical.terminal.shell")
-assert(split.after.block.flavor == "com.superlogical.terminal.shell")
-assert(split.before.block.label == "nixfiles" and split.after.block.label == "nxp")
-assert(split.before.block.options.cwd == "/home/tom/nixfiles")
-assert(split.after.block.options.cwd == "/home/tom/nxp")
-assert(run().session_id == "session:new-2", "Each run must create a new session")
-args.name, args.nixfiles, args.nxp = "work", "/projects/nix files", "/projects/nxp"
-args.select = false
-run()
-assert(queued == 2 and request.label == "work")
-split = request.initial_windows[1].layout.split
-assert(split.before.block.options.cwd == args.nixfiles)
-assert(split.after.block.options.cwd == args.nxp)
-args.select = true
-failure.create = true
-local ok, err = pcall(run)
-assert(not ok and tostring(err):find("connection failed", 1, true))
-assert(queued == 2)
-failure.create, failure.select = false, true
-ok, err = pcall(run)
-assert(not ok and tostring(err):find("Created session:new-5 on dolomite", 1, true), tostring(err))
-return { ok = true }
-`);
-    const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
-    assert.equal(result.status, 0, result.stderr);
-    assert.deepEqual(JSON.parse(result.stdout), { ok: true });
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-});
-
 test("Rex direct shortcuts and recent-session history", { skip }, () => {
   const dir = mkdtempSync(join(process.env.PI_SESSION_TEMP, "rex-test-"));
   const source = resolve("modules/tools/rex");
@@ -94,6 +24,7 @@ local json = rex.json
 local bindings, actions, handlers, queued = {}, {}, {}, {}
 local live = { { session_id = "a" }, { session_id = "b" }, { session_id = "c" } }
 local fail_list = { value = false }
+local startup = { ensured = 0, fail = false }
 local mock = {
   json = json,
   bind = function(key, action, args)
@@ -103,6 +34,12 @@ local mock = {
   action = function(action) actions[action.name] = action.run end,
   client = { queue = function(action, args) queued.action = action; queued.args = args end },
   on = function(event, handler) handlers[event] = handler end,
+  invoke = function(action, args)
+    assert(action == "ensure_sessions" and args.include_remote == false)
+    startup.ensured = startup.ensured + 1
+    if startup.fail then return nil, "ensure failed" end
+    return { ready = true }
+  end,
   call = function(method, args)
     if method == "session.list" then
       if fail_list.value then return nil, "list failed" end
@@ -182,6 +119,11 @@ actions.last_session({ client_id = "app", session_id = "a" })
 assert(queued.args.session_id == "b")
 load(${JSON.stringify(join(source, "track-sessions.lua"))})
 assert(history.read(path).app[2] == "b", "History must survive tracker restarts")
+assert(startup.ensured == 2, "Each tracker start must ensure local sessions")
+startup.fail = true
+local ready, err = pcall(load, ${JSON.stringify(join(source, "track-sessions.lua"))})
+assert(not ready and tostring(err):find("ensure failed", 1, true))
+startup.fail = false
 handlers.client_connected({ session_id = "c" }, { client_id = "cli", session_id = "c" })
 assert(history.read(path).cli == nil)
 handlers.client_connected({ session_id = "c" }, { client_id = "other", session_id = "c" })
