@@ -37,6 +37,7 @@
     treeFilterMode = "no-tools";
     packages = [sandboxDir "${pkgs.pi-question}"] ++ config.nixfiles.pi.packages;
     quietStartup = true;
+    showHardwareCursor = true;
     fullscreenCopyOnSelect = config.nixfiles.pi.fullscreenCopyOnSelect;
     warnings.anthropicExtraUsage = false;
     doubleEscapeAction = "fork";
