@@ -203,6 +203,7 @@ rex.action{
   title = "Worktree / PR Picker",
   category = "Session",
   run = function(ctx)
+    if not settings.worktree_picker then error("Worktree picker is disabled on this host", 0) end
     local command = { settings.worktree_picker, ctx.client_id }
     if ctx.block_id then
       local result = rex.block.call("com.superlogical.terminal", "process", { block_id = ctx.block_id })

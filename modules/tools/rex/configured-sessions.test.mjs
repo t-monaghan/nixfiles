@@ -72,9 +72,10 @@ local mock = {
     return { layer_id = "picker" }
   end },
 }
+local settings = { worktree_picker = "/nix/store/worktree-picker", sessions = sessions }
 local env = setmetatable({ rex = mock, require = function(name)
   assert(name == "session-settings")
-  return { worktree_picker = "/nix/store/worktree-picker", sessions = sessions }
+  return settings
 end }, { __index = _G })
 local file = assert(io.open(${JSON.stringify(resolve("modules/tools/rex/configured-sessions.lua"))}, "r"))
 local code = file:read("*a")
@@ -171,6 +172,9 @@ assert(layer.args.layout.block.options.shell == "none")
 fail.layer = true
 assert(not pcall(actions.worktree_picker, ctx))
 fail.layer = nil
+settings.worktree_picker = nil
+local ok, err = pcall(actions.worktree_picker, ctx)
+assert(not ok and tostring(err):find("Worktree picker is disabled on this host", 1, true), tostring(err))
 local worktree = actions.open_worktree(ctx, { name = "repo #42", path = "/repo/.worktrees/feature" })
 assert(worktree.session_id == "new:5")
 assert(calls[5].initial_windows[1].layout.block.options.cwd == "/repo/.worktrees/feature")

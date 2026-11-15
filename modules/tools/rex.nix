@@ -29,7 +29,6 @@
   };
   sessionSettings = {
     picker = lib.getExe sessionPicker;
-    worktree_picker = lib.getExe worktreePicker;
     shortcuts_popup = lib.getExe shortcutsPopup;
     sessions = let
       sessions = builtins.filter (session: session.name != "dolomite") (config.programs.sesh.settings.session or []);
@@ -41,6 +40,8 @@
         startup_command = session.startup_command or "";
       }) (builtins.filter (session: session.name == name) sessions)
     ) names;
+  } // lib.optionalAttrs config.nixfiles.context.role.desktop {
+    worktree_picker = lib.getExe worktreePicker;
   };
   trackSessions = pkgs.writeShellScript "rex-track-sessions" ''
     state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/rex"
