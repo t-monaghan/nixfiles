@@ -4,10 +4,10 @@ set lists
 
 user := `whoami`
 
-homeMan := if which("home-manager") == "" {
-  "nix shell nixpkgs#home-manager --command home-manager"
-} else {
+homeMan := if which("home-manager") {
   "home-manager"
+} else {
+  "nix shell nixpkgs#home-manager --command home-manager"
 }
 
 switch:
