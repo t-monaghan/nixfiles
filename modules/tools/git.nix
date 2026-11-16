@@ -1,4 +1,4 @@
-{...}: {
+{options, ...}: {
   programs = {
     gh = {
       enable = true;
@@ -10,10 +10,13 @@
 
     difftastic = {
       enable = true;
-      git = {
-        mode = "difftool";
-        enable = true;
-      };
+      git =
+        {enable = true;}
+        // (
+          if options.programs.difftastic.git ? mode
+          then {mode = "difftool";}
+          else {diffToolMode = true;}
+        );
     };
 
     git = {

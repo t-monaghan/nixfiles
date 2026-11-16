@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
+    home-manager-stable.url = "github:nix-community/home-manager/release-26.05";
+    home-manager-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
+    nixvim-stable.url = "github:nix-community/nixvim/nixos-26.05";
+    nixvim-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
@@ -23,6 +28,12 @@
   }: let
     mkHost = import ./lib/mkHost.nix inputs;
     mkNixosHost = import ./lib/mkNixosHost.nix inputs;
+    mkCratonHost = import ./lib/mkNixosHost.nix (inputs
+      // {
+        nixpkgs = inputs.nixpkgs-stable;
+        home-manager = inputs.home-manager-stable;
+        nixvim = inputs.nixvim-stable;
+      });
     darwinPkgs = nixpkgs.legacyPackages.aarch64-darwin;
     linuxPkgs = nixpkgs.legacyPackages.x86_64-linux;
   in {
@@ -52,7 +63,7 @@
         modules = [./hosts/dolomite/configuration.nix] ++ extraModules;
       };
     lib.mkCraton = {extraModules ? []}:
-      mkNixosHost {
+      mkCratonHost {
         modules = [./hosts/craton/configuration.nix] ++ extraModules;
       };
 
