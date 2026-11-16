@@ -10,8 +10,22 @@ homeMan := if which("home-manager") {
   "nix shell nixpkgs#home-manager --command home-manager"
 }
 
-switch:
-  {{homeMan + " switch --flake .#" + user}}
+# Apply NixOS by hostname, or standalone Home Manager by username.
+switch host="":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  host="{{host}}"
+  if [ -e /etc/NIXOS ]; then
+    if [ -z "$host" ]; then
+      host=$(hostname -s)
+    fi
+    sudo nixos-rebuild switch --flake ".#$host"
+  else
+    if [ -z "$host" ]; then
+      host="{{user}}"
+    fi
+    {{homeMan}} switch --flake ".#$host"
+  fi
 
 news:
   {{homeMan + " news --flake .#" + user}}
