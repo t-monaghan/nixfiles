@@ -37,6 +37,7 @@
         tmonaghan = self.homeConfigurations.tmonaghan.activationPackage;
       };
       x86_64-linux = {
+        craton = self.nixosConfigurations.craton.config.system.build.toplevel;
         dolomite = self.nixosConfigurations.dolomite.config.system.build.toplevel;
       };
     };
@@ -50,7 +51,12 @@
       mkNixosHost {
         modules = [./hosts/dolomite/configuration.nix] ++ extraModules;
       };
+    lib.mkCraton = {extraModules ? []}:
+      mkNixosHost {
+        modules = [./hosts/craton/configuration.nix] ++ extraModules;
+      };
 
     nixosConfigurations.dolomite = self.lib.mkDolomite {};
+    nixosConfigurations.craton = self.lib.mkCraton {};
   };
 }

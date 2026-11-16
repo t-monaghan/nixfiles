@@ -6,7 +6,7 @@
   options.nixfiles = {
     context = {
       host = lib.mkOption {
-        type = lib.types.enum ["tom.monaghan1" "tmonaghan" "dolomite"];
+        type = lib.types.enum ["tom.monaghan1" "tmonaghan" "dolomite" "craton"];
         description = "Host identifier for this configuration.";
       };
       role = {
