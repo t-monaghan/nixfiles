@@ -37,6 +37,7 @@
   networking = {
     networkmanager.enable = true;
     hostName = "craton";
+    firewall.interfaces.tailscale0.allowedTCPPorts = [45876];
   };
 
   users.users.tom = {
@@ -89,6 +90,14 @@
     tailscale = {
       enable = true;
       openFirewall = true;
+    };
+    beszel.agent = {
+      enable = true;
+      smartmon.enable = true;
+      environment = {
+        KEY = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZ1ySHE2oyVEh2pqVbw9Hd2jISOsZcIEdXszgHf/ryO";
+        LISTEN = "100.64.250.109:45876";
+      };
     };
   };
 
