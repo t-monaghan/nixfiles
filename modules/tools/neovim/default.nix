@@ -36,6 +36,7 @@ in {
   programs.nixvim = {
     enable = true;
     defaultEditor = true;
+    nixpkgs.source = lib.mkIf (host == "craton") pkgs.path;
     imports = [
       ./plugins.nix
       ./lsp.nix
