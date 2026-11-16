@@ -422,7 +422,6 @@ in {
       // lib.optionalAttrs isDarwin {
         zed = "open -a 'Zed Preview' . && exit";
         disu = "caffeinate -disu";
-        ssh = "ghostty +ssh --";
         gcy = "copy-commit-hash";
         gfy = "copy-changed-file-path";
       }
