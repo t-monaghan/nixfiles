@@ -106,8 +106,4 @@ in {
   };
 
   programs.antigravity-cli.enable = lib.mkIf ctx.role.desktop true;
-  programs.awtrix-cli = lib.mkIf isDarwin {
-    enable = true;
-    host = "192.168.1.97";
-  };
 }

@@ -11,7 +11,6 @@ inputs @ {
   nixpkgs,
   home-manager,
   nixvim,
-  awtrix-cli,
   ...
 }: {modules}:
 nixpkgs.lib.nixosSystem {
@@ -36,7 +35,6 @@ nixpkgs.lib.nixosSystem {
         home-manager.extraSpecialArgs = {inherit inputs;};
         home-manager.sharedModules = [
           nixvim.homeModules.nixvim
-          awtrix-cli.homeManagerModules.default
           {nixfiles.context.flakePath = self.outPath;}
         ];
         # First activation takes over pre-existing dotfiles (e.g. an old
