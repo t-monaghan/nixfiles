@@ -92,6 +92,13 @@ history.write(path, clients)
 assert(history.read(path).app[1] == "a")
 
 load(${JSON.stringify(join(source, "init.lua"))})
+local config = os.getenv("XDG_CONFIG_HOME")
+if not config or config == "" then config = os.getenv("HOME") .. "/.config" end
+for _, mode in ipairs({ "light", "dark" }) do
+  actions["import_ghostty_" .. mode]()
+  assert(queued.action == "client.theme.import")
+  assert(queued.args.path == config .. "/rex/theme-" .. mode, queued.args.path)
+end
 assert(bindings["cmd+k"].action == "client.palette.toggle")
 assert(bindings["cmd+shift+p"].action == "session.switch")
 assert(bindings["cmd+r"].action == "session.rename")

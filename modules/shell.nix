@@ -1,8 +1,3 @@
-# Shared shell + CLI tooling — used by ALL three machines.
-#
-# This is a plain home-manager module (imported, not called) so it works
-# identically on the standalone Mac home configs and on the home-manager
-# instance running inside the `dolomite` NixOS system (see ../hosts/dolomite/home.nix).
 {
   config,
   lib,
@@ -24,7 +19,6 @@ in {
     ./tools/tmux.nix
   ];
 
-  # CLI baseline shared across machines.
   home.packages =
     (with pkgs; [
       eza
@@ -50,9 +44,6 @@ in {
     bat = {
       enable = true;
       config = {
-        # `base16` renders through ANSI 0–21 instead of hex, so bat follows the
-        # terminal's palette — which Ghostty sets per appearance mode from
-        # ./theme/colours.nix.
         theme = "base16";
       };
     };
@@ -84,11 +75,6 @@ in {
         hide_env_diff = true;
         warn_timeout = "1h";
       };
-    };
-
-    navi = {
-      enable = true;
-      enableFishIntegration = true;
     };
 
     uv.enable = lib.mkIf (ctx.role.desktop || ctx.role.work) true;

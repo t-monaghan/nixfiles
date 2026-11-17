@@ -256,6 +256,10 @@ in
 
         appRules = [
           {
+            bundleId = "com.superlogical.rex";
+            layout = "tile";
+          }
+          {
             bundleId = "com.cron.electron";
             appNameSubstring = "Calendar";
             assignToWorkspace = "4";

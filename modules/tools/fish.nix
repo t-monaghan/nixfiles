@@ -18,6 +18,8 @@ in {
     enable = true;
 
     interactiveShellInit = ''
+      set -g fish_key_bindings fish_vi_key_bindings
+
       if test -n "$REX_BIN_DIR"
         set -gx PATH "$REX_BIN_DIR" $PATH
       end
@@ -32,7 +34,6 @@ in {
       set -gx AWTRIX_HOST 192.168.1.97
       set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
 
-      bind \cx\ce edit_command_buffer
       ${lib.optionalString isDarwin ''
 
         # Multi-user nix on macOS isn't on PATH for login shells until its
@@ -49,12 +50,12 @@ in {
 
     functions =
       {
-        git-https = {
-          description = "Changes the git remote to https from ssh";
+        fish_user_key_bindings = {
           body = ''
-            set current_url (git remote get-url origin)
-            set new_url (echo $current_url | sed 's/https:\/\/github.com\///' | sed 's/git@github.com://')
-            git remote set-url origin https://github.com/$new_url
+            fish_default_key_bindings -M insert
+            fish_vi_key_bindings --no-erase
+            bind \cg edit_command_buffer
+            bind -M insert -m default j,k backward-char repaint-mode
           '';
         };
         print-commit-hash = {
@@ -143,39 +144,6 @@ in {
               > /dev/null 2>&1 &
 
             return $cmd_status
-          '';
-        };
-        wts = {
-          wraps = "wt switch";
-          description = "Resolve or create a worktrunk worktree, then open it in a tmux window";
-          body = ''
-            set -l result (wt switch --no-cd --format json $argv)
-            or return $status
-
-            set -l worktree_path (printf '%s\n' $result | jq -r '.path // empty')
-            if test -z "$worktree_path"
-              echo 'wts: worktrunk returned no worktree path' >&2
-              return 1
-            end
-
-            if not set -q TMUX
-              sesh connect $worktree_path
-              return $status
-            end
-
-            set -l session_id
-            if set -q TMUX_PANE
-              set session_id (tmux display-message -p -t $TMUX_PANE '#{session_id}')
-            else
-              set session_id (tmux display-message -p '#{session_id}')
-            end
-            or return $status
-            set -l branch (git -C $worktree_path branch --show-current)
-            or return $status
-            set -l window_id (tmux new-window -d -P -F '#{window_id}' -t "$session_id:" -n "$branch" -c "$worktree_path")
-            or return $status
-            tmux set-option -w -t $window_id automatic-rename off
-            and tmux select-window -t $window_id
           '';
         };
         wtclean = {
@@ -390,6 +358,9 @@ in {
         gca = "git commit --amend --no-edit";
         grp = "git restore -p";
 
+        wts = "wt switch";
+        wtsc = "wt switch --create ";
+
         ll = "ls -ltra";
 
         dr = "direnv reload";
@@ -416,20 +387,11 @@ in {
         jr = "just run";
         deploy-dev = "gh pr checks --watch --required && gh pr comment -b \".deploy to development\"";
         deploy-prod = "gh pr checks --watch --required && gh pr comment -b \".deploy\"";
-
-        wtsc = "wt switch --create ";
       }
       // lib.optionalAttrs isDarwin {
-        zed = "open -a 'Zed Preview' . && exit";
         disu = "caffeinate -disu";
         gcy = "copy-commit-hash";
         gfy = "copy-changed-file-path";
-      }
-      // lib.optionalAttrs ctx.role.work {
-        "hsu" = "hotel services up";
-        "hsl" = "hotel services logs --follow --all";
-        "hsd" = "hotel services down";
-        "hsls" = "hotel services list";
       };
 
     plugins = [

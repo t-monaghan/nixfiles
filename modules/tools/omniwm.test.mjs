@@ -79,6 +79,11 @@ test("missing workspace or unsuccessful query cannot move windows", () => {
   }
 });
 
+test("Rex uses tiling while the workspace bar still hides floating windows", () => {
+  assert.match(config, /\{\s*bundleId = "com\.superlogical\.rex";\s*layout = "tile";\s*\}/);
+  assert.match(config, /showFloatingWindows = false;/);
+});
+
 test("watcher handles workspace, monitor, and window changes and reconnects", () => {
   assert.match(config, /active-workspace,focused-monitor,windows-changed/);
   assert.match(config, /"--reconnect"/);

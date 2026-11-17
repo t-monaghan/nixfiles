@@ -6,6 +6,7 @@
 
     settings = {
       "$schema" = "https://starship.rs/config-schema.json";
+      direnv.disabled = false;
       battery = {
         charging_symbol = "󰚥";
         display = [
@@ -38,12 +39,6 @@
         full_symbol = "󱊣";
         unknown_symbol = "󱈑";
       };
-      character = {
-        error_symbol = "[❯](red)";
-        success_symbol = "[❯](bold cyan)";
-        vimcmd_symbol = "[ ](green)";
-        vimcmd_visual_symbol = "[ ](yellow)";
-      };
       custom = {
         aws_assumed_role = {
           command = ''
@@ -73,12 +68,6 @@
           style = "bold blue";
           symbol = " ";
           when = "[[ -n $DEVBOX_INIT_PATH ]]\n";
-        };
-        direnv = {
-          command = "if [[ -f ./devbox.json ]]; then\n  direnv_output=$(direnv status)\n  ## Confusingly, direnv has a status of 0 for allowed\n  if echo $direnv_output | grep -q \"Found RC allowed 0\"; then\n    echo \"\"\n  else\n    echo \" direnv is not allowed\"\n  fi\nfi\n";
-          description = "Shows if direnv has not been allowed if inside a project with a .envrc and devbox.json";
-          shell = "sh";
-          when = "[[ -n $DIRENV_FILE ]]\n";
         };
       };
       directory = {style = "bold cyan";};
