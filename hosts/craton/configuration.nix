@@ -34,6 +34,12 @@
     };
   };
 
+  fileSystems."/srv/backups" = {
+    device = "/dev/disk/by-uuid/41f1eab0-7a16-4120-87be-2c91881a417e";
+    fsType = "ext4";
+    options = ["noatime" "nofail" "x-systemd.device-timeout=10s"];
+  };
+
   networking = {
     networkmanager.enable = true;
     hostName = "craton";
