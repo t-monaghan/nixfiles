@@ -23,7 +23,6 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 
 | Shortcut | Action |
 | --- | --- |
-| **Ctrl-Tab** | Toggle between the two most recently visited sessions |
 | **Cmd-k** | Rex's native command palette |
 | **Cmd-Shift-p** | Existing Rex session picker |
 | **Cmd-r** | Rename session |
@@ -36,7 +35,7 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 
 **Alt-Shift-r** is reserved for OmniWM's `raiseAllFloatingWindows` action. OmniWM's `toggleOverview` shortcut is unassigned so Rex can use **Alt-Shift-o**.
 
-These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Ctrl-Tab for the most recently visited session, Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
+These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
 
 The shortcuts popup reads the current server configuration with `rex keymap`. It lists configured bindings and their arguments, not Rex defaults or shortcuts set in the app. It does not execute bindings. Press **Esc** to close the popup and return to the terminal.
 

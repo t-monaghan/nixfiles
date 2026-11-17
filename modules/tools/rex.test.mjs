@@ -13,9 +13,9 @@ test("Rex swaps the command palette and session picker shortcuts", () => {
   assert.match(source, /rex\.bind\("cmd\+shift\+p", "session\.switch"\)/);
 });
 
-test("Rex binds Ctrl-Tab to the most recently visited session", () => {
+test("Rex leaves Ctrl-Tab on its default binding", () => {
   const source = readFileSync("modules/tools/rex/init.lua", "utf8");
-  assert.match(source, /rex\.bind\("ctrl\+tab", "last_session"\)/);
+  assert.doesNotMatch(source, /rex\.bind\("ctrl\+tab",/);
 });
 
 test("Rex direct shortcuts and recent-session history", { skip }, () => {
@@ -106,7 +106,7 @@ assert(bindings["cmd+w"].action == "client.window.close")
 assert(bindings["alt+shift+[Slash]"].action == "show_shortcuts")
 assert(bindings["cmd+shift+[Slash]"] == nil)
 assert(bindings["cmd+shift+a"].action == "last_session")
-assert(bindings["ctrl+tab"].action == "last_session")
+assert(bindings["ctrl+tab"] == nil)
 assert(bindings["alt+shift+o"].action == "configured_sessions")
 assert(bindings["alt+shift+p"].action == "worktree_picker")
 assert(bindings["cmd+shift+o"] == nil and bindings["cmd+shift+w"] == nil)
@@ -118,7 +118,7 @@ assert(bindings["alt+shift+c"].action == "reload_sessions")
 assert(bindings["cmd+shift+r"].action == "client.config.reload")
 for key in pairs(bindings) do
   assert((key == "cmd+k" or key == "cmd+r" or key == "cmd+w" or key == "alt+shift+c" or key == "alt+shift+o" or key == "alt+shift+p"
-    or key == "alt+shift+[Slash]" or key == "alt+shift+ctrl+w" or key == "ctrl+tab"
+    or key == "alt+shift+[Slash]" or key == "alt+shift+ctrl+w"
     or key:find("cmd+shift+", 1, true) == 1) and not key:find(">", 1, true))
 end
 local ok = pcall(actions.last_session, { client_id = "app", session_id = "a" })
@@ -156,7 +156,7 @@ return { bindings = bindings }
     const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     const { bindings } = JSON.parse(result.stdout);
-    assert.equal(Object.keys(bindings).length, 40);
+    assert.equal(Object.keys(bindings).length, 39);
 
     const normalise = key => key.toLowerCase().split("+")
       .map(part => ({ command: "cmd", option: "alt", control: "ctrl" })[part] ?? part)
