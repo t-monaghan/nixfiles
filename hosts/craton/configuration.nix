@@ -41,7 +41,14 @@
   };
 
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      connectionConfig."ethernet.wake-on-lan" = "magic";
+    };
+    interfaces.enp2s0.wakeOnLan = {
+      enable = true;
+      policy = ["magic"];
+    };
     hostName = "craton";
     firewall.interfaces.tailscale0.allowedTCPPorts = [45876];
   };
@@ -103,6 +110,7 @@
   home-manager.users.tom = import ./home.nix;
 
   environment.systemPackages = with pkgs; [
+    ethtool
     git
     just
   ];
