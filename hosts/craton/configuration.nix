@@ -139,6 +139,13 @@
     };
   };
 
+  systemd.services = {
+    beszel-agent = {
+      requires = ["tailscale-online.target"];
+      after = ["tailscale-online.target"];
+    };
+  };
+
   time.timeZone = "Australia/Melbourne";
   i18n.defaultLocale = "en_AU.UTF-8";
 
