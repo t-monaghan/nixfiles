@@ -64,7 +64,39 @@
     ];
   };
 
-  programs.fish.enable = true;
+  programs.fish = {
+    enable = true;
+    shellAbbrs = {
+      j = "just";
+      nv = "nvim";
+      gco = "git checkout";
+      gp = "git push";
+      gpf = "git push --force-with-lease";
+      gpu = "git pull --autostash --rebase";
+      gs = "git status";
+      gl = "tv git-log";
+      gd = "git difftool";
+      gdc = "git difftool --cached";
+      ga = "git add";
+      gc = "git commit -m";
+      gcp = "print-commit-hash";
+      ghpr = "gh pr checkout";
+      gsc = "git stash clear";
+      checks = "gh pr checks --required --watch";
+      gsp = "git stash pop";
+      gcob = "git checkout -b";
+      grs = "git restore --staged";
+      grim = "git rebase -i main";
+      grm = "git rebase main";
+      gap = "git add -p";
+      gsl = "git stash list";
+      gfm = "git fetch origin main:main";
+      gca = "git commit --amend --no-edit";
+      grp = "git restore -p";
+      gcy = "copy-commit-hash";
+      gfy = "copy-changed-file-path";
+    };
+  };
   environment.shells = [pkgs.fish];
   users.defaultUserShell = "/run/current-system/sw/bin/fish";
 
