@@ -65,7 +65,7 @@ local mock = {
   session = { new_layer = function(options) layer.options = options; return { layer_id = "popup" } end },
 }
 local env = setmetatable({ rex = mock, require = function(name)
-  if name == "session-settings" then return { shortcuts_popup = "/bin/rex-shortcuts-popup" } end
+  if name == "session-settings" then return { shortcuts_popup = "/bin/rex-shortcuts-popup", sessions = {} } end
   return {}
 end }, { __index = _G })
 local function load(name)

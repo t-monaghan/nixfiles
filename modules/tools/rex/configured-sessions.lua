@@ -107,11 +107,10 @@ rex.action{
 
 rex.action{
   name = "reload_sessions",
-  title = "Reload Configuration and Ensure Local Sessions",
+  title = "Reload Configuration",
   category = "Session",
   run = function(ctx)
     if not ctx.client_id then error("A Rex client is required", 0) end
-    ensure_sessions(false)
     rex.client.queue("client.config.reload")
   end,
 }
@@ -177,14 +176,26 @@ rex.action{
   end,
 }
 
+for index, configured in ipairs(settings.sessions) do
+  rex.action{
+    name = "configured_session_" .. index,
+    title = "Open Configured Session: " .. configured.name,
+    description = configured.path,
+    category = "Configured Sessions",
+    keywords = "configured session create open " .. configured.name,
+    run = function(ctx)
+      return open_session(ctx, configured)
+    end,
+  }
+end
+
 rex.action{
   name = "configured_sessions",
-  title = "Ensure Configured Sessions and Change Session",
+  title = "Open Configured Session…",
   category = "Session",
   run = function(ctx)
     if not ctx.client_id then error("A Rex client is required", 0) end
-    ensure_sessions(true)
-    rex.client.queue("session.switch")
+    rex.client.queue("client.palette.toggle")
   end,
 }
 

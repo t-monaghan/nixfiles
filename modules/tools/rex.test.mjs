@@ -3,6 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "no
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { omniwmSettings } from "./omniwm/settings.test-helper.mjs";
 
 const rex = process.env.REX_BIN_DIR ? join(process.env.REX_BIN_DIR, "rex") : null;
 const skip = !rex || !existsSync(rex) || !process.env.PI_SESSION_TEMP;
@@ -29,7 +30,7 @@ local json = rex.json
 local bindings, actions, handlers, queued = {}, {}, {}, {}
 local live = { { session_id = "a" }, { session_id = "b" }, { session_id = "c" } }
 local fail_list = { value = false }
-local startup = { ensured = 0, fail = false }
+local terminal_size = { rows = 80, fail = false }
 local mock = {
   json = json,
   bind = function(key, action, args)
@@ -39,13 +40,24 @@ local mock = {
   action = function(action) actions[action.name] = action.run end,
   client = { queue = function(action, args) queued.action = action; queued.args = args end },
   on = function(event, handler) handlers[event] = handler end,
-  invoke = function(action, args)
-    assert(action == "ensure_sessions" and args.include_remote == false)
-    startup.ensured = startup.ensured + 1
-    if startup.fail then return nil, "ensure failed" end
-    return { ready = true }
+  invoke = function(action)
+    error("History tracking must not invoke actions or create sessions: " .. action)
   end,
   call = function(method, args)
+    if method == "com.superlogical.terminal.size" then
+      assert(args.session_id == "a" and args.block_id == "block:focused")
+      if terminal_size.fail then return nil, "size failed" end
+      return { rows = terminal_size.rows }
+    end
+    if method == "session.new_split" then
+      if fail_list.value then return nil, "split failed" end
+      queued.split = args
+      return { block_ids = { "block:new" } }
+    end
+    if method == "session.resize_pane" then
+      queued.resize = args
+      return {}
+    end
     if method == "session.list" then
       if fail_list.value then return nil, "list failed" end
       return { sessions = live }
@@ -92,13 +104,6 @@ history.write(path, clients)
 assert(history.read(path).app[1] == "a")
 
 load(${JSON.stringify(join(source, "init.lua"))})
-local config = os.getenv("XDG_CONFIG_HOME")
-if not config or config == "" then config = os.getenv("HOME") .. "/.config" end
-for _, mode in ipairs({ "light", "dark" }) do
-  actions["import_ghostty_" .. mode]()
-  assert(queued.action == "client.theme.import")
-  assert(queued.args.path == config .. "/rex/theme-" .. mode, queued.args.path)
-end
 assert(bindings["cmd+k"].action == "client.palette.toggle")
 assert(bindings["cmd+shift+p"].action == "session.switch")
 assert(bindings["cmd+r"].action == "session.rename")
@@ -112,12 +117,44 @@ assert(bindings["alt+shift+p"].action == "worktree_picker")
 assert(bindings["cmd+shift+o"] == nil and bindings["cmd+shift+w"] == nil)
 assert(bindings["cmd+shift+ctrl+j"].action == "pane.resize")
 assert(bindings["cmd+shift+j"].args.direction == "down")
-assert(bindings["cmd+shift+ctrl+d"].args.direction == "down")
+assert(bindings["alt+u"].action == "pane.split" and bindings["alt+u"].args.direction == "down")
+assert(bindings["alt+i"].action == "split_down_small")
+assert(bindings["alt+o"].action == "pane.split" and bindings["alt+o"].args.direction == "right")
+assert(bindings["cmd+d"] == nil and bindings["cmd+shift+d"] == nil and bindings["cmd+e"] == nil)
+assert(bindings["cmd+shift+ctrl+d"] == nil and bindings["cmd+shift+alt+d"] == nil)
+assert(not pcall(actions.split_down_small, {}))
+actions.split_down_small({ session_id = "a", block_id = "block:focused" })
+local split = queued.split
+assert(split.session_id == "a" and split.anchor_id == "block:focused")
+assert(split.direction == "vertical" and split.side == "after")
+assert(math.abs((1 - split.ratio) * terminal_size.rows - 13) < 0.000001 and split.focus == true)
+assert(split.layout.block.flavor == "com.superlogical.terminal.shell")
+assert(queued.resize.session_id == "a" and queued.resize.direction == "vertical")
+assert(queued.resize.before_block_id == "block:focused" and queued.resize.after_block_id == "block:new")
+assert(queued.resize.ratio == split.ratio)
+for _, rows in ipairs({ 40, 80, 160, 240 }) do
+  terminal_size.rows = rows
+  actions.split_down_small({ session_id = "a", block_id = "block:focused" })
+  assert(math.abs((1 - queued.split.ratio) * rows - 13) < 0.000001)
+  assert(queued.resize.ratio == queued.split.ratio)
+end
+terminal_size.rows = 20
+actions.split_down_small({ session_id = "a", block_id = "block:focused" })
+assert(queued.split.ratio == 0.5)
+terminal_size.rows = 0
+assert(not pcall(actions.split_down_small, { session_id = "a", block_id = "block:focused" }))
+terminal_size.rows = 80
+terminal_size.fail = true
+assert(not pcall(actions.split_down_small, { session_id = "a", block_id = "block:focused" }))
+terminal_size.fail = false
+fail_list.value = true
+assert(not pcall(actions.split_down_small, { session_id = "a", block_id = "block:focused" }))
+fail_list.value = false
 assert(bindings["cmd+shift+ctrl+n"].action == "session.new")
 assert(bindings["alt+shift+c"].action == "reload_sessions")
 assert(bindings["cmd+shift+r"].action == "client.config.reload")
 for key in pairs(bindings) do
-  assert((key == "cmd+k" or key == "cmd+r" or key == "cmd+w" or key == "alt+shift+c" or key == "alt+shift+o" or key == "alt+shift+p"
+  assert((key == "alt+u" or key == "alt+i" or key == "alt+o" or key == "cmd+k" or key == "cmd+r" or key == "cmd+w" or key == "alt+shift+c" or key == "alt+shift+o" or key == "alt+shift+p"
     or key == "alt+shift+[Slash]" or key == "alt+shift+ctrl+w"
     or key:find("cmd+shift+", 1, true) == 1) and not key:find(">", 1, true))
 end
@@ -134,11 +171,6 @@ actions.last_session({ client_id = "app", session_id = "a" })
 assert(queued.args.session_id == "b")
 load(${JSON.stringify(join(source, "track-sessions.lua"))})
 assert(history.read(path).app[2] == "b", "History must survive tracker restarts")
-assert(startup.ensured == 2, "Each tracker start must ensure local sessions")
-startup.fail = true
-local ready, err = pcall(load, ${JSON.stringify(join(source, "track-sessions.lua"))})
-assert(not ready and tostring(err):find("ensure failed", 1, true))
-startup.fail = false
 handlers.client_connected({ session_id = "c" }, { client_id = "cli", session_id = "c" })
 assert(history.read(path).cli == nil)
 handlers.client_connected({ session_id = "c" }, { client_id = "other", session_id = "c" })
@@ -156,22 +188,16 @@ return { bindings = bindings }
     const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     const { bindings } = JSON.parse(result.stdout);
-    assert.equal(Object.keys(bindings).length, 39);
+    assert.equal(Object.keys(bindings).length, 40);
 
     const normalise = key => key.toLowerCase().split("+")
       .map(part => ({ command: "cmd", option: "alt", control: "ctrl" })[part] ?? part)
       .sort().join("+");
     const rexKeys = new Set(Object.keys(bindings).map(normalise));
     assert.equal(rexKeys.size, Object.keys(bindings).length, "Duplicate resolved shortcut");
-    const omni = readFileSync("modules/tools/omniwm.nix", "utf8");
-    for (const [, binding] of omni.matchAll(/hotkey "([^"]+)"/g)) {
-      if (binding === "Unassigned" || binding.includes("\${")) continue;
+    for (const { binding } of omniwmSettings().hotkeys) {
+      if (binding === "Unassigned") continue;
       assert(!rexKeys.has(normalise(binding)), `OmniWM conflict: ${binding}`);
-    }
-    // Generated OmniWM number bindings use Option or Control-Option, never Command.
-    for (let number = 0; number <= 9; number++) {
-      assert(!rexKeys.has(normalise(`Option+${number}`)));
-      assert(!rexKeys.has(normalise(`Control+Option+${number}`)));
     }
   } finally {
     rmSync(dir, { recursive: true, force: true });

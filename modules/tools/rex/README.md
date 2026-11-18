@@ -2,13 +2,12 @@
 
 On both macOS laptops, Home Manager uses the Rex snapshot input to install the Rex CLI, terminfo entries, and SSH guard. Home Manager installs the Rex Lua configuration and session scripts in `~/.config/rex/`. Install the Rex app separately; the Rex app runs the macOS server. The Home Manager Rex server service stays disabled.
 
-All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. The pickers, shortcuts popup, and session-creation reload use **Alt-Shift**, as shown in the second table. No prefix is required. Alt is the Option key on macOS.
+All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. The pickers, shortcuts popup, and configuration reload use **Alt-Shift**, as shown in the second table. No prefix is required. Alt is the Option key on macOS.
 
 | Key | Action |
 | --- | --- |
 | `h` / `j` / `k` / `l` | Focus pane left / down / up / right |
 | `Ctrl-h` / `Ctrl-j` / `Ctrl-k` / `Ctrl-l` | Resize pane in that direction by 5 percent |
-| `d` / `Ctrl-d` | Split right / down |
 | `z` | Toggle pane zoom |
 | `x` | Close pane |
 | `c` | New tab |
@@ -23,25 +22,30 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 
 | Shortcut | Action |
 | --- | --- |
+| **Alt-u** | Split down |
+| **Alt-i** | Split down with the new pane approximately 12 terminal rows high; use at most half the height in a small pane |
+| **Alt-o** | Split right |
 | **Cmd-k** | Rex's native command palette |
 | **Cmd-Shift-p** | Existing Rex session picker |
 | **Cmd-r** | Rename session |
 | **Cmd-w** | Close the Rex app window, not the selected tab |
 | **Alt-Shift-/** (**Alt-?**) | Show configured Rex bindings in a searchable popup; **Esc** closes it |
-| **Alt-Shift-o** | Create missing configured sessions, then open Rex's session picker |
+| **Alt-Shift-o** | Open Rex's native command palette to select a configured session |
 | **Alt-Shift-p** | Repository, then worktree / PR picker |
 | **Ctrl-Alt-Shift-w** | Close current PR / worktree session |
-| **Alt-Shift-c** | Ensure local sessions and reload Rex configuration |
+| **Alt-Shift-c** | Reload Rex configuration without creating sessions |
 
 **Alt-Shift-r** is reserved for OmniWM's `raiseAllFloatingWindows` action. OmniWM's `toggleOverview` shortcut is unassigned so Rex can use **Alt-Shift-o**.
 
-These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
+These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Alt-u/i/o for splits, Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
 
 The shortcuts popup reads the current server configuration with `rex keymap`. It lists configured bindings and their arguments, not Rex defaults or shortcuts set in the app. It does not execute bindings. Press **Esc** to close the popup and return to the terminal.
 
 ## Configured sessions
 
-Use **Cmd-Shift-p** (or **Cmd-Shift-s**) to navigate with Rex's native session picker. **Alt-Shift-o** creates any missing configured sessions, then opens the same picker. Existing sessions keep their terminals and running programs.
+Use **Cmd-Shift-p** (or **Cmd-Shift-s**) to navigate existing sessions with Rex's native session picker. Press **Alt-Shift-o**, then search for **Open Configured Session:** and select a session. Rex creates only the selected session if it is missing, then selects it. Existing sessions keep their terminals and running programs. Press **Esc** to cancel without creating a session.
+
+This uses Rex's native command palette, not a terminal or `fzf`. The palette also lists other Rex commands. The documented automation APIs do not expose a custom native list popup or a palette filter argument. Each configured session has its own registered action, with its directory as the description. See [Custom Actions](https://www.superlogical.com/rex/docs/customize/actions) and [Lua API](https://www.superlogical.com/rex/docs/reference/lua).
 
 Home Manager generates `session-settings.lua` from `programs.sesh.settings.session` in `modules/tools/sesh.nix`. `modules/tools/rex.nix` excludes `dolomite` and sets the Rex session order:
 
@@ -51,11 +55,11 @@ Home Manager generates `session-settings.lua` from `programs.sesh.settings.sessi
 | `notes` | `~/notes` | `nvim ~/notes/notes.md && exit` |
 | `nixfiles` | `~/dev/nixfiles/` | Interactive shell |
 
-On desktop macOS hosts, the existing `rex-session-history` LaunchAgent creates missing local sessions when it connects to Rex. It retries while Rex is unavailable and connects again after a server restart. Rex does not permit server API calls during config loading, so startup session creation runs through this service instead. **Alt-Shift-c** also creates missing local sessions before reloading the configuration.
+The `rex-session-history` LaunchAgent records session history only. It does not create sessions when Rex opens or the server restarts. Configuration reloads, including **Alt-Shift-c**, do not create sessions either.
 
 After session creation or reuse, the configured sessions appear first in the order above. Other sessions retain their relative order. New PR sessions are appended. Session ordering applies to every client on the local server.
 
-Startup commands run only when a session is created. If multiple sessions have the same configured name, rename one before trying again. Closing Notes or HUD does not immediately recreate its session; startup, reload, or **Alt-Shift-o** can create it again.
+Startup commands run only when a session is created. If multiple sessions have the same configured name, rename one before trying again. Closing Notes or HUD does not recreate its session automatically. Select its configured-session action to create it again.
 
 Apply Home Manager, then reload Rex once with its command palette to register the new actions. Apply Home Manager again after changing the Sesh session definitions. Session creation reads the generated settings, not the Sesh cache.
 
@@ -83,6 +87,6 @@ The process records session attachments for each Rex app client in `$XDG_STATE_H
 
 Rex does not expose an active-session event. Focus changes between already-attached sessions in multiple Rex app windows cannot be tracked with attachment events. The toggle is intended for normal single-window session switching on one server. The LaunchAgent does not track remote servers or run on Linux.
 
-After Home Manager activation, press **Cmd-Shift-r** to reload Rex configuration, or **Alt-Shift-c** to also create missing local sessions. Visit another session after the LaunchAgent starts to establish recent-session history.
+After Home Manager activation, press **Cmd-Shift-r** or **Alt-Shift-c** to reload Rex configuration without creating sessions. Visit another session after the LaunchAgent starts to establish recent-session history.
 
 Check `init.lua` with Rex's `config check` command. Run `modules/tools/rex.test.mjs` and `modules/tools/rex/*.test.mjs` with Node's test runner to check history, direct shortcuts, OmniWM conflicts, session creation and reuse, PR labels, and picker cancellation. The tests require Rex and `PI_SESSION_TEMP`.
