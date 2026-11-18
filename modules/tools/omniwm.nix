@@ -122,7 +122,6 @@ in
             "com.raycast.macos"
             "com.barut.OmniWM"
             "com.tinyspeck.slackmacgap"
-            "io.tailscale.ipn.macsys"
             "org.openvpn.client.app"
           ];
           rehideIntervalSeconds = 5.0;
