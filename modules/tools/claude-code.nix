@@ -1,11 +1,26 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 lib.mkIf config.nixfiles.context.role.desktop {
+  home.activation.claudeCodeWorkSkills = lib.mkIf config.nixfiles.context.role.work (
+    lib.hm.dag.entryAfter ["writeBoundary" "linkGeneration"] ''
+      run ${pkgs.writeShellApplication {
+        name = "install-claude-code-work-skills";
+        runtimeInputs = [pkgs.git pkgs.coreutils];
+        text = builtins.readFile ./claude-code-work-skills.sh;
+      }}/bin/install-claude-code-work-skills \
+        ${lib.escapeShellArg "${config.home.homeDirectory}/.local/share/claude-code/skills-repos"} \
+        ${lib.escapeShellArg "${config.home.homeDirectory}/.claude/skills"}
+    ''
+  );
+
   programs.claude-code = {
     enable = true;
+    enableMcpIntegration = config.nixfiles.context.role.work;
+    mutableSettings = true;
     skills = {
       running-scripts-and-commands = ./claude-code-skills/just.md;
     };
@@ -25,7 +40,8 @@ lib.mkIf config.nixfiles.context.role.desktop {
         mode = "replace";
         verbs = builtins.fromJSON (builtins.readFile ./pi-coding-agent/spinner-verbs.json);
       };
-      model = "claude-opus-4-7";
+      model = "claude-opus-5-5";
+      tui = "fullscreen";
       env = {
         DISABLE_ERROR_REPORTING = "1";
         DISABLE_TELEMETRY = "1";
