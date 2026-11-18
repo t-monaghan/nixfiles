@@ -20,6 +20,9 @@ in {
           command = "agentsview";
           args = ["mcp"];
         };
+        culture-amp = {
+          url = "https://gw.production.api.cultureamp.com/mcp/cultureamp";
+        };
         hotel-mcp = {
           command = "hotel";
           args = ["mcp-server"];
