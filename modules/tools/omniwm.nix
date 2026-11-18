@@ -1,42 +1,15 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: let
   huddleTitleRegex = "^(?!(Activity|Later|Threads|Unread Messages|Huddles|Drafts & sent) -)[^()]+ - Culture Amp - Slack$";
-  followHuddle = pkgs.writeShellApplication {
-    name = "omniwm-follow-huddle";
-    runtimeInputs = [config.programs.omniwm.package pkgs.jq];
-    text = ''
-      export HUDDLE_TITLE_REGEX=${lib.escapeShellArg huddleTitleRegex}
-      ${builtins.readFile ./omniwm/follow-huddle.sh}
-    '';
-  };
   hotkey = binding: id: {inherit binding id;};
   unassigned = map (hotkey "Unassigned");
   numberedHotkeys = count: makeHotkeys:
     builtins.concatMap makeHotkeys (lib.range 1 count);
 in
   lib.mkIf config.nixfiles.context.role.desktop {
-    launchd.agents.omniwm-follow-huddle = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      enable = true;
-      config = {
-        ProgramArguments = [
-          "${config.programs.omniwm.package}/bin/omniwmctl"
-          "watch"
-          "active-workspace,focused-monitor,windows-changed"
-          "--reconnect"
-          "--exec"
-          (lib.getExe followHuddle)
-        ];
-        RunAtLoad = true;
-        KeepAlive = true;
-        ThrottleInterval = 10;
-        ProcessType = "Background";
-      };
-    };
-
     programs.omniwm = {
       enable = true;
 
@@ -271,7 +244,7 @@ in
           {
             bundleId = "com.tinyspeck.slackmacgap";
             titleRegex = huddleTitleRegex;
-            layout = "float";
+            layout = "tile";
             assignToWorkspace = "3";
           }
         ];
@@ -284,12 +257,12 @@ in
           ++ numberedHotkeys 9 (number: let
             index = number - 1;
             switchBinding =
-              if number <= 7
+              if number <= 6
               then "Option+${toString number}"
               else "Unassigned";
             moveBinding =
-              if number <= 7
-              then "Option+${builtins.elemAt ["Q" "W" "E" "R" "T" "Y" "U"] index}"
+              if number <= 6
+              then "Option+${builtins.elemAt ["Q" "W" "E" "R" "T" "Y"] index}"
               else "Unassigned";
           in [
             (hotkey switchBinding "switchWorkspace.${toString index}")
@@ -469,12 +442,6 @@ in
             id = "5953F2BF-A378-4266-91B2-287174C4FA4D";
             layoutType = "niri";
             name = "6";
-            monitorAssignment.type = "secondary";
-          }
-          {
-            id = "A7D5E104-6985-4516-8ED5-07F144F2A33D";
-            layoutType = "niri";
-            name = "7";
             monitorAssignment.type = "secondary";
           }
         ];
