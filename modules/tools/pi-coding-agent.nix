@@ -64,19 +64,19 @@ in {
           defaultProvider = "github-copilot";
           defaultModel = "gemini-4-argon";
           enabledModels = [
-            "github-copilot/gpt-6.1-sol"
-            "anthropic/claude-fable-5-1"
-            "github-copilot/gpt-6-astra"
+            "github-copilot/gpt-6.2-sol"
+            "anthropic/claude-fable-5-2"
+            "github-copilot/gpt-6.2-astra"
             "github-copilot/kimi-k3"
           ];
         }
         else {
           defaultProvider = "github-copilot";
-          defaultModel = "gpt-6.1-sol";
+          defaultModel = "gpt-6.2-sol";
           enabledModels =
-            lib.optional (ctx.host == "dolomite") "github-copilot/gpt-6.1-sol"
+            lib.optional (ctx.host == "dolomite") "github-copilot/gpt-6.2-sol"
             ++ [
-              "github-copilot/gpt-6-astra"
+              "github-copilot/gpt-6.2-astra"
               "github-copilot/kimi-k3"
             ];
         };
