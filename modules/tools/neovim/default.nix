@@ -306,6 +306,8 @@ in {
     # base16-nvim itself comes from `colorschemes.base16` above.
 
     extraConfigLua = ''
+      vim.opt.guicursor:append("i:block-blinkwait700-blinkoff400-blinkon250")
+
       vim.filetype.add({
         extension = {
           hujson = "jsonc",

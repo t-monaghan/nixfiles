@@ -19,6 +19,7 @@ in {
 
     interactiveShellInit = ''
       set -g fish_key_bindings fish_vi_key_bindings
+      set -g fish_cursor_insert block blink
 
       if test -n "$REX_BIN_DIR"
         set -gx PATH "$REX_BIN_DIR" $PATH
