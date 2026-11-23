@@ -155,6 +155,15 @@ local function picker(ctx, command)
 end
 
 rex.action{
+  name = "pi_kimi_popup",
+  title = "Open Floating Pi (Kimi K3)",
+  category = "Pane",
+  run = function(ctx)
+    return picker(ctx, { "pi", "--model", "github-copilot/kimi-k3" })
+  end,
+}
+
+rex.action{
   name = "show_shortcuts",
   title = "Show Configured Shortcuts",
   category = "Keys",

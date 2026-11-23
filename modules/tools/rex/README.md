@@ -29,6 +29,7 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 | **Cmd-Shift-p** | Existing Rex session picker |
 | **Cmd-r** | Rename session |
 | **Cmd-w** | Close the Rex app window, not the selected tab |
+| **Cmd-Shift-f** | Open pi with Kimi K3 in a focused floating terminal |
 | **Alt-Shift-/** (**Alt-?**) | Show configured Rex bindings in a searchable popup; **Esc** closes it |
 | **Alt-Shift-o** | Open Rex's native command palette to select a configured session |
 | **Alt-Shift-p** | Repository, then worktree / PR picker |
@@ -38,6 +39,8 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 **Alt-Shift-r** is reserved for OmniWM's `raiseAllFloatingWindows` action. OmniWM's `toggleOverview` shortcut is unassigned so Rex can use **Alt-Shift-o**.
 
 These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Alt-u/i/o for splits, Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
+
+**Cmd-Shift-f** starts `pi --model github-copilot/kimi-k3` in a new floating terminal inside the current Rex window. The terminal occupies 80 percent of the window width and height. Exit pi to close the terminal. Each press starts a new pi session.
 
 The shortcuts popup reads the current server configuration with `rex keymap`. It lists configured bindings and their arguments, not Rex defaults or shortcuts set in the app. It does not execute bindings. Press **Esc** to close the popup and return to the terminal.
 

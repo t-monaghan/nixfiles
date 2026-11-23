@@ -108,6 +108,7 @@ assert(bindings["cmd+k"].action == "client.palette.toggle")
 assert(bindings["cmd+shift+p"].action == "session.switch")
 assert(bindings["cmd+r"].action == "session.rename")
 assert(bindings["cmd+w"].action == "client.window.close")
+assert(bindings["cmd+shift+f"].action == "pi_kimi_popup")
 assert(bindings["alt+shift+[Slash]"].action == "show_shortcuts")
 assert(bindings["cmd+shift+[Slash]"] == nil)
 assert(bindings["cmd+shift+a"].action == "last_session")
@@ -188,7 +189,7 @@ return { bindings = bindings }
     const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     const { bindings } = JSON.parse(result.stdout);
-    assert.equal(Object.keys(bindings).length, 40);
+    assert.equal(Object.keys(bindings).length, 41);
 
     const normalise = key => key.toLowerCase().split("+")
       .map(part => ({ command: "cmd", option: "alt", control: "ctrl" })[part] ?? part)

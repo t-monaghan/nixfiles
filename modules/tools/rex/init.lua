@@ -79,6 +79,7 @@ bind("x", "pane.close")
 rex.bind("cmd+k", "client.palette.toggle")
 rex.bind("cmd+shift+p", "session.switch")
 rex.bind("cmd+w", "client.window.close")
+rex.bind("cmd+shift+f", "pi_kimi_popup")
 rex.bind("alt+shift+[Slash]", "show_shortcuts")
 
 bind("c", "client.tab.new")
