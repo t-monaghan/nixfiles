@@ -393,6 +393,9 @@ in {
         disu = "caffeinate -disu";
         gcy = "copy-commit-hash";
         gfy = "copy-changed-file-path";
+      }
+      // lib.optionalAttrs (builtins.elem ctx.host ["dolomite" "craton"]) {
+        logs = "journalctl -n 50 -f -o cat -u";
       };
 
     plugins = [
