@@ -3,7 +3,6 @@
   home-manager,
   nixpkgs,
   nixvim,
-  awtrix-cli,
   rex,
   ...
 } @ inputs: username:
@@ -15,7 +14,6 @@ home-manager.lib.homeManagerConfiguration {
   };
   modules = [
     nixvim.homeModules.nixvim
-    ../modules/tools/awtrix-cli.nix
     rex.homeManagerModules.default
     # `self.outPath` is this flake's source in the store: a stable, immutable,
     # host-independent path that `builtins.getFlake` can resolve regardless of
@@ -26,6 +24,5 @@ home-manager.lib.homeManagerConfiguration {
   ];
   extraSpecialArgs = {
     inherit username;
-    inherit awtrix-cli;
   };
 }

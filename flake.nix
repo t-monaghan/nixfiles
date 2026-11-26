@@ -14,8 +14,6 @@
     rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
     rex.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
-    awtrix-cli.url = "github:t-monaghan/awtrix-cli";
-    awtrix-cli.inputs.nixpkgs.follows = "nixpkgs";
     imds-broker.url = "github:t-monaghan/imds-broker/feat/nix-flake";
     imds-broker.inputs.nixpkgs.follows = "nixpkgs";
     sandy.url = "github:t-monaghan/sandy/feat/nix-flake";
