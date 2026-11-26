@@ -24,7 +24,10 @@ switch host="":
     if [ -z "$host" ]; then
       host=$local_hostname
     fi
-    sudo nixos-rebuild switch --flake ".#$host"
+    echo "Switch output: sudo journalctl -fu nixfiles-switch.service"
+    sudo systemd-run --unit=nixfiles-switch.service --service-type=exec --same-dir \
+      --wait --collect --setenv=PATH=/run/current-system/sw/bin --setenv=SUDO_UID \
+      /run/current-system/sw/bin/nixos-rebuild switch --flake ".#$host"
   else
     if [ -z "$host" ]; then
       host="{{user}}"

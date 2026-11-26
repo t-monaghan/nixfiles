@@ -38,6 +38,11 @@ nix flake update
 just switch
 ```
 
+On Craton, run `just switch` to apply the NixOS configuration. The recipe runs
+`nixos-rebuild` in `nixfiles-switch.service`, outside `rex.service`. If the switch
+restarts Rex and closes your terminal, the switch can continue. To follow the
+output from another terminal, run `sudo journalctl -fu nixfiles-switch.service`.
+
 Builds and switches of the complete Dolomite configuration are run from
 `nixfiles-private`. See that repository's README for its pinned update and local
 override workflows.
