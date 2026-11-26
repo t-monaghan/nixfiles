@@ -10,14 +10,19 @@ homeMan := if which("home-manager") {
   "nix shell nixpkgs#home-manager --command home-manager"
 }
 
-# Apply NixOS by hostname, or standalone Home Manager by username.
+# Apply NixOS by hostname, or standalone Home Manager by username. Not for Dolomite.
 switch host="":
   #!/usr/bin/env bash
   set -euo pipefail
   host="{{host}}"
+  local_hostname=$(hostname -s)
+  if [ "$local_hostname" = dolomite ] || [ "$host" = dolomite ]; then
+    echo 'Refusing to switch Dolomite from nixfiles.' >&2
+    exit 1
+  fi
   if [ -e /etc/NIXOS ]; then
     if [ -z "$host" ]; then
-      host=$(hostname -s)
+      host=$local_hostname
     fi
     sudo nixos-rebuild switch --flake ".#$host"
   else
