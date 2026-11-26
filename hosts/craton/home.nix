@@ -5,7 +5,10 @@
     ../../modules/theme
     ../../modules/tools/neovim
     ../../modules/tools/git.nix
+    ../../modules/tools/starship.nix
   ];
+
+  programs.fish.enable = true;
 
   home = {
     stateVersion = "26.05";

@@ -1,4 +1,10 @@
-{...}: {
+{
+  config,
+  lib,
+  ...
+}: let
+  showHostname = config.nixfiles.context.role.homelab;
+in {
   programs.starship = {
     enable = true;
     enableFishIntegration = true;
@@ -71,7 +77,10 @@
         };
       };
       directory = {style = "bold cyan";};
-      format = "$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom\n$status$character";
+      format = "${lib.optionalString showHostname "$hostname"}$directory$git_branch$git_status$git_state$direnv$java$golang$ruby$node$custom\n$status$character";
+      hostname = lib.mkIf showHostname {
+        ssh_only = false;
+      };
       git_branch = {
         style = "yellow";
         symbol = " ";
