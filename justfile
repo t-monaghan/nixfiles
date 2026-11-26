@@ -24,10 +24,17 @@ switch host="":
     if [ -z "$host" ]; then
       host=$local_hostname
     fi
-    echo "Switch output: sudo journalctl -fu nixfiles-switch.service"
+    run_args=()
+    rebuild_args=()
+    if [ "$host" = craton ]; then
+      run_args+=(--verbose)
+      rebuild_args+=(--print-build-logs)
+    else
+      echo "Switch output: sudo journalctl -fu nixfiles-switch.service"
+    fi
     sudo systemd-run --unit=nixfiles-switch.service --service-type=exec --same-dir \
       --wait --collect --setenv=PATH=/run/current-system/sw/bin --setenv=SUDO_UID \
-      /run/current-system/sw/bin/nixos-rebuild switch --flake ".#$host"
+      "${run_args[@]}" /run/current-system/sw/bin/nixos-rebuild switch --flake ".#$host" "${rebuild_args[@]}"
   else
     if [ -z "$host" ]; then
       host="{{user}}"
