@@ -50,7 +50,7 @@
       policy = ["magic"];
     };
     hostName = "craton";
-    firewall.interfaces.tailscale0.allowedTCPPorts = [45876];
+    firewall.interfaces.tailscale0.allowedTCPPorts = [45876 8000];
   };
 
   users.users.tom = {
@@ -146,12 +146,25 @@
         LISTEN = "100.64.250.109:45876";
       };
     };
+    restic.server = {
+      enable = true;
+      appendOnly = true;
+      htpasswd-file = "/var/lib/restic-auth/htpasswd";
+      dataDir = "/srv/backups";
+    };
   };
 
   systemd.services = {
     beszel-agent = {
       requires = ["tailscale-online.target"];
       after = ["tailscale-online.target"];
+      # allows beszel to read service logs
+      serviceConfig.SupplementaryGroups = ["systemd-journal"];
+    };
+    restic-rest-server = {
+      bindsTo = ["srv-backups.mount"];
+      after = ["srv-backups.mount"];
+      unitConfig.AssertPathIsMountPoint = "/srv/backups";
     };
   };
 
