@@ -8,15 +8,16 @@ import { omniwmSettings } from "./omniwm/settings.test-helper.mjs";
 const rex = process.env.REX_BIN_DIR ? join(process.env.REX_BIN_DIR, "rex") : null;
 const skip = !rex || !existsSync(rex) || !process.env.PI_SESSION_TEMP;
 
-test("Rex swaps the command palette and session picker shortcuts", () => {
+test("Rex binds Cmd-K to Go to Anything and keeps the default command palette shortcut", () => {
   const source = readFileSync("modules/tools/rex/init.lua", "utf8");
-  assert.match(source, /rex\.bind\("cmd\+k", "client\.palette\.toggle"\)/);
-  assert.match(source, /rex\.bind\("cmd\+shift\+p", "session\.switch"\)/);
+  assert.match(source, /rex\.bind\("cmd\+k", "pane\.go_to"\)/);
+  assert.doesNotMatch(source, /rex\.(?:bind|unbind)\("cmd\+shift\+p"/);
+  assert.doesNotMatch(source, /\bbind\("p",/);
 });
 
-test("Rex leaves Ctrl-Tab on its default binding", () => {
+test("Rex binds Cmd-. to the View Activity popup", () => {
   const source = readFileSync("modules/tools/rex/init.lua", "utf8");
-  assert.doesNotMatch(source, /rex\.bind\("ctrl\+tab",/);
+  assert.match(source, /rex\.bind\("cmd\+\[Period\]", "pane\.view_activity"\)/);
 });
 
 test("Rex direct shortcuts and recent-session history", { skip }, () => {
@@ -31,6 +32,7 @@ local bindings, actions, handlers, queued = {}, {}, {}, {}
 local live = { { session_id = "a" }, { session_id = "b" }, { session_id = "c" } }
 local fail_list = { value = false }
 local terminal_size = { rows = 80, fail = false }
+local pane_focus = { calls = {}, result = { reversed = true, session_id = "b", window_id = "tab:b" } }
 local mock = {
   json = json,
   bind = function(key, action, args)
@@ -44,6 +46,16 @@ local mock = {
     error("History tracking must not invoke actions or create sessions: " .. action)
   end,
   call = function(method, args)
+    if method == "session.focus_block" then
+      assert(args.session_id == "a" and args.block_id == "block:focused")
+      table.insert(pane_focus.calls, method)
+      return {}
+    end
+    if method == "focus_history.reverse" then
+      assert(args == nil or next(args) == nil, "Start a new reversal; do not keep a cursor")
+      table.insert(pane_focus.calls, method)
+      return pane_focus.result, pane_focus.err
+    end
     if method == "com.superlogical.terminal.size" then
       assert(args.session_id == "a" and args.block_id == "block:focused")
       if terminal_size.fail then return nil, "size failed" end
@@ -104,15 +116,16 @@ history.write(path, clients)
 assert(history.read(path).app[1] == "a")
 
 load(${JSON.stringify(join(source, "init.lua"))})
-assert(bindings["cmd+k"].action == "client.palette.toggle")
-assert(bindings["cmd+shift+p"].action == "session.switch")
-assert(bindings["cmd+r"].action == "session.rename")
+assert(bindings["cmd+k"].action == "pane.go_to")
+assert(bindings["cmd+[Period]"].action == "pane.view_activity")
+assert(bindings["cmd+shift+p"] == nil)
+assert(bindings["cmd+r"].action == "client.tab.rename")
 assert(bindings["cmd+w"].action == "client.window.close")
 assert(bindings["cmd+shift+f"].action == "pi_kimi_popup")
 assert(bindings["alt+shift+[Slash]"].action == "show_shortcuts")
 assert(bindings["cmd+shift+[Slash]"] == nil)
 assert(bindings["cmd+shift+a"].action == "last_session")
-assert(bindings["ctrl+tab"] == nil)
+assert(bindings["ctrl+tab"].action == "last_pane")
 assert(bindings["alt+shift+o"].action == "configured_sessions")
 assert(bindings["alt+shift+p"].action == "worktree_picker")
 assert(bindings["cmd+shift+o"] == nil and bindings["cmd+shift+w"] == nil)
@@ -156,9 +169,24 @@ assert(bindings["alt+shift+c"].action == "reload_sessions")
 assert(bindings["cmd+shift+r"].action == "client.config.reload")
 for key in pairs(bindings) do
   assert((key == "alt+u" or key == "alt+i" or key == "alt+o" or key == "cmd+k" or key == "cmd+r" or key == "cmd+w" or key == "alt+shift+c" or key == "alt+shift+o" or key == "alt+shift+p"
-    or key == "alt+shift+[Slash]" or key == "alt+shift+ctrl+w"
+    or key == "alt+shift+[Slash]" or key == "alt+shift+ctrl+w" or key == "ctrl+tab" or key == "cmd+[Period]"
     or key:find("cmd+shift+", 1, true) == 1) and not key:find(">", 1, true))
 end
+local pane_ctx = { client_id = "app", session_id = "a", block_id = "block:focused" }
+actions.last_pane({})
+assert(#pane_focus.calls == 0)
+actions.last_pane(pane_ctx)
+assert(table.concat(pane_focus.calls, ",") == "session.focus_block,focus_history.reverse")
+assert(queued.action == "session.select" and queued.args.session_id == "b" and queued.args.window_id == "tab:b")
+queued.action = nil
+pane_focus.result = { reversed = false }
+actions.last_pane(pane_ctx)
+assert(queued.action == nil)
+pane_focus.result, pane_focus.err = nil, "code=method_not_found"
+local pane_ok, pane_err = pcall(actions.last_pane, pane_ctx)
+assert(not pane_ok and pane_err:find("revision 19", 1, true))
+assert(queued.action == nil)
+
 local ok = pcall(actions.last_session, { client_id = "app", session_id = "a" })
 assert(not ok, "A missing previous session must not switch to an arbitrary session")
 assert(not pcall(actions.last_session, {}))
@@ -189,7 +217,7 @@ return { bindings = bindings }
     const result = spawnSync(rex, ["--autostart=false", "do", script, "--json"], { encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
     const { bindings } = JSON.parse(result.stdout);
-    assert.equal(Object.keys(bindings).length, 41);
+    assert.equal(Object.keys(bindings).length, 42);
 
     const normalise = key => key.toLowerCase().split("+")
       .map(part => ({ command: "cmd", option: "alt", control: "ctrl" })[part] ?? part)

@@ -2,7 +2,7 @@
 
 On both macOS laptops, Home Manager uses the Rex snapshot input to install the Rex CLI, terminfo entries, and SSH guard. Home Manager installs the Rex Lua configuration and session scripts in `~/.config/rex/`. Install the Rex app separately; the Rex app runs the macOS server. The Home Manager Rex server service stays disabled.
 
-All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. The pickers, shortcuts popup, and configuration reload use **Alt-Shift**, as shown in the second table. No prefix is required. Alt is the Option key on macOS.
+No shortcut requires a prefix. Hold **Cmd-Shift** for the keys in the first table. The second table lists the other shortcuts. Alt is the Option key on macOS.
 
 | Key | Action |
 | --- | --- |
@@ -25,9 +25,11 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 | **Alt-u** | Split down |
 | **Alt-i** | Split down with the new pane approximately 12 terminal rows high; use at most half the height in a small pane |
 | **Alt-o** | Split right |
-| **Cmd-k** | Rex's native command palette |
-| **Cmd-Shift-p** | Existing Rex session picker |
-| **Cmd-r** | Rename session |
+| **Ctrl-Tab** | Toggle between the two most recently focused panes on the current Rex server |
+| **Cmd-k** | Rex's **Go to Anything** picker |
+| **Cmd-.** | Open Rex's **View Activity** popup |
+| **Cmd-Shift-p** | Rex's native command palette (default) |
+| **Cmd-r** | Rename tab |
 | **Cmd-w** | Close the Rex app window, not the selected tab |
 | **Cmd-Shift-f** | Open pi with Kimi K3 in a focused floating terminal |
 | **Alt-Shift-/** (**Alt-?**) | Show configured Rex bindings in a searchable popup; **Esc** closes it |
@@ -38,15 +40,17 @@ All shortcuts are direct. Hold **Cmd-Shift** for the keys in the first table. Th
 
 **Alt-Shift-r** is reserved for OmniWM's `raiseAllFloatingWindows` action. OmniWM's `toggleOverview` shortcut is unassigned so Rex can use **Alt-Shift-o**.
 
-These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Alt-u/i/o for splits, Cmd-k for the command palette, Cmd-r to rename the session, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
+These shortcuts do not conflict with the configured OmniWM shortcuts in `modules/tools/omniwm.nix`. OmniWM uses Option for window focus and Control-Option for column selection. Rex uses Cmd-Shift, with Control added for resize and secondary actions, except for Alt-u/i/o for splits, Ctrl-Tab to toggle recent panes, Cmd-k for Go to Anything, Cmd-. for View Activity, Cmd-r to rename the tab, Cmd-w to close the app window, Alt-Shift-o/p for the pickers, Alt-Shift-/ for the shortcuts popup, Alt-Shift-c to reload configuration, and Ctrl-Alt-Shift-w to close a PR / worktree session. OmniWM uses Alt-Shift-w, so Rex adds Control for its close action. This configuration replaces Rex defaults on the same keys. Shortcuts set in the Rex app override this configuration. Existing arrow-key shortcuts remain available.
 
 **Cmd-Shift-f** starts `pi --model github-copilot/kimi-k3` in a new floating terminal inside the current Rex window. The terminal occupies 80 percent of the window width and height. Exit pi to close the terminal. Each press starts a new pi session.
 
 The shortcuts popup reads the current server configuration with `rex keymap`. It lists configured bindings and their arguments, not Rex defaults or shortcuts set in the app. It does not execute bindings. Press **Esc** to close the popup and return to the terminal.
 
+Enable **New Quick Switcher** in the Rex command palette to make **Go to Anything** show sessions, blocks (panes), and processes in one list.
+
 ## Configured sessions
 
-Use **Cmd-Shift-p** (or **Cmd-Shift-s**) to navigate existing sessions with Rex's native session picker. Press **Alt-Shift-o**, then search for **Open Configured Session:** and select a session. Rex creates only the selected session if it is missing, then selects it. Existing sessions keep their terminals and running programs. Press **Esc** to cancel without creating a session.
+Use **Cmd-Shift-s** to navigate existing sessions with Rex's session picker. Press **Alt-Shift-o**, then search for **Open Configured Session:** and select a session. Rex creates only the selected session if it is missing, then selects it. Existing sessions keep their terminals and running programs. Press **Esc** to cancel without creating a session.
 
 This uses Rex's native command palette, not a terminal or `fzf`. The palette also lists other Rex commands. The documented automation APIs do not expose a custom native list popup or a palette filter argument. Each configured session has its own registered action, with its directory as the description. See [Custom Actions](https://www.superlogical.com/rex/docs/customize/actions) and [Lua API](https://www.superlogical.com/rex/docs/reference/lua).
 
@@ -81,6 +85,12 @@ The picker reads PR numbers from `pr-123` directory names first. For branch-name
 This picker needs Rex **Remote Control** enabled. Worktrunk hooks run normally when creating a worktree. Each worktree opens as a separate Rex session, not a tmux session.
 
 **Ctrl-Alt-Shift-w** destroys the current PR / worktree session and closes all its terminals. It does not delete the worktree or close the GitHub PR. The action refuses configured sessions and labels outside the `repo #123` / `repo: branch` formats. Use Rex's normal close action for other sessions.
+
+## Recent pane switching
+
+Tap **Ctrl-Tab** to focus the previous pane. Tap it again to return, including across tabs or sessions on the same Rex server. This is the two-pane toggle from macOS Cmd-Tab, not the picker that opens when you hold Cmd. Use **Cmd-k** to pick another pane.
+
+This shortcut uses Rex Server's `focus_history.reverse` API. It requires server API revision 19 or later; a newer CLI alone is not enough. Check the running server with `rex server status`. Rex keeps the focus history in memory, so visit two panes after a server restart. Rex shares the focus history between clients signed in as the same user. A client request in another session can affect the order.
 
 ## Recent-session history
 

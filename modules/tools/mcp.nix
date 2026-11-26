@@ -28,6 +28,9 @@ in {
           args = ["mcp-server"];
           lifecycle = "lazy";
         };
+        lakeview = {
+          url = "https://concierge.meta.cultureamp.io/mcp/lakeview";
+        };
         datadog = {
           url = "https://mcp.datadoghq.com/v1/mcp";
         };

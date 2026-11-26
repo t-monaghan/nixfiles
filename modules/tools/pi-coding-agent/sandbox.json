@@ -84,6 +84,7 @@
       "~/dev/*/.git/**",
       "~/hotel",
       "~/.pi",
+      "~/Library/Application Support/rtk",
       "~/Library/Caches",
       "~/Library/pnpm",
       "~/go"

@@ -9,7 +9,7 @@ const fixture = {
   actions: [{ name: "show_shortcuts", title: "Show Configured Shortcuts" }],
   bindings: [
     { keys: ["alt+shift+[Slash]"], action: "show_shortcuts" },
-    { keys: ["cmd+r"], action: "session.rename" },
+    { keys: ["cmd+r"], action: "client.tab.rename" },
     { keys: ["cmd+shift+h"], action: "pane.focus", args: { direction: "left" } },
     { keys: ["cmd+shift+ctrl+h"], action: "pane.resize", args: { direction: "left", amount: 5 } },
   ],
@@ -20,7 +20,7 @@ test("shortcut rows include configured keys, titles, and arguments", () => {
     input: JSON.stringify(fixture), encoding: "utf8",
   });
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /cmd\+r    session\.rename/);
+  assert.match(result.stdout, /cmd\+r    client\.tab\.rename/);
   assert.match(result.stdout, /alt\+shift\+\[Slash\]    Show Configured Shortcuts/);
   assert.match(result.stdout, /pane\.resize    amount=5 direction=left/);
   assert.equal(result.stdout.trim().split("\n").length, 4);
@@ -75,7 +75,7 @@ local function load(name)
 end
 load("configured-sessions.lua")
 load("init.lua")
-assert(bindings["cmd+r"] == "session.rename")
+assert(bindings["cmd+r"] == "client.tab.rename")
 assert(bindings["cmd+w"] == "client.window.close")
 assert(bindings["cmd+shift+f"] == "pi_kimi_popup")
 assert(bindings["cmd+shift+r"] == "client.config.reload")

@@ -62,7 +62,7 @@ in
         };
 
         focus = {
-          followsMouse = false;
+          followsMouse = true;
           followsWindowToMonitor = true;
           lockModifier = "rightCommand";
           crossesMonitorAtEdge = false;

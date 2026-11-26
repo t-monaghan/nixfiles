@@ -26,6 +26,9 @@ in {
   home.stateVersion = "23.11";
   programs.home-manager.enable = true;
 
+  manual.manpages.enable = false;
+  programs.man.enable = false;
+
   nix = lib.mkIf ctx.role.desktop {
     package = pkgs.nix;
     extraOptions = ''

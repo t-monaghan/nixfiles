@@ -22,6 +22,32 @@ rex.action{
 }
 
 rex.action{
+  name = "last_pane",
+  title = "Toggle Recent Pane",
+  category = "Pane",
+  run = function(ctx)
+    if not ctx.client_id or not ctx.session_id or not ctx.block_id then return end
+    local server = ctx.server and rex.server(ctx.server) or rex
+    -- Record the pane the client is showing before reversing server focus history.
+    local focused, focus_err = server.call("session.focus_block", {
+      session_id = ctx.session_id,
+      block_id = ctx.block_id,
+    })
+    if not focused then error(focus_err, 0) end
+    local result, err = server.call("focus_history.reverse")
+    if not result then
+      if err and err:find("method_not_found", 1, true) then
+        error("Recent pane switching requires Rex Server API revision 19 or later", 0)
+      end
+      error(err, 0)
+    end
+    if result.reversed then
+      rex.client.queue("session.select", { session_id = result.session_id, window_id = result.window_id })
+    end
+  end,
+}
+
+rex.action{
   name = "split_down_small",
   title = "Split Down (12 Rows)",
   category = "Pane",
@@ -76,8 +102,9 @@ rex.bind("alt+o", "pane.split", { direction = "right" })
 bind("z", "pane.zoom")
 bind("x", "pane.close")
 
-rex.bind("cmd+k", "client.palette.toggle")
-rex.bind("cmd+shift+p", "session.switch")
+rex.bind("ctrl+tab", "last_pane")
+rex.bind("cmd+k", "pane.go_to")
+rex.bind("cmd+[Period]", "pane.view_activity")
 rex.bind("cmd+w", "client.window.close")
 rex.bind("cmd+shift+f", "pi_kimi_popup")
 rex.bind("alt+shift+[Slash]", "show_shortcuts")
@@ -96,7 +123,7 @@ bind("a", "last_session")
 bind("[BracketRight]", "session.next")
 bind("[BracketLeft]", "session.previous")
 bind("ctrl+n", "session.new")
-rex.bind("cmd+r", "session.rename")
+rex.bind("cmd+r", "client.tab.rename")
 rex.bind("alt+shift+ctrl+w", "close_pr_session")
 rex.bind("alt+shift+c", "reload_sessions")
 bind("r", "client.config.reload")

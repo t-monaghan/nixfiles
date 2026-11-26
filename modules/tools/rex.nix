@@ -51,6 +51,13 @@ in {
     };
   };
 
+  targets = lib.optionalAttrs (pkgs.stdenv.hostPlatform.isDarwin && config.nixfiles.context.role.desktop) {
+    darwin.defaults."com.superlogical.rex" = {
+      "Workspace.terminalCursorBlinkIntervalMilliseconds" = 417;
+      "Workspace.terminalCursorBlinkUsesCustomInterval" = true;
+    };
+  };
+
   xdg.configFile = {
     "rex/init.lua" = lib.mkIf (!pkgs.stdenv.hostPlatform.isDarwin) {
       source = ./rex/init.lua;

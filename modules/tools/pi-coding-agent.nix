@@ -32,20 +32,30 @@
     npm ci --include=dev --ignore-scripts=false --no-audit --no-fund
     printf '%s\n' "$revision" > .installed-revision
   '';
-  sharedPiSettings = {
-    defaultThinkingLevel = "medium";
-    treeFilterMode = "no-tools";
-    packages = [sandboxDir "${pkgs.pi-question}"] ++ config.nixfiles.pi.packages;
-    quietStartup = true;
-    tuiMode = "regular";
-    showHardwareCursor = true;
-    fullscreenCopyOnSelect = config.nixfiles.pi.fullscreenCopyOnSelect;
-    warnings.anthropicExtraUsage = false;
-    doubleEscapeAction = "fork";
-    markdown.codeBlockIndent = "";
+  rtkExtension = pkgs.fetchurl {
+    name = "rtk.ts";
+    url = "https://raw.githubusercontent.com/rtk-ai/rtk/v1.2.0/hooks/pi/rtk.ts";
+    hash = "sha256-0VVeCvWHKjDtBAWUIzUL2zgwLyAKlkLFqbzFGclaIlc=";
   };
+  sharedPiSettings =
+    {
+      defaultThinkingLevel = "medium";
+      treeFilterMode = "no-tools";
+      packages = [sandboxDir "${pkgs.pi-question}"] ++ config.nixfiles.pi.packages;
+      quietStartup = true;
+      tuiMode = "regular";
+      showHardwareCursor = true;
+      fullscreenCopyOnSelect = config.nixfiles.pi.fullscreenCopyOnSelect;
+      warnings.anthropicExtraUsage = false;
+      doubleEscapeAction = "fork";
+      markdown.codeBlockIndent = "";
+    }
+    // lib.optionalAttrs config.nixfiles.pi.rtk.enable {
+      extensions = ["${rtkExtension}"];
+    };
 in {
   options.nixfiles.pi = {
+    rtk.enable = lib.mkEnableOption "RTK output filtering for Pi Bash tool calls";
     fullscreenCopyOnSelect = lib.mkOption {
       type = lib.types.bool;
       default = ctx.role.desktop;
@@ -86,7 +96,6 @@ in {
       default = lib.optionals ctx.role.work [
         "git:github.com/cultureamp/sre-health-triage@main"
         "git:github.com/cultureamp/sre-ai-toolkit@main"
-        "git:github.com/cultureamp/ca-agent-context@main"
       ];
       example = ["git:github.com/org/skills@main"];
       description = ''
@@ -172,6 +181,7 @@ in {
               exec ${pkgs.nodejs}/bin/node ${./pi-hud.mjs} "$@"
             '')
           ]
+          ++ lib.optional config.nixfiles.pi.rtk.enable pkgs.rtk
           ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
             # @anthropic-ai/sandbox-runtime resolves these by executable name at
             # startup. They are required for filesystem and network isolation.
