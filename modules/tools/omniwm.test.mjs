@@ -15,6 +15,23 @@ test("OmniWM has six workspaces and leaves workspace 7 shortcuts unassigned", ()
   assert.equal(hotkeys.find(hotkey => hotkey.id === "moveToWorkspace.5").binding, "Option+Y");
 });
 
+test("OmniWM uses schema 5 and preserves the resize shortcuts", () => {
+  const { schemaVersion, hotkeys } = omniwmSettings();
+  assert.equal(schemaVersion, 5);
+  assert.deepEqual(
+    hotkeys.filter(({ id }) => /^resize(?:Container|Window)(?:Primary|Secondary)Span\./.test(id)),
+    [
+      { binding: "Option+Minus", id: "resizeContainerPrimarySpan.shrink" },
+      { binding: "Option+Equal", id: "resizeContainerPrimarySpan.grow" },
+      { binding: "Unassigned", id: "resizeWindowPrimarySpan.shrink" },
+      { binding: "Unassigned", id: "resizeWindowPrimarySpan.grow" },
+      { binding: "Option+Shift+Minus", id: "resizeWindowSecondarySpan.shrink" },
+      { binding: "Option+Shift+Equal", id: "resizeWindowSecondarySpan.grow" },
+    ],
+  );
+  assert(!hotkeys.some(({ id }) => /\.(?:decrease|increase)10Percent$/.test(id)));
+});
+
 test("OmniWM does not run Huddle workspace-follow automation", () => {
   assert.doesNotMatch(config, /followHuddle|follow-huddle|active-workspace,focused-monitor,windows-changed/);
 });

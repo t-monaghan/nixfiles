@@ -82,6 +82,8 @@
       "~/dev/agents",
       "~/dev/*/.git",
       "~/dev/*/.git/**",
+      "~/dev/*/.worktrees",
+      "~/dev/*/.worktrees/**/*",
       "~/hotel",
       "~/.pi",
       "~/Library/Application Support/rtk",

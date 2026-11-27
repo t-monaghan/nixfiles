@@ -10,6 +10,17 @@
     builtins.concatMap makeHotkeys (lib.range 1 count);
 in
   lib.mkIf config.nixfiles.context.role.desktop {
+    xdg.configFile."omniwm/shell/shell.toml".text = ''
+      [profiles.default]
+      center = []
+      leading = ["apple-menu", "app-menu", "workspaces", "scratchpads"]
+      trailing = ["media", "clock"]
+
+      [profiles.default.workspaceBar]
+      fullWidth = false
+      systemStatsButton = false
+    '';
+
     programs.omniwm = {
       enable = true;
 
@@ -30,7 +41,7 @@ in
         monitorGapOverrides = [];
         monitorNiriOverrides = [];
         monitorOrientationOverrides = [];
-        schemaVersion = 4;
+        schemaVersion = 5;
 
         appearance.mode = "automatic";
 
@@ -367,12 +378,12 @@ in
             (hotkey "Option+Shift+F" "toggleContainerFullPrimarySpan")
             (hotkey "Control+Option+F" "expandContainerToAvailablePrimarySpan")
             (hotkey "Control+Option+R" "resetWindowSecondarySpan")
-            (hotkey "Option+Minus" "setContainerPrimarySpan.decrease10Percent")
-            (hotkey "Option+Equal" "setContainerPrimarySpan.increase10Percent")
-            (hotkey "Unassigned" "setWindowPrimarySpan.decrease10Percent")
-            (hotkey "Unassigned" "setWindowPrimarySpan.increase10Percent")
-            (hotkey "Option+Shift+Minus" "setWindowSecondarySpan.decrease10Percent")
-            (hotkey "Option+Shift+Equal" "setWindowSecondarySpan.increase10Percent")
+            (hotkey "Option+Minus" "resizeContainerPrimarySpan.shrink")
+            (hotkey "Option+Equal" "resizeContainerPrimarySpan.grow")
+            (hotkey "Unassigned" "resizeWindowPrimarySpan.shrink")
+            (hotkey "Unassigned" "resizeWindowPrimarySpan.grow")
+            (hotkey "Option+Shift+Minus" "resizeWindowSecondarySpan.shrink")
+            (hotkey "Option+Shift+Equal" "resizeWindowSecondarySpan.grow")
             (hotkey "Option+0" "balanceSizes")
           ]
           ++ unassigned [

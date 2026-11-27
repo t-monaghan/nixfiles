@@ -14,6 +14,19 @@ homeMan := if which("home-manager") {
 switch host="":
   #!/usr/bin/env bash
   set -euo pipefail
+  if [ -t 2 ]; then
+    report_status() {
+      printf '\033]7501;state=%s:app=just\033\\' "$1" >&2 || :
+    }
+    trap 'case $? in
+      0) report_status done ;;
+      130|143) report_status idle ;;
+      *) report_status error ;;
+    esac' EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+    report_status working
+  fi
   host="{{host}}"
   local_hostname=$(hostname -s)
   if [ "$local_hostname" = dolomite ] || [ "$host" = dolomite ]; then
@@ -39,7 +52,7 @@ switch host="":
     if [ -z "$host" ]; then
       host="{{user}}"
     fi
-    {{homeMan}} switch --flake ".#$host"
+    {{homeMan}} switch -b bak --flake ".#$host"
   fi
 
 news:

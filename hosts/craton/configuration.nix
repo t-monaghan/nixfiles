@@ -139,7 +139,6 @@
     };
     beszel.agent = {
       enable = true;
-      package = inputs.nixpkgs-beszel.legacyPackages.${pkgs.stdenv.hostPlatform.system}.beszel;
       smartmon.enable = true;
       environment = {
         KEY = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZ1ySHE2oyVEh2pqVbw9Hd2jISOsZcIEdXszgHf/ryO";

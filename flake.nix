@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
-    nixpkgs-beszel.url = "github:nixos/nixpkgs/619c39f6eac5d1ed6b8f073a9414baf7034b2356";
     home-manager-stable.url = "github:nix-community/home-manager/release-26.05";
     home-manager-stable.inputs.nixpkgs.follows = "nixpkgs-stable";
     nixvim-stable.url = "github:nix-community/nixvim/nixos-26.05";
